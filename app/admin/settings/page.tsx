@@ -1,0 +1,234 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { createClient } from '@supabase/supabase-js';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
+import { Save, Loader2 } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { CheckCircle2 } from 'lucide-react';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
+
+interface Settings {
+  id: string;
+  name: string;
+  tagline: string;
+  phone: string;
+  whatsapp: string;
+  email: string;
+  address: string;
+  business_hours: any;
+  social_media: any;
+}
+
+export default function AdminSettingsPage() {
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  const [formData, setFormData] = useState({
+    name: '',
+    tagline: '',
+    phone: '',
+    whatsapp: '',
+    email: '',
+    address: '',
+  });
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const { data } = await supabase
+        .from('business_settings')
+        .select('*')
+        .single();
+
+      if (data) {
+        setSettings(data);
+        setFormData({
+          name: data.name,
+          tagline: data.tagline,
+          phone: data.phone,
+          whatsapp: data.whatsapp,
+          email: data.email,
+          address: data.address,
+        });
+      }
+    } catch (err) {
+      console.error('Error fetching settings:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setSaved(false);
+    try {
+      const { error } = await supabase
+        .from('business_settings')
+        .update(formData)
+        .eq('id', settings?.id);
+
+      if (error) throw error;
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      console.error('Error saving settings:', err);
+      alert('Failed to save settings');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-gold" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="font-display text-3xl font-bold text-brand-off-white">Settings</h1>
+          <p className="text-brand-warm-grey mt-1">Manage business information and settings</p>
+        </div>
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="bg-brand-gold text-brand-bg hover:bg-brand-gold-light"
+        >
+          {saving ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Save className="w-4 h-4 mr-2" />
+              Save Changes
+            </>
+          )}
+        </Button>
+      </div>
+
+      {saved && (
+        <Alert className="bg-green-900/20 border-green-900 text-green-400">
+          <CheckCircle2 className="h-4 w-4" />
+          <AlertDescription>Settings saved successfully!</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Business Information */}
+      <Card className="bg-brand-card border-brand-border">
+        <CardHeader>
+          <CardTitle className="text-brand-off-white">Business Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label className="text-brand-off-white">Business Name</Label>
+              <Input
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+              />
+            </div>
+
+            <div>
+              <Label className="text-brand-off-white">Tagline</Label>
+              <Input
+                value={formData.tagline}
+                onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
+                className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-brand-off-white">Address</Label>
+            <Textarea
+              value={formData.address}
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+              rows={2}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Contact Information */}
+      <Card className="bg-brand-card border-brand-border">
+        <CardHeader>
+          <CardTitle className="text-brand-off-white">Contact Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label className="text-brand-off-white">Phone Number</Label>
+              <Input
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                placeholder="+234 803 456 7890"
+              />
+            </div>
+
+            <div>
+              <Label className="text-brand-off-white">WhatsApp Number</Label>
+              <Input
+                value={formData.whatsapp}
+                onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
+                className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                placeholder="2348034567890"
+              />
+              <p className="text-brand-warm-grey text-xs mt-1">Without + sign, for wa.me links</p>
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-brand-off-white">Email Address</Label>
+            <Input
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+              placeholder="info@dxstaremporium.com"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Danger Zone */}
+      <Card className="bg-brand-card border-red-900/50">
+        <CardHeader>
+          <CardTitle className="text-red-400">Danger Zone</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-brand-warm-grey text-sm mb-4">
+            These actions are irreversible. Please be careful.
+          </p>
+          <Button variant="destructive" className="bg-red-600 hover:bg-red-700">
+            Delete All Data
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
