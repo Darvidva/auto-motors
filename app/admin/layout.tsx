@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { createClient } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
   Car,
@@ -16,11 +16,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 const navItems = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
@@ -37,48 +32,13 @@ export default function AdminLayout({
   const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        router.push('/login');
-        return;
-      }
-      setUserEmail(session.user.email ?? null);
-      setLoading(false);
-    };
+  // Mock user for demo mode
+  const userEmail = 'admin@dxstaremporium.com';
 
-    checkAuth();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_OUT') {
-        router.push('/login');
-      }
-      setUserEmail(session?.user?.email ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [router]);
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
     router.push('/login');
   };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-brand-bg flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-gold" />
-      </div>
-    );
-  }
-
-  if (pathname === '/login') {
-    return children;
-  }
 
   return (
     <div className="min-h-screen bg-brand-bg">
@@ -160,7 +120,7 @@ export default function AdminLayout({
           <div className="p-4 border-t border-brand-border">
             <div className="px-4 py-2 mb-2">
               <p className="text-sm text-brand-off-white truncate">{userEmail}</p>
-              <p className="text-xs text-brand-warm-grey">Administrator</p>
+              <p className="text-xs text-brand-warm-grey">Administrator (Demo)</p>
             </div>
             <Button
               variant="ghost"

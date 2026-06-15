@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Search, SlidersHorizontal, X, Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,29 +47,35 @@ export default function FilterBar({
   const [sortBy, setSortBy] = useState<string>('newest');
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Build filter object from current state
-  const buildFilterObject = useCallback(() => ({
-    search,
-    category,
-    condition,
-    brand,
-    minPrice: minPrice ? parseInt(minPrice) : undefined,
-    maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
-    fuelType,
-    transmission,
-    sortBy,
-  }), [search, category, condition, brand, minPrice, maxPrice, fuelType, transmission, sortBy]);
+  // Use ref to store latest callback without triggering re-renders
+  const onFilterChangeRef = useRef(onFilterChange);
+  onFilterChangeRef.current = onFilterChange;
+
+  // Build filter object and apply
+  const applyFilters = () => {
+    onFilterChangeRef.current({
+      search,
+      category,
+      condition,
+      brand,
+      minPrice: minPrice ? parseInt(minPrice) : undefined,
+      maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
+      fuelType,
+      transmission,
+      sortBy,
+    });
+  };
 
   // Auto-apply filters when any filter changes (except search which requires Enter)
   useEffect(() => {
-    const filters = buildFilterObject();
-    onFilterChange(filters);
-  }, [category, condition, brand, minPrice, maxPrice, fuelType, transmission, sortBy, buildFilterObject, onFilterChange]);
+    applyFilters();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [category, condition, brand, minPrice, maxPrice, fuelType, transmission, sortBy]);
 
   // Apply search on Enter key
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      onFilterChange(buildFilterObject());
+      applyFilters();
     }
   };
 
@@ -236,7 +242,7 @@ export default function FilterBar({
       <div className="lg:hidden">
         <Button
           onClick={() => {
-            onFilterChange(buildFilterObject());
+            applyFilters();
             setMobileOpen(false);
           }}
           className="w-full bg-brand-gold text-brand-bg hover:bg-brand-gold-light rounded-md"
@@ -394,7 +400,7 @@ export default function FilterBar({
                   </Button>
                   <Button
                     onClick={() => {
-                      onFilterChange(buildFilterObject());
+                      applyFilters();
                       setMobileOpen(false);
                     }}
                     className="flex-1 bg-brand-gold text-brand-bg hover:bg-brand-gold-light"

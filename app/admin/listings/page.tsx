@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useMemo } from 'react';
+import { listings as allListings } from '@/lib/placeholder-data';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -31,12 +31,12 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { Listing } from '@/types';
 import {
   Plus,
   Search,
   Edit,
   Trash2,
-  Eye,
   MoreHorizontal,
   Image as ImageIcon,
 } from 'lucide-react';
@@ -47,36 +47,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-interface Listing {
-  id: string;
-  slug: string;
-  name: string;
-  category: string;
-  brand: string;
-  model: string;
-  year: number;
-  price: number;
-  mileage?: number;
-  hours_used?: number;
-  transmission: string;
-  fuel_type: string;
-  drive_system: string;
-  condition: string;
-  color: string;
-  description: string;
-  specifications: Record<string, string>;
-  features: string[];
-  images: string[];
-  featured: boolean;
-  published: boolean;
-  created_at: string;
-}
-
 const categories = ['Cars', 'Trucks', 'Tractors', 'Excavators', 'Heavy Machinery', 'Equipment'];
 const conditions = ['New', 'Used'];
 const transmissions = ['Automatic', 'Manual', 'N/A'];
@@ -84,8 +54,7 @@ const fuelTypes = ['Petrol', 'Diesel', 'Electric', 'Hybrid', 'N/A'];
 const driveSystems = ['2WD', '4WD', 'AWD', '6x6', 'N/A'];
 
 export default function AdminListingsPage() {
-  const [listings, setListings] = useState<Listing[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [listings, setListings] = useState<Listing[]>(allListings);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -104,11 +73,11 @@ export default function AdminListingsPage() {
     year: new Date().getFullYear(),
     price: 0,
     mileage: null as number | null,
-    hours_used: null as number | null,
-    transmission: 'Automatic',
-    fuel_type: 'Diesel',
-    drive_system: '4WD',
-    condition: 'Used',
+    hoursUsed: null as number | null,
+    transmission: 'Automatic' as 'Automatic' | 'Manual' | 'N/A',
+    fuelType: 'Diesel' as 'Petrol' | 'Diesel' | 'Electric' | 'Hybrid' | 'N/A',
+    driveSystem: '4WD' as string,
+    condition: 'Used' as 'New' | 'Used',
     color: '',
     description: '',
     specifications: {} as Record<string, string>,
@@ -118,39 +87,26 @@ export default function AdminListingsPage() {
     published: false,
   });
 
-  useEffect(() => {
-    fetchListings();
-  }, []);
+  const filteredListings = useMemo(() => {
+    let result = [...listings];
 
-  const fetchListings = async () => {
-    setLoading(true);
-    try {
-      let query = supabase.from('listings').select('*').order('created_at', { ascending: false });
-
-      if (search) {
-        query = query.ilike('name', `%${search}%`);
-      }
-      if (categoryFilter) {
-        query = query.eq('category', categoryFilter);
-      }
-      if (statusFilter === 'published') {
-        query = query.eq('published', true);
-      } else if (statusFilter === 'draft') {
-        query = query.eq('published', false);
-      }
-
-      const { data } = await query;
-      setListings(data || []);
-    } catch (err) {
-      console.error('Error fetching listings:', err);
-    } finally {
-      setLoading(false);
+    if (search) {
+      result = result.filter(l =>
+        l.name.toLowerCase().includes(search.toLowerCase()) ||
+        l.brand.toLowerCase().includes(search.toLowerCase())
+      );
     }
-  };
+    if (categoryFilter) {
+      result = result.filter(l => l.category === categoryFilter);
+    }
+    if (statusFilter === 'published') {
+      result = result.filter(l => l.published);
+    } else if (statusFilter === 'draft') {
+      result = result.filter(l => !l.published);
+    }
 
-  const handleSearch = () => {
-    fetchListings();
-  };
+    return result;
+  }, [listings, search, categoryFilter, statusFilter]);
 
   const openEditDialog = (listing?: Listing) => {
     if (listing) {
@@ -164,10 +120,10 @@ export default function AdminListingsPage() {
         year: listing.year,
         price: listing.price,
         mileage: listing.mileage ?? null,
-        hours_used: listing.hours_used ?? null,
+        hoursUsed: listing.hoursUsed ?? null,
         transmission: listing.transmission,
-        fuel_type: listing.fuel_type,
-        drive_system: listing.drive_system,
+        fuelType: listing.fuelType,
+        driveSystem: listing.driveSystem,
         condition: listing.condition,
         color: listing.color,
         description: listing.description,
@@ -188,10 +144,10 @@ export default function AdminListingsPage() {
         year: new Date().getFullYear(),
         price: 0,
         mileage: null,
-        hours_used: null,
+        hoursUsed: null,
         transmission: 'Automatic',
-        fuel_type: 'Diesel',
-        drive_system: '4WD',
+        fuelType: 'Diesel',
+        driveSystem: '4WD',
         condition: 'Used',
         color: '',
         description: '',
@@ -205,87 +161,77 @@ export default function AdminListingsPage() {
     setEditDialogOpen(true);
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     setSaving(true);
-    try {
-      // Generate slug if not provided
+    setTimeout(() => {
       const slug = formData.slug || formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
-      const listingData = {
-        ...formData,
-        slug,
-        price: Number(formData.price),
-        year: Number(formData.year),
-      };
-
       if (selectedListing) {
-        // Update
-        const { error } = await supabase
-          .from('listings')
-          .update(listingData)
-          .eq('id', selectedListing.id);
-        if (error) throw error;
+        setListings(prev => prev.map(l =>
+          l.id === selectedListing.id
+            ? {
+                ...l,
+                ...formData,
+                slug,
+                category: formData.category as any,
+                mileage: formData.mileage ?? undefined,
+                hoursUsed: formData.hoursUsed ?? undefined,
+              }
+            : l
+        ));
       } else {
-        // Create
-        const { error } = await supabase
-          .from('listings')
-          .insert(listingData);
-        if (error) throw error;
+        const newListing: Listing = {
+          id: Date.now().toString(),
+          slug,
+          name: formData.name,
+          category: formData.category as any,
+          brand: formData.brand,
+          model: formData.model,
+          year: formData.year,
+          price: formData.price,
+          mileage: formData.mileage ?? undefined,
+          hoursUsed: formData.hoursUsed ?? undefined,
+          transmission: formData.transmission,
+          fuelType: formData.fuelType,
+          driveSystem: formData.driveSystem,
+          condition: formData.condition,
+          color: formData.color,
+          description: formData.description,
+          specifications: formData.specifications,
+          features: formData.features,
+          images: formData.images,
+          featured: formData.featured,
+          published: formData.published,
+          createdAt: new Date().toISOString(),
+        };
+        setListings(prev => [newListing, ...prev]);
       }
 
       setEditDialogOpen(false);
-      fetchListings();
-    } catch (err) {
-      console.error('Error saving listing:', err);
-      alert('Failed to save listing');
-    } finally {
       setSaving(false);
-    }
+    }, 500);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!selectedListing) return;
-
     setSaving(true);
-    try {
-      const { error } = await supabase
-        .from('listings')
-        .delete()
-        .eq('id', selectedListing.id);
-      if (error) throw error;
-
+    setTimeout(() => {
+      setListings(prev => prev.filter(l => l.id !== selectedListing.id));
       setDeleteDialogOpen(false);
-      fetchListings();
-    } catch (err) {
-      console.error('Error deleting listing:', err);
-      alert('Failed to delete listing');
-    } finally {
       setSaving(false);
-    }
+    }, 300);
   };
 
-  const togglePublished = async (listing: Listing) => {
-    try {
-      await supabase
-        .from('listings')
-        .update({ published: !listing.published })
-        .eq('id', listing.id);
-      fetchListings();
-    } catch (err) {
-      console.error('Error toggling published:', err);
-    }
+  const togglePublished = (listing: Listing) => {
+    setListings(prev => prev.map(l =>
+      l.id === listing.id ? { ...l, published: !l.published } : l
+    ));
   };
 
-  const toggleFeatured = async (listing: Listing) => {
-    try {
-      await supabase
-        .from('listings')
-        .update({ featured: !listing.featured })
-        .eq('id', listing.id);
-      fetchListings();
-    } catch (err) {
-      console.error('Error toggling featured:', err);
-    }
+  const toggleFeatured = (listing: Listing) => {
+    setListings(prev => prev.map(l =>
+      l.id === listing.id ? { ...l, featured: !l.featured } : l
+    ));
   };
 
   const formatPrice = (price: number) => `₦${price?.toLocaleString() || 0}`;
@@ -316,11 +262,10 @@ export default function AdminListingsPage() {
                 placeholder="Search listings..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 className="bg-brand-surface border-brand-border text-brand-off-white"
               />
             </div>
-            <Select value={categoryFilter} onValueChange={(val) => { setCategoryFilter(val); fetchListings(); }}>
+            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border text-brand-off-white">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
@@ -331,7 +276,7 @@ export default function AdminListingsPage() {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={statusFilter} onValueChange={(val) => { setStatusFilter(val); fetchListings(); }}>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border text-brand-off-white">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
@@ -341,9 +286,6 @@ export default function AdminListingsPage() {
                 <SelectItem value="draft">Draft</SelectItem>
               </SelectContent>
             </Select>
-            <Button onClick={handleSearch} variant="outline" className="border-brand-border">
-              <Search className="w-4 h-4" />
-            </Button>
           </div>
         </CardContent>
       </Card>
@@ -363,20 +305,14 @@ export default function AdminListingsPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="text-center text-brand-warm-grey py-8">
-                      Loading...
-                    </TableCell>
-                  </TableRow>
-                ) : listings.length === 0 ? (
+                {filteredListings.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={5} className="text-center text-brand-warm-grey py-8">
                       No listings found
                     </TableCell>
                   </TableRow>
                 ) : (
-                  listings.map((listing) => (
+                  filteredListings.map((listing) => (
                     <TableRow key={listing.id} className="border-brand-border">
                       <TableCell>
                         <div className="flex items-center gap-3">
@@ -422,10 +358,10 @@ export default function AdminListingsPage() {
                               <Edit className="mr-2 h-4 w-4" /> Edit
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => togglePublished(listing)} className="text-brand-off-white">
-                              <Eye className="mr-2 h-4 w-4" /> {listing.published ? 'Unpublish' : 'Publish'}
+                              {listing.published ? 'Unpublish' : 'Publish'}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => toggleFeatured(listing)} className="text-brand-off-white">
-                              <Star className="mr-2 h-4 w-4" /> {listing.featured ? 'Unfeature' : 'Feature'}
+                              {listing.featured ? 'Unfeature' : 'Feature'}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => { setSelectedListing(listing); setDeleteDialogOpen(true); }}
@@ -461,7 +397,7 @@ export default function AdminListingsPage() {
                 <Input
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="bg-brand-surface border-brand-border text-brand-off-white"
+                  className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
                   placeholder="e.g., Toyota Land Cruiser 300"
                 />
               </div>
@@ -471,7 +407,7 @@ export default function AdminListingsPage() {
                 <Input
                   value={formData.slug}
                   onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                  className="bg-brand-surface border-brand-border text-brand-off-white"
+                  className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
                   placeholder="auto-generated if empty"
                 />
               </div>
@@ -480,7 +416,7 @@ export default function AdminListingsPage() {
                 <div>
                   <Label className="text-brand-off-white">Category *</Label>
                   <Select value={formData.category} onValueChange={(val) => setFormData({ ...formData, category: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
+                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white mt-2">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-brand-surface border-brand-border">
@@ -493,8 +429,8 @@ export default function AdminListingsPage() {
 
                 <div>
                   <Label className="text-brand-off-white">Condition</Label>
-                  <Select value={formData.condition} onValueChange={(val) => setFormData({ ...formData, condition: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
+                  <Select value={formData.condition} onValueChange={(val: any) => setFormData({ ...formData, condition: val })}>
+                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white mt-2">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-brand-surface border-brand-border">
@@ -512,7 +448,7 @@ export default function AdminListingsPage() {
                   <Input
                     value={formData.brand}
                     onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                    className="bg-brand-surface border-brand-border text-brand-off-white"
+                    className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
                     placeholder="e.g., Toyota"
                   />
                 </div>
@@ -522,7 +458,7 @@ export default function AdminListingsPage() {
                   <Input
                     value={formData.model}
                     onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                    className="bg-brand-surface border-brand-border text-brand-off-white"
+                    className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
                     placeholder="e.g., Land Cruiser"
                   />
                 </div>
@@ -535,7 +471,7 @@ export default function AdminListingsPage() {
                     type="number"
                     value={formData.year}
                     onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
-                    className="bg-brand-surface border-brand-border text-brand-off-white"
+                    className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
                   />
                 </div>
 
@@ -545,7 +481,7 @@ export default function AdminListingsPage() {
                     type="number"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) })}
-                    className="bg-brand-surface border-brand-border text-brand-off-white"
+                    className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
                   />
                 </div>
               </div>
@@ -555,9 +491,9 @@ export default function AdminListingsPage() {
                   <Label className="text-brand-off-white">Mileage (km)</Label>
                   <Input
                     type="number"
-                    value={formData.mileage || ''}
+                    value={formData.mileage ?? ''}
                     onChange={(e) => setFormData({ ...formData, mileage: e.target.value ? parseInt(e.target.value) : null })}
-                    className="bg-brand-surface border-brand-border text-brand-off-white"
+                    className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
                     placeholder="For vehicles"
                   />
                 </div>
@@ -566,9 +502,9 @@ export default function AdminListingsPage() {
                   <Label className="text-brand-off-white">Hours Used</Label>
                   <Input
                     type="number"
-                    value={formData.hours_used || ''}
-                    onChange={(e) => setFormData({ ...formData, hours_used: e.target.value ? parseInt(e.target.value) : null })}
-                    className="bg-brand-surface border-brand-border text-brand-off-white"
+                    value={formData.hoursUsed ?? ''}
+                    onChange={(e) => setFormData({ ...formData, hoursUsed: e.target.value ? parseInt(e.target.value) : null })}
+                    className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
                     placeholder="For machinery"
                   />
                 </div>
@@ -577,8 +513,8 @@ export default function AdminListingsPage() {
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label className="text-brand-off-white">Transmission</Label>
-                  <Select value={formData.transmission} onValueChange={(val) => setFormData({ ...formData, transmission: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
+                  <Select value={formData.transmission} onValueChange={(val: any) => setFormData({ ...formData, transmission: val })}>
+                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white mt-2">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-brand-surface border-brand-border">
@@ -591,8 +527,8 @@ export default function AdminListingsPage() {
 
                 <div>
                   <Label className="text-brand-off-white">Fuel Type</Label>
-                  <Select value={formData.fuel_type} onValueChange={(val) => setFormData({ ...formData, fuel_type: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
+                  <Select value={formData.fuelType} onValueChange={(val: any) => setFormData({ ...formData, fuelType: val })}>
+                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white mt-2">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-brand-surface border-brand-border">
@@ -605,8 +541,8 @@ export default function AdminListingsPage() {
 
                 <div>
                   <Label className="text-brand-off-white">Drive System</Label>
-                  <Select value={formData.drive_system} onValueChange={(val) => setFormData({ ...formData, drive_system: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
+                  <Select value={formData.driveSystem} onValueChange={(val) => setFormData({ ...formData, driveSystem: val })}>
+                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white mt-2">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-brand-surface border-brand-border">
@@ -623,7 +559,7 @@ export default function AdminListingsPage() {
                 <Input
                   value={formData.color}
                   onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  className="bg-brand-surface border-brand-border text-brand-off-white"
+                  className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
                   placeholder="e.g., Pearl White"
                 />
               </div>
@@ -635,8 +571,8 @@ export default function AdminListingsPage() {
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="bg-brand-surface border-brand-border text-brand-off-white min-h-[120px]"
-                  placeholder="Detailed description of the vehicle or machinery..."
+                  className="bg-brand-surface border-brand-border text-brand-off-white min-h-[120px] mt-2"
+                  placeholder="Detailed description..."
                 />
               </div>
 
@@ -645,7 +581,7 @@ export default function AdminListingsPage() {
                 <Textarea
                   value={formData.images.join('\n')}
                   onChange={(e) => setFormData({ ...formData, images: e.target.value.split('\n').filter(Boolean) })}
-                  className="bg-brand-surface border-brand-border text-brand-off-white min-h-[80px]"
+                  className="bg-brand-surface border-brand-border text-brand-off-white min-h-[80px] mt-2"
                   placeholder="https://images.pexels.com/..."
                 />
               </div>
@@ -655,8 +591,8 @@ export default function AdminListingsPage() {
                 <Textarea
                   value={formData.features?.join('\n') || ''}
                   onChange={(e) => setFormData({ ...formData, features: e.target.value.split('\n').filter(Boolean) })}
-                  className="bg-brand-surface border-brand-border text-brand-off-white min-h-[80px]"
-                  placeholder="GPS Navigation&#10;Reverse Camera&#10;Leather Seats"
+                  className="bg-brand-surface border-brand-border text-brand-off-white min-h-[80px] mt-2"
+                  placeholder="GPS Navigation&#10;Reverse Camera"
                 />
               </div>
 
@@ -699,7 +635,7 @@ export default function AdminListingsPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Delete Confirmation */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent className="bg-brand-card border-brand-border">
           <DialogHeader>
@@ -728,13 +664,5 @@ export default function AdminListingsPage() {
         </DialogContent>
       </Dialog>
     </div>
-  );
-}
-
-function Star({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <polygon points="12,2 15,10 24,10 17,15 19,24 12,19 5,24 7,15 0,10 9,10" />
-    </svg>
   );
 }

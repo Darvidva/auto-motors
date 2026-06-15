@@ -612,3 +612,73 @@ export const filterOptions = {
     max: 2024,
   },
 };
+
+// Mock enquiries for admin
+export const mockEnquiries = [
+  {
+    id: '1',
+    name: 'Chukwuemeka Okafor',
+    email: 'chukwuemeka@gmail.com',
+    phone: '+234 805 123 4567',
+    message: 'I am interested in the Toyota Land Cruiser 300. Is it still available? Can I schedule a viewing this weekend?',
+    listing_id: '1',
+    listing_name: 'Toyota Land Cruiser 300',
+    status: 'Unread',
+    created_at: '2024-01-15T10:30:00Z',
+  },
+  {
+    id: '2',
+    name: 'Fatima Ibrahim',
+    email: 'fatima.ibrahim@yahoo.com',
+    phone: '+234 708 987 6543',
+    message: 'Looking for a reliable tractor for my farm in Kano. What is the financing option for the John Deere 6R?',
+    listing_id: '2',
+    listing_name: 'John Deere 6R Series Tractor',
+    status: 'Read',
+    created_at: '2024-01-14T14:20:00Z',
+  },
+  {
+    id: '3',
+    name: 'Adebayo Consulting',
+    email: 'info@adebayoconsulting.com',
+    phone: '+234 902 555 1234',
+    message: 'We need an excavator for a construction project in Abuja. Can you provide a quote for the Caterpillar 320 including transportation?',
+    listing_id: '3',
+    listing_name: 'Caterpillar 320 Excavator',
+    status: 'Followed Up',
+    created_at: '2024-01-13T09:15:00Z',
+  },
+  {
+    id: '4',
+    name: 'Ngozi Adeyemi',
+    email: 'ngozi.adeyemi@company.ng',
+    phone: '+234 806 444 5555',
+    message: 'General enquiry - Do you have any Toyota Camrys in stock? Looking for a clean 2022-2023 model.',
+    listing_id: null,
+    listing_name: null,
+    status: 'Resolved',
+    created_at: '2024-01-12T16:45:00Z',
+  },
+  {
+    id: '5',
+    name: 'Musa Abdullahi',
+    email: 'musa.a@hotmail.com',
+    phone: '+234 813 777 8888',
+    message: 'The Mercedes GLS 450 looks amazing! What is the best price you can offer? I am ready to buy this week.',
+    listing_id: '4',
+    listing_name: 'Mercedes-Benz GLS 450',
+    status: 'Unread',
+    created_at: '2024-01-15T08:00:00Z',
+  },
+];
+
+// Mock business settings
+export const mockBusinessSettings = {
+  id: '1',
+  name: 'DX STAR EMPORIUM',
+  tagline: 'Quality Vehicles and Equipment',
+  phone: '+234 803 456 7890',
+  whatsapp: '2348034567890',
+  email: 'info@dxstaremporium.com',
+  address: '15 Adeniran Ogunsanya Street, Surulere, Lagos, Nigeria',
+};

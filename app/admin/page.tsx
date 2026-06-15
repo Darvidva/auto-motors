@@ -1,97 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Car, Mail, Eye, TrendingUp, DollarSign } from 'lucide-react';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-interface Stats {
-  totalListings: number;
-  publishedListings: number;
-  totalEnquiries: number;
-  unreadEnquiries: number;
-  totalValue: number;
-}
+import { listings, mockEnquiries } from '@/lib/placeholder-data';
+import { Card, CardContent } from '@/components/ui/card';
+import { CardHeader, CardTitle } from '@/components/ui/card';
+import { Car, Mail, DollarSign, TrendingUp } from 'lucide-react';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState<Stats>({
-    totalListings: 0,
-    publishedListings: 0,
-    totalEnquiries: 0,
-    unreadEnquiries: 0,
-    totalValue: 0,
-  });
-  const [loading, setLoading] = useState(true);
-  const [recentEnquiries, setRecentEnquiries] = useState<any[]>([]);
-  const [recentListings, setRecentListings] = useState<any[]>([]);
+  const stats = {
+    totalListings: listings.length,
+    publishedListings: listings.filter(l => l.published).length,
+    totalEnquiries: mockEnquiries.length,
+    unreadEnquiries: mockEnquiries.filter(e => e.status === 'Unread').length,
+    totalValue: listings.reduce((sum, l) => sum + l.price, 0),
+  };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Fetch listings count
-        const { count: totalListings } = await supabase
-          .from('listings')
-          .select('*', { count: 'exact', head: true });
-
-        const { count: publishedListings } = await supabase
-          .from('listings')
-          .select('*', { count: 'exact', head: true })
-          .eq('published', true);
-
-        // Fetch enquiries count
-        const { count: totalEnquiries } = await supabase
-          .from('enquiries')
-          .select('*', { count: 'exact', head: true });
-
-        const { count: unreadEnquiries } = await supabase
-          .from('enquiries')
-          .select('*', { count: 'exact', head: true })
-          .eq('status', 'Unread');
-
-        // Fetch total value
-        const { data: listingsData } = await supabase
-          .from('listings')
-          .select('price');
-
-        const totalValue = listingsData?.reduce((sum, l) => sum + (l.price || 0), 0) || 0;
-
-        // Fetch recent enquiries
-        const { data: enquiries } = await supabase
-          .from('enquiries')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(5);
-
-        // Fetch recent listings
-        const { data: listings } = await supabase
-          .from('listings')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(5);
-
-        setStats({
-          totalListings: totalListings || 0,
-          publishedListings: publishedListings || 0,
-          totalEnquiries: totalEnquiries || 0,
-          unreadEnquiries: unreadEnquiries || 0,
-          totalValue,
-        });
-        setRecentEnquiries(enquiries || []);
-        setRecentListings(listings || []);
-      } catch (err) {
-        console.error('Error fetching data:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const recentEnquiries = mockEnquiries.slice(0, 5);
+  const recentListings = listings.slice(0, 5);
 
   const formatPrice = (price: number) => `₦${price.toLocaleString()}`;
 
@@ -119,7 +43,7 @@ export default function AdminDashboard() {
               <div>
                 <p className="text-brand-warm-grey text-sm">Total Listings</p>
                 <p className="font-display text-3xl font-bold text-brand-off-white mt-1">
-                  {loading ? '...' : stats.totalListings}
+                  {stats.totalListings}
                 </p>
               </div>
               <div className="w-12 h-12 rounded-lg bg-brand-gold/10 flex items-center justify-center">
@@ -138,7 +62,7 @@ export default function AdminDashboard() {
               <div>
                 <p className="text-brand-warm-grey text-sm">Total Enquiries</p>
                 <p className="font-display text-3xl font-bold text-brand-off-white mt-1">
-                  {loading ? '...' : stats.totalEnquiries}
+                  {stats.totalEnquiries}
                 </p>
               </div>
               <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
@@ -157,7 +81,7 @@ export default function AdminDashboard() {
               <div>
                 <p className="text-brand-warm-grey text-sm">Inventory Value</p>
                 <p className="font-display text-2xl font-bold text-brand-off-white mt-1">
-                  {loading ? '...' : formatPrice(stats.totalValue)}
+                  {formatPrice(stats.totalValue)}
                 </p>
               </div>
               <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
@@ -173,7 +97,7 @@ export default function AdminDashboard() {
               <div>
                 <p className="text-brand-warm-grey text-sm">Published</p>
                 <p className="font-display text-3xl font-bold text-brand-off-white mt-1">
-                  {loading ? '...' : Math.round((stats.publishedListings / (stats.totalListings || 1)) * 100)}%
+                  {Math.round((stats.publishedListings / (stats.totalListings || 1)) * 100)}%
                 </p>
               </div>
               <div className="w-12 h-12 rounded-lg bg-brand-gold/10 flex items-center justify-center">
@@ -195,13 +119,7 @@ export default function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="animate-pulse bg-brand-surface h-16 rounded-lg" />
-                ))}
-              </div>
-            ) : recentEnquiries.length === 0 ? (
+            {recentEnquiries.length === 0 ? (
               <p className="text-brand-warm-grey text-center py-8">No enquiries yet</p>
             ) : (
               <div className="space-y-3">
@@ -248,13 +166,7 @@ export default function AdminDashboard() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {loading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="animate-pulse bg-brand-surface h-16 rounded-lg" />
-                ))}
-              </div>
-            ) : recentListings.length === 0 ? (
+            {recentListings.length === 0 ? (
               <p className="text-brand-warm-grey text-center py-8">No listings yet</p>
             ) : (
               <div className="space-y-3">

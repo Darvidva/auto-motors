@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState, useMemo } from 'react';
+import { mockEnquiries } from '@/lib/placeholder-data';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -27,15 +27,12 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
-import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import {
   Search,
   Mail,
   Phone,
   Calendar,
-  ExternalLink,
-  ChevronRight,
   MoreHorizontal,
 } from 'lucide-react';
 import {
@@ -44,12 +41,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import Link from 'next/link';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 interface Enquiry {
   id: string;
@@ -57,11 +48,10 @@ interface Enquiry {
   email: string;
   phone?: string;
   message: string;
-  listing_id?: string;
-  listing_name?: string;
+  listing_id?: string | null;
+  listing_name?: string | null;
   status: string;
   created_at: string;
-  updated_at: string;
 }
 
 const statuses = ['Unread', 'Read', 'Followed Up', 'Resolved'];
@@ -74,64 +64,42 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminEnquiriesPage() {
-  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [enquiries, setEnquiries] = useState<Enquiry[]>(mockEnquiries);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
-  const [note, setNote] = useState('');
 
-  useEffect(() => {
-    fetchEnquiries();
-  }, [statusFilter]);
+  const filteredEnquiries = useMemo(() => {
+    let result = [...enquiries];
 
-  const fetchEnquiries = async () => {
-    setLoading(true);
-    try {
-      let query = supabase.from('enquiries').select('*').order('created_at', { ascending: false });
-
-      if (search) {
-        query = query.ilike('name', `%${search}%`);
-      }
-      if (statusFilter) {
-        query = query.eq('status', statusFilter);
-      }
-
-      const { data } = await query;
-      setEnquiries(data || []);
-    } catch (err) {
-      console.error('Error fetching enquiries:', err);
-    } finally {
-      setLoading(false);
+    if (search) {
+      result = result.filter(e =>
+        e.name.toLowerCase().includes(search.toLowerCase()) ||
+        e.email.toLowerCase().includes(search.toLowerCase())
+      );
     }
-  };
+    if (statusFilter) {
+      result = result.filter(e => e.status === statusFilter);
+    }
 
-  const handleSearch = () => {
-    fetchEnquiries();
-  };
+    return result;
+  }, [enquiries, search, statusFilter]);
 
   const openDetail = (enquiry: Enquiry) => {
     setSelectedEnquiry(enquiry);
     setDetailOpen(true);
-    // Mark as read if unread
     if (enquiry.status === 'Unread') {
       updateStatus(enquiry.id, 'Read');
     }
   };
 
-  const updateStatus = async (id: string, status: string) => {
-    try {
-      await supabase
-        .from('enquiries')
-        .update({ status })
-        .eq('id', id);
-      fetchEnquiries();
-      if (selectedEnquiry?.id === id) {
-        setSelectedEnquiry({ ...selectedEnquiry, status });
-      }
-    } catch (err) {
-      console.error('Error updating status:', err);
+  const updateStatus = (id: string, status: string) => {
+    setEnquiries(prev => prev.map(e =>
+      e.id === id ? { ...e, status } : e
+    ));
+    if (selectedEnquiry?.id === id) {
+      setSelectedEnquiry({ ...selectedEnquiry, status });
     }
   };
 
@@ -201,14 +169,13 @@ export default function AdminEnquiriesPage() {
           <div className="flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px]">
               <Input
-                placeholder="Search by name..."
+                placeholder="Search by name or email..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                 className="bg-brand-surface border-brand-border text-brand-off-white"
               />
             </div>
-            <Select value={statusFilter} onValueChange={(val) => { setStatusFilter(val); fetchEnquiries(); }}>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border text-brand-off-white">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
@@ -219,9 +186,6 @@ export default function AdminEnquiriesPage() {
                 ))}
               </SelectContent>
             </Select>
-            <Button onClick={handleSearch} variant="outline" className="border-brand-border">
-              <Search className="w-4 h-4" />
-            </Button>
           </div>
         </CardContent>
       </Card>
@@ -242,20 +206,14 @@ export default function AdminEnquiriesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center text-brand-warm-grey py-8">
-                      Loading...
-                    </TableCell>
-                  </TableRow>
-                ) : enquiries.length === 0 ? (
+                {filteredEnquiries.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center text-brand-warm-grey py-8">
                       No enquiries found
                     </TableCell>
                   </TableRow>
                 ) : (
-                  enquiries.map((enquiry) => (
+                  filteredEnquiries.map((enquiry) => (
                     <TableRow
                       key={enquiry.id}
                       className="border-brand-border cursor-pointer hover:bg-brand-surface/50"
@@ -328,7 +286,6 @@ export default function AdminEnquiriesPage() {
 
           {selectedEnquiry && (
             <div className="mt-6 space-y-6">
-              {/* Contact Info */}
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-brand-gold/10 flex items-center justify-center">
@@ -357,7 +314,6 @@ export default function AdminEnquiriesPage() {
                 </div>
               </div>
 
-              {/* Status */}
               <div>
                 <Label className="text-brand-off-white">Status</Label>
                 <Select
@@ -375,7 +331,6 @@ export default function AdminEnquiriesPage() {
                 </Select>
               </div>
 
-              {/* Message */}
               <div>
                 <Label className="text-brand-off-white">Message</Label>
                 <div className="mt-2 p-4 bg-brand-surface rounded-lg border border-brand-border">
@@ -385,22 +340,13 @@ export default function AdminEnquiriesPage() {
                 </div>
               </div>
 
-              {/* Related Listing */}
-              {selectedEnquiry.listing_id && (
+              {selectedEnquiry.listing_name && (
                 <div>
                   <Label className="text-brand-off-white">Related Listing</Label>
-                  <Link
-                    href={`/inventory/${selectedEnquiry.listing_id}`}
-                    target="_blank"
-                    className="mt-2 flex items-center gap-2 text-brand-gold hover:underline"
-                  >
-                    {selectedEnquiry.listing_name}
-                    <ExternalLink className="w-4 h-4" />
-                  </Link>
+                  <p className="mt-2 text-brand-gold">{selectedEnquiry.listing_name}</p>
                 </div>
               )}
 
-              {/* Quick Actions */}
               <div className="flex gap-3 pt-4 border-t border-brand-border">
                 <Button
                   asChild

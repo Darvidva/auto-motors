@@ -3,18 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { createClient } from '@supabase/supabase-js';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Lock, ArrowRight } from 'lucide-react';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { AlertCircle, Lock } from 'lucide-react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -23,32 +17,20 @@ export default function AdminLoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setLoading(true);
 
-    try {
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (authError) {
-        setError('Invalid email or password');
-        setLoading(false);
-        return;
-      }
-
-      if (data.user) {
+    // Mock authentication - accepts any credentials
+    setTimeout(() => {
+      if (email && password) {
         router.push('/admin');
-        router.refresh();
+      } else {
+        setError('Please enter email and password');
       }
-    } catch (err) {
-      setError('An unexpected error occurred');
-    } finally {
       setLoading(false);
-    }
+    }, 500);
   };
 
   return (
@@ -106,6 +88,12 @@ export default function AdminLoginPage() {
                   required
                   className="bg-brand-surface border-brand-border text-brand-off-white placeholder:text-brand-warm-grey"
                 />
+              </div>
+
+              <div className="text-xs text-brand-warm-grey bg-brand-surface p-3 rounded-lg border border-brand-border">
+                <p className="font-medium text-brand-gold mb-1">Demo Mode</p>
+                Enter any email and password to access the admin panel.
+                Data is stored locally and will reset on page reload.
               </div>
             </CardContent>
             <CardFooter>

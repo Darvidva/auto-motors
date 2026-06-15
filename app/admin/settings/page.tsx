@@ -1,105 +1,38 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { useState } from 'react';
+import { mockBusinessSettings } from '@/lib/placeholder-data';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Save, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CheckCircle2 } from 'lucide-react';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-interface Settings {
-  id: string;
-  name: string;
-  tagline: string;
-  phone: string;
-  whatsapp: string;
-  email: string;
-  address: string;
-  business_hours: any;
-  social_media: any;
-}
-
 export default function AdminSettingsPage() {
-  const [settings, setSettings] = useState<Settings | null>(null);
-  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: '',
-    tagline: '',
-    phone: '',
-    whatsapp: '',
-    email: '',
-    address: '',
+    name: mockBusinessSettings.name,
+    tagline: mockBusinessSettings.tagline,
+    phone: mockBusinessSettings.phone,
+    whatsapp: mockBusinessSettings.whatsapp,
+    email: mockBusinessSettings.email,
+    address: mockBusinessSettings.address,
   });
 
-  useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  const fetchSettings = async () => {
-    try {
-      const { data } = await supabase
-        .from('business_settings')
-        .select('*')
-        .single();
-
-      if (data) {
-        setSettings(data);
-        setFormData({
-          name: data.name,
-          tagline: data.tagline,
-          phone: data.phone,
-          whatsapp: data.whatsapp,
-          email: data.email,
-          address: data.address,
-        });
-      }
-    } catch (err) {
-      console.error('Error fetching settings:', err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSave = async () => {
+  const handleSave = () => {
     setSaving(true);
     setSaved(false);
-    try {
-      const { error } = await supabase
-        .from('business_settings')
-        .update(formData)
-        .eq('id', settings?.id);
-
-      if (error) throw error;
+    setTimeout(() => {
+      setSaving(false);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-    } catch (err) {
-      console.error('Error saving settings:', err);
-      alert('Failed to save settings');
-    } finally {
-      setSaving(false);
-    }
+    }, 500);
   };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-gold" />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -131,7 +64,7 @@ export default function AdminSettingsPage() {
       {saved && (
         <Alert className="bg-green-900/20 border-green-900 text-green-400">
           <CheckCircle2 className="h-4 w-4" />
-          <AlertDescription>Settings saved successfully!</AlertDescription>
+          <AlertDescription>Settings saved successfully! (Demo mode - changes are not persisted)</AlertDescription>
         </Alert>
       )}
 
@@ -215,18 +148,12 @@ export default function AdminSettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Danger Zone */}
-      <Card className="bg-brand-card border-red-900/50">
-        <CardHeader>
-          <CardTitle className="text-red-400">Danger Zone</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-brand-warm-grey text-sm mb-4">
-            These actions are irreversible. Please be careful.
+      {/* Demo Notice */}
+      <Card className="bg-yellow-900/20 border-yellow-900/50">
+        <CardContent className="p-4">
+          <p className="text-yellow-400 text-sm">
+            <strong>Demo Mode:</strong> This is a preview of the admin settings. Changes are not saved to a database and will reset on page reload.
           </p>
-          <Button variant="destructive" className="bg-red-600 hover:bg-red-700">
-            Delete All Data
-          </Button>
         </CardContent>
       </Card>
     </div>
