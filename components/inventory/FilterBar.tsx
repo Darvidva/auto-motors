@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Search, SlidersHorizontal, X, Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -47,6 +47,32 @@ export default function FilterBar({
   const [sortBy, setSortBy] = useState<string>('newest');
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  // Build filter object from current state
+  const buildFilterObject = useCallback(() => ({
+    search,
+    category,
+    condition,
+    brand,
+    minPrice: minPrice ? parseInt(minPrice) : undefined,
+    maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
+    fuelType,
+    transmission,
+    sortBy,
+  }), [search, category, condition, brand, minPrice, maxPrice, fuelType, transmission, sortBy]);
+
+  // Auto-apply filters when any filter changes (except search which requires Enter)
+  useEffect(() => {
+    const filters = buildFilterObject();
+    onFilterChange(filters);
+  }, [category, condition, brand, minPrice, maxPrice, fuelType, transmission, sortBy, buildFilterObject, onFilterChange]);
+
+  // Apply search on Enter key
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onFilterChange(buildFilterObject());
+    }
+  };
+
   const activeFilters = [];
   if (search) activeFilters.push({ key: 'search', label: 'Search', value: search });
   if (category) activeFilters.push({ key: 'category', label: 'Category', value: category });
@@ -57,46 +83,16 @@ export default function FilterBar({
   if (fuelType) activeFilters.push({ key: 'fuelType', label: 'Fuel', value: fuelType });
   if (transmission) activeFilters.push({ key: 'transmission', label: 'Transmission', value: transmission });
 
-  const applyFilters = () => {
-    onFilterChange({
-      search,
-      category,
-      condition,
-      brand,
-      minPrice: minPrice ? parseInt(minPrice) : undefined,
-      maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
-      fuelType,
-      transmission,
-      sortBy,
-    });
-  };
-
   const clearFilter = (key: string) => {
     switch (key) {
-      case 'search':
-        setSearch('');
-        break;
-      case 'category':
-        setCategory('');
-        break;
-      case 'condition':
-        setCondition('');
-        break;
-      case 'brand':
-        setBrand('');
-        break;
-      case 'minPrice':
-        setMinPrice('');
-        break;
-      case 'maxPrice':
-        setMaxPrice('');
-        break;
-      case 'fuelType':
-        setFuelType('');
-        break;
-      case 'transmission':
-        setTransmission('');
-        break;
+      case 'search': setSearch(''); break;
+      case 'category': setCategory(''); break;
+      case 'condition': setCondition(''); break;
+      case 'brand': setBrand(''); break;
+      case 'minPrice': setMinPrice(''); break;
+      case 'maxPrice': setMaxPrice(''); break;
+      case 'fuelType': setFuelType(''); break;
+      case 'transmission': setTransmission(''); break;
     }
   };
 
@@ -111,22 +107,6 @@ export default function FilterBar({
     setTransmission('');
   };
 
-  const handleCategoryClick = (cat: string) => {
-    const newCategory = category === cat ? '' : cat;
-    setCategory(newCategory);
-    onFilterChange({
-      search,
-      category: newCategory,
-      condition,
-      brand,
-      minPrice: minPrice ? parseInt(minPrice) : undefined,
-      maxPrice: maxPrice ? parseInt(maxPrice) : undefined,
-      fuelType,
-      transmission,
-      sortBy,
-    });
-  };
-
   const FilterContent = () => (
     <div className="space-y-6">
       {/* Search */}
@@ -137,19 +117,14 @@ export default function FilterBar({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="bg-brand-surface border-brand-border text-brand-off-white placeholder:text-brand-warm-grey"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              applyFilters();
-              setMobileOpen(false);
-            }
-          }}
+          onKeyDown={handleSearchKeyDown}
         />
       </div>
 
       {/* Category */}
       <div>
         <label className="text-sm font-medium text-brand-warm-grey mb-2 block">Category</label>
-        <Select value={category} onValueChange={(val) => { setCategory(val); }}>
+        <Select value={category} onValueChange={setCategory}>
           <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
@@ -167,7 +142,7 @@ export default function FilterBar({
       {/* Condition */}
       <div>
         <label className="text-sm font-medium text-brand-warm-grey mb-2 block">Condition</label>
-        <Select value={condition} onValueChange={(val) => { setCondition(val); }}>
+        <Select value={condition} onValueChange={setCondition}>
           <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
             <SelectValue placeholder="All Conditions" />
           </SelectTrigger>
@@ -185,7 +160,7 @@ export default function FilterBar({
       {/* Brand */}
       <div>
         <label className="text-sm font-medium text-brand-warm-grey mb-2 block">Brand / Make</label>
-        <Select value={brand} onValueChange={(val) => { setBrand(val); }}>
+        <Select value={brand} onValueChange={setBrand}>
           <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
             <SelectValue placeholder="All Brands" />
           </SelectTrigger>
@@ -224,7 +199,7 @@ export default function FilterBar({
       {/* Fuel Type */}
       <div>
         <label className="text-sm font-medium text-brand-warm-grey mb-2 block">Fuel / Power</label>
-        <Select value={fuelType} onValueChange={(val) => { setFuelType(val); }}>
+        <Select value={fuelType} onValueChange={setFuelType}>
           <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
             <SelectValue placeholder="All Types" />
           </SelectTrigger>
@@ -242,7 +217,7 @@ export default function FilterBar({
       {/* Transmission */}
       <div>
         <label className="text-sm font-medium text-brand-warm-grey mb-2 block">Transmission</label>
-        <Select value={transmission} onValueChange={(val) => { setTransmission(val); }}>
+        <Select value={transmission} onValueChange={setTransmission}>
           <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
             <SelectValue placeholder="All" />
           </SelectTrigger>
@@ -261,7 +236,7 @@ export default function FilterBar({
       <div className="lg:hidden">
         <Button
           onClick={() => {
-            applyFilters();
+            onFilterChange(buildFilterObject());
             setMobileOpen(false);
           }}
           className="w-full bg-brand-gold text-brand-bg hover:bg-brand-gold-light rounded-md"
@@ -285,14 +260,12 @@ export default function FilterBar({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 bg-brand-surface border-brand-border text-brand-off-white h-10"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') applyFilters();
-              }}
+              onKeyDown={handleSearchKeyDown}
             />
           </div>
 
           {/* Sort */}
-          <Select value={sortBy} onValueChange={(val) => { setSortBy(val); applyFilters(); }}>
+          <Select value={sortBy} onValueChange={setSortBy}>
             <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border text-brand-off-white h-10">
               <SelectValue />
             </SelectTrigger>
@@ -309,7 +282,7 @@ export default function FilterBar({
           <Button
             variant={category === '' ? 'default' : 'outline'}
             size="sm"
-            onClick={() => handleCategoryClick('')}
+            onClick={() => setCategory('')}
             className={cn(
               'rounded-md',
               category === '' ? 'bg-brand-gold text-brand-bg' : 'border-brand-border text-brand-warm-grey hover:text-brand-gold'
@@ -322,7 +295,7 @@ export default function FilterBar({
               key={cat}
               variant={category === cat.toLowerCase().replace(/ /g, '-') ? 'default' : 'outline'}
               size="sm"
-              onClick={() => handleCategoryClick(cat.toLowerCase().replace(/ /g, '-'))}
+              onClick={() => setCategory(category === cat.toLowerCase().replace(/ /g, '-') ? '' : cat.toLowerCase().replace(/ /g, '-'))}
               className={cn(
                 'rounded-md',
                 category === cat.toLowerCase().replace(/ /g, '-') ? 'bg-brand-gold text-brand-bg' : 'border-brand-border text-brand-warm-grey hover:text-brand-gold'
@@ -370,9 +343,7 @@ export default function FilterBar({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-10 bg-brand-surface border-brand-border text-brand-off-white h-10"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') applyFilters();
-              }}
+              onKeyDown={handleSearchKeyDown}
             />
           </div>
 
@@ -400,7 +371,7 @@ export default function FilterBar({
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => { clearAllFilters(); applyFilters(); setMobileOpen(false); }}
+                    onClick={() => { clearAllFilters(); }}
                     className="text-brand-warm-grey hover:text-brand-gold"
                   >
                     Clear All
@@ -416,8 +387,6 @@ export default function FilterBar({
                     variant="outline"
                     onClick={() => {
                       clearAllFilters();
-                      applyFilters();
-                      setMobileOpen(false);
                     }}
                     className="flex-1 border-brand-border text-brand-warm-grey"
                   >
@@ -425,7 +394,7 @@ export default function FilterBar({
                   </Button>
                   <Button
                     onClick={() => {
-                      applyFilters();
+                      onFilterChange(buildFilterObject());
                       setMobileOpen(false);
                     }}
                     className="flex-1 bg-brand-gold text-brand-bg hover:bg-brand-gold-light"
@@ -446,7 +415,7 @@ export default function FilterBar({
                 key={filter.key}
                 variant="outline"
                 className="border-brand-gold text-brand-gold pr-1 cursor-pointer hover:bg-brand-gold/10"
-                onClick={() => { clearFilter(filter.key); applyFilters(); }}
+                onClick={() => clearFilter(filter.key)}
               >
                 {filter.label}: {filter.value}
                 <X className="w-3 h-3 ml-1" />
@@ -455,7 +424,7 @@ export default function FilterBar({
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => { clearAllFilters(); applyFilters(); }}
+              onClick={clearAllFilters}
               className="text-xs text-brand-warm-grey hover:text-brand-gold"
             >
               Clear All
