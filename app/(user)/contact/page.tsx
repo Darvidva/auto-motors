@@ -41,7 +41,7 @@ export default function ContactPage() {
       {/* Hero Section */}
       <div className="relative h-[40vh] sm:h-[50vh] flex items-center justify-center">
         <Image
-          src="https://images.pexels.com/photos/1592384/pexels-photo-1592384.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          src="https://images.pexels.com/photos/2199293/pexels-photo-2199293.jpeg?auto=compress&cs=tinysrgb&w=1920"
           alt="Contact Us"
           fill
           className="object-cover grayscale"

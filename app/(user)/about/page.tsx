@@ -71,7 +71,7 @@ export default function AboutPage() {
       {/* Hero Section */}
       <div className="relative h-[50vh] sm:h-[60vh] flex items-center justify-center">
         <Image
-          src="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          src="https://images.pexels.com/photos/1335077/pexels-photo-1335077.jpeg?auto=compress&cs=tinysrgb&w=1920"
           alt="About Us"
           fill
           className="object-cover grayscale"

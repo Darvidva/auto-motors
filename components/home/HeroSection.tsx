@@ -68,7 +68,7 @@ export default function HeroSection() {
       {/* Background Image with Ken Burns Effect */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          src="https://images.pexels.com/photos/2519374/pexels-photo-2519374.jpeg?auto=compress&cs=tinysrgb&w=1920"
           alt="Premium vehicles and machinery"
           fill
           className="object-cover animate-ken-burns"
