@@ -97,7 +97,7 @@ export const listings: Listing[] = [
       'Air Suspension Seat',
     ],
     images: [
-      'https://images.pexels.com/photos/2933509/pexels-photo-2933509.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'https://images.pexels.com/photos/32958976/pexels-photo-32958976.jpeg?auto=compress&cs=tinysrgb&w=1200',
       'https://images.pexels.com/photos/2252516/pexels-photo-2252516.jpeg?auto=compress&cs=tinysrgb&w=1200',
     ],
     featured: true,
@@ -234,7 +234,7 @@ export const listings: Listing[] = [
       'Recaro Seats',
     ],
     images: [
-      'https://images.pexels.com/photos/1571456/pexels-photo-1571456.jpeg?auto=compress&cs=tinysrgb&w=1200',
+      'https://images.pexels.com/photos/33336584/pexels-photo-33336584.jpeg?auto=compress&cs=tinysrgb&w=1200',
       'https://images.pexels.com/photos/1335077/pexels-photo-1335077.jpeg?auto=compress&cs=tinysrgb&w=1200',
     ],
     featured: false,

@@ -105,7 +105,7 @@ export default function InventoryPage() {
       {/* Page Header */}
       <div className="relative h-[40vh] sm:h-[45vh] flex items-center justify-center">
         <Image
-          src="https://images.pexels.com/photos/1498808/pexels-photo-1498808.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          src="https://images.pexels.com/photos/34875545/pexels-photo-34875545.jpeg?auto=compress&cs=tinysrgb&w=1920"
           alt="Inventory"
           fill
           className="object-cover"
