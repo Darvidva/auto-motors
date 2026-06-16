@@ -175,12 +175,12 @@ export default function AdminEnquiriesPage() {
                 className="bg-brand-surface border-brand-border text-brand-off-white"
               />
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter || '__all__'} onValueChange={(v) => setStatusFilter(v === '__all__' ? '' : v)}>
               <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border text-brand-off-white">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent className="bg-brand-surface border-brand-border">
-                <SelectItem value="">All Status</SelectItem>
+                <SelectItem value="__all__">All Status</SelectItem>
                 {statuses.map((s) => (
                   <SelectItem key={s} value={s}>{s}</SelectItem>
                 ))}

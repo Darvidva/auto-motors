@@ -265,23 +265,23 @@ export default function AdminListingsPage() {
                 className="bg-brand-surface border-brand-border text-brand-off-white"
               />
             </div>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+            <Select value={categoryFilter || '__all__'} onValueChange={(v) => setCategoryFilter(v === '__all__' ? '' : v)}>
               <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border text-brand-off-white">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent className="bg-brand-surface border-brand-border">
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="__all__">All Categories</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter || '__all__'} onValueChange={(v) => setStatusFilter(v === '__all__' ? '' : v)}>
               <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border text-brand-off-white">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent className="bg-brand-surface border-brand-border">
-                <SelectItem value="">All Status</SelectItem>
+                <SelectItem value="__all__">All Status</SelectItem>
                 <SelectItem value="published">Published</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
               </SelectContent>
