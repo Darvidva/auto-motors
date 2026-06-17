@@ -17,7 +17,6 @@ const categoryLinks = [
 ];
 
 export default function Footer() {
-  // TODO: Connect to backend API — GET /api/business-info
   const info = businessInfo;
 
   const getSocialIcon = (platform: string) => {
@@ -34,7 +33,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-brand-bg border-t border-brand-gold/30">
+    <footer className="bg-brand-dark border-t border-brand-gold/20">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Column */}
@@ -42,10 +41,10 @@ export default function Footer() {
             <div className="flex items-center gap-1">
               <span className="font-display text-xl font-bold text-brand-gold">DX</span>
               <div className="w-1 h-5 bg-brand-gold/30" />
-              <span className="font-display text-xl font-bold text-brand-off-white">STAR</span>
-              <span className="font-display text-xl font-bold text-brand-warm-grey ml-1">EMPORIUM</span>
+              <span className="font-display text-xl font-bold text-white">STAR</span>
+              <span className="font-display text-xl font-bold text-brand-light-grey ml-1">EMPORIUM</span>
             </div>
-            <p className="text-sm text-brand-warm-grey leading-relaxed max-w-xs">
+            <p className="text-sm text-brand-light-grey leading-relaxed max-w-xs">
               Premium vehicles and heavy machinery. Cars, trucks, tractors,
               excavators, and industrial equipment at competitive prices.
             </p>
@@ -53,7 +52,7 @@ export default function Footer() {
 
           {/* Quick Links Column */}
           <div>
-            <h3 className="font-display text-lg text-brand-off-white mb-4">
+            <h3 className="font-display text-lg text-white mb-4">
               Quick Links
             </h3>
             <ul className="space-y-3">
@@ -61,7 +60,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-sm text-brand-warm-grey hover:text-brand-gold transition-colors duration-200"
+                    className="text-sm text-brand-light-grey hover:text-brand-gold transition-colors duration-200"
                   >
                     {link.name}
                   </Link>
@@ -72,7 +71,7 @@ export default function Footer() {
 
           {/* Categories Column */}
           <div>
-            <h3 className="font-display text-lg text-brand-off-white mb-4">
+            <h3 className="font-display text-lg text-white mb-4">
               Categories
             </h3>
             <ul className="space-y-3">
@@ -80,7 +79,7 @@ export default function Footer() {
                 <li key={link.name}>
                   <Link
                     href={link.href}
-                    className="text-sm text-brand-warm-grey hover:text-brand-gold transition-colors duration-200"
+                    className="text-sm text-brand-light-grey hover:text-brand-gold transition-colors duration-200"
                   >
                     {link.name}
                   </Link>
@@ -91,14 +90,14 @@ export default function Footer() {
 
           {/* Contact Column */}
           <div>
-            <h3 className="font-display text-lg text-brand-off-white mb-4">
+            <h3 className="font-display text-lg text-white mb-4">
               Contact Us
             </h3>
             <ul className="space-y-3">
               <li>
                 <a
                   href={`tel:${info.phone.replace(/\s/g, '')}`}
-                  className="flex items-center gap-2 text-sm text-brand-warm-grey hover:text-brand-gold transition-colors duration-200"
+                  className="flex items-center gap-2 text-sm text-brand-light-grey hover:text-brand-gold transition-colors duration-200"
                 >
                   <Phone className="w-4 h-4 text-brand-gold" />
                   {info.phone}
@@ -109,7 +108,7 @@ export default function Footer() {
                   href={`https://wa.me/${info.whatsapp}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-sm text-brand-warm-grey hover:text-brand-gold transition-colors duration-200"
+                  className="flex items-center gap-2 text-sm text-brand-light-grey hover:text-brand-gold transition-colors duration-200"
                 >
                   <svg
                     className="w-4 h-4 text-brand-gold"
@@ -124,14 +123,14 @@ export default function Footer() {
               <li>
                 <a
                   href={`mailto:${info.email}`}
-                  className="flex items-center gap-2 text-sm text-brand-warm-grey hover:text-brand-gold transition-colors duration-200"
+                  className="flex items-center gap-2 text-sm text-brand-light-grey hover:text-brand-gold transition-colors duration-200"
                 >
                   <Mail className="w-4 h-4 text-brand-gold" />
                   {info.email}
                 </a>
               </li>
               <li>
-                <span className="flex items-start gap-2 text-sm text-brand-warm-grey">
+                <span className="flex items-start gap-2 text-sm text-brand-light-grey">
                   <MapPin className="w-4 h-4 text-brand-gold flex-shrink-0 mt-0.5" />
                   {info.address}
                 </span>
@@ -148,7 +147,7 @@ export default function Footer() {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-9 h-9 rounded bg-brand-surface flex items-center justify-center text-brand-warm-grey hover:text-brand-gold hover:bg-brand-gold/10 transition-colors duration-200"
+                    className="w-9 h-9 rounded bg-brand-dark-grey/50 flex items-center justify-center text-brand-light-grey hover:text-brand-gold hover:bg-brand-gold/10 transition-colors duration-200"
                   >
                     <Icon className="w-4 h-4" />
                   </a>
@@ -159,14 +158,14 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-12 pt-8 border-t border-brand-border">
+        <div className="mt-12 pt-8 border-t border-brand-dark-grey/30">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-xs text-brand-warm-grey">
+            <p className="text-xs text-brand-light-grey">
               &copy; {new Date().getFullYear()} DX STAR EMPORIUM. All rights reserved.
             </p>
             <Link
               href="/privacy"
-              className="text-xs text-brand-warm-grey hover:text-brand-gold transition-colors duration-200"
+              className="text-xs text-brand-light-grey hover:text-brand-gold transition-colors duration-200"
             >
               Privacy Policy
             </Link>

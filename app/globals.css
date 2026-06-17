@@ -8,11 +8,11 @@
   }
 
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   body {
-    @apply bg-brand-bg text-brand-off-white antialiased;
+    @apply bg-brand-bg text-brand-dark antialiased;
     font-family: var(--font-inter), sans-serif;
   }
 
@@ -39,14 +39,14 @@
   }
 
   .btn-gold {
-    @apply bg-brand-gold text-brand-bg hover:bg-brand-gold-light transition-colors duration-200 rounded-md;
+    @apply bg-brand-gold text-white hover:bg-brand-gold-dark transition-colors duration-200 rounded-md;
   }
 
   .btn-gold-outline {
-    @apply border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-brand-bg transition-colors duration-200 rounded-md;
+    @apply border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white transition-colors duration-200 rounded-md;
   }
 
-  .card-dark {
+  .card-light {
     @apply bg-brand-card border border-brand-border rounded-lg;
   }
 
@@ -69,7 +69,7 @@
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(201, 168, 76, 0.3),
+      rgba(184, 134, 11, 0.2),
       transparent
     );
     animation: shimmer 2s infinite;
@@ -94,27 +94,27 @@
   }
 }
 
-/* Custom scrollbar for dark mode */
+/* Custom scrollbar for light mode */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #161616;
+  background: #F5F5F5;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2A2A2A;
+  background: #D4D4D4;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #C9A84C;
+  background: #B8860B;
 }
 
 /* Selection color */
 ::selection {
-  background: rgba(201, 168, 76, 0.3);
-  color: #F0EDE8;
+  background: rgba(184, 134, 11, 0.25);
+  color: #1A1A1A;
 }

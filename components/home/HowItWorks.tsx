@@ -26,49 +26,39 @@ const steps = [
 
 export default function HowItWorks() {
   return (
-    <section className="bg-brand-bg py-16 sm:py-24">
+    <section className="bg-brand-surface py-16 sm:py-24">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-off-white mb-4">
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-dark mb-4">
             How It Works
           </h2>
           <div className="w-16 h-0.5 bg-brand-gold mx-auto" />
         </div>
 
-        {/* Steps Container */}
         <div className="relative">
-          {/* Connecting Line (Desktop) */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-brand-border border-dashed" />
+          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-px bg-brand-border-dark border-dashed" />
 
-          {/* Steps Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 lg:gap-8">
             {steps.map((step, index) => (
               <div key={step.number} className="relative flex flex-col items-center">
-                {/* Step Card */}
-                <Card className="bg-brand-card border-brand-border p-6 lg:p-8 text-center relative z-10 w-full">
-                  {/* Step Number */}
-                  <span className="font-accent text-5xl font-bold text-brand-gold/20 absolute top-4 left-4">
+                <Card className="bg-white border-brand-border p-6 lg:p-8 text-center relative z-10 w-full shadow-sm hover:shadow-md transition-shadow duration-200">
+                  <span className="font-accent text-5xl font-bold text-brand-gold/15 absolute top-4 left-4">
                     {step.number}
                   </span>
 
-                  {/* Icon */}
                   <div className="w-14 h-14 rounded-full bg-brand-surface flex items-center justify-center mx-auto mb-4">
                     <step.icon className="w-7 h-7 text-brand-gold" />
                   </div>
 
-                  {/* Title */}
-                  <h3 className="font-display text-xl font-semibold text-brand-off-white mb-2">
+                  <h3 className="font-display text-xl font-semibold text-brand-dark mb-2">
                     {step.title}
                   </h3>
 
-                  {/* Description */}
-                  <p className="text-sm text-brand-warm-grey leading-relaxed">
+                  <p className="text-sm text-brand-mid-grey leading-relaxed">
                     {step.description}
                   </p>
                 </Card>
 
-                {/* Mobile Arrow */}
                 {index < steps.length - 1 && (
                   <div className="flex md:hidden justify-center my-4 text-brand-gold">
                     <svg

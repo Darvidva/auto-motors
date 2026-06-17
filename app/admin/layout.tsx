@@ -33,7 +33,6 @@ export default function AdminLayout({
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Mock user for demo mode
   const userEmail = 'admin@dxstaremporium.com';
 
   const handleLogout = () => {
@@ -41,18 +40,18 @@ export default function AdminLayout({
   };
 
   return (
-    <div className="min-h-screen bg-brand-bg">
+    <div className="min-h-screen bg-brand-surface">
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-brand-card border-b border-brand-border h-16 flex items-center justify-between px-4">
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white border-b border-brand-border h-16 flex items-center justify-between px-4 shadow-sm">
         <button
           onClick={() => setSidebarOpen(true)}
-          className="text-brand-off-white p-2"
+          className="text-brand-dark p-2"
         >
           <Menu className="w-6 h-6" />
         </button>
         <div className="flex items-center gap-1">
           <span className="font-display text-xl font-bold text-brand-gold">DX</span>
-          <span className="font-display text-xl font-bold text-brand-off-white">STAR</span>
+          <span className="font-display text-xl font-bold text-brand-dark">STAR</span>
         </div>
         <div className="w-10" />
       </header>
@@ -60,7 +59,7 @@ export default function AdminLayout({
       {/* Mobile Sidebar Overlay */}
       {sidebarOpen && (
         <div
-          className="lg:hidden fixed inset-0 bg-black/50 z-50"
+          className="lg:hidden fixed inset-0 bg-black/30 z-50"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -68,7 +67,7 @@ export default function AdminLayout({
       {/* Sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 bottom-0 z-50 w-64 bg-brand-card border-r border-brand-border transition-transform duration-300',
+          'fixed top-0 left-0 bottom-0 z-50 w-64 bg-white border-r border-brand-border transition-transform duration-300 shadow-lg',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         )}
       >
@@ -79,16 +78,16 @@ export default function AdminLayout({
               <Link href="/admin" className="flex items-center gap-1">
                 <span className="font-display text-2xl font-bold text-brand-gold">DX</span>
                 <div className="w-1 h-6 bg-brand-gold/30" />
-                <span className="font-display text-2xl font-bold text-brand-off-white">STAR</span>
+                <span className="font-display text-2xl font-bold text-brand-dark">STAR</span>
               </Link>
               <button
                 onClick={() => setSidebarOpen(false)}
-                className="lg:hidden text-brand-warm-grey hover:text-brand-off-white"
+                className="lg:hidden text-brand-mid-grey hover:text-brand-dark"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <p className="text-brand-warm-grey text-xs mt-2">Admin Portal</p>
+            <p className="text-brand-mid-grey text-xs mt-2 font-medium">Admin Portal</p>
           </div>
 
           {/* Navigation */}
@@ -104,8 +103,8 @@ export default function AdminLayout({
                   className={cn(
                     'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
                     isActive
-                      ? 'bg-brand-gold text-brand-bg'
-                      : 'text-brand-warm-grey hover:text-brand-off-white hover:bg-brand-surface'
+                      ? 'bg-brand-gold text-white'
+                      : 'text-brand-mid-grey hover:text-brand-dark hover:bg-brand-surface'
                   )}
                 >
                   <item.icon className="w-5 h-5" />
@@ -119,13 +118,13 @@ export default function AdminLayout({
           {/* User & Logout */}
           <div className="p-4 border-t border-brand-border">
             <div className="px-4 py-2 mb-2">
-              <p className="text-sm text-brand-off-white truncate">{userEmail}</p>
-              <p className="text-xs text-brand-warm-grey">Administrator (Demo)</p>
+              <p className="text-sm text-brand-dark font-medium truncate">{userEmail}</p>
+              <p className="text-xs text-brand-mid-grey">Administrator (Demo)</p>
             </div>
             <Button
               variant="ghost"
               onClick={handleLogout}
-              className="w-full justify-start text-brand-warm-grey hover:text-red-400 hover:bg-red-900/20"
+              className="w-full justify-start text-brand-mid-grey hover:text-red-500 hover:bg-red-50"
             >
               <LogOut className="w-5 h-5 mr-3" />
               Sign Out

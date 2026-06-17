@@ -241,12 +241,12 @@ export default function AdminListingsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold text-brand-off-white">Listings</h1>
-          <p className="text-brand-warm-grey mt-1">Manage vehicles and machinery inventory</p>
+          <h1 className="font-display text-3xl font-bold text-brand-dark">Listings</h1>
+          <p className="text-brand-mid-grey mt-1">Manage vehicles and machinery inventory</p>
         </div>
         <Button
           onClick={() => openEditDialog()}
-          className="bg-brand-gold text-brand-bg hover:bg-brand-gold-light"
+          className="bg-brand-gold text-white hover:bg-brand-gold-light"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Listing
@@ -254,7 +254,7 @@ export default function AdminListingsPage() {
       </div>
 
       {/* Filters */}
-      <Card className="bg-brand-card border-brand-border">
+      <Card className="bg-white border-brand-border">
         <CardContent className="p-4">
           <div className="flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px]">
@@ -262,14 +262,14 @@ export default function AdminListingsPage() {
                 placeholder="Search listings..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="bg-brand-surface border-brand-border text-brand-off-white"
+                className="bg-brand-surface border-brand-border border-brand-border text-brand-dark"
               />
             </div>
             <Select value={categoryFilter || '__all__'} onValueChange={(v) => setCategoryFilter(v === '__all__' ? '' : v)}>
-              <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border text-brand-off-white">
+              <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border border-brand-border text-brand-dark">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
-              <SelectContent className="bg-brand-surface border-brand-border">
+              <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
                 <SelectItem value="__all__">All Categories</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>{cat}</SelectItem>
@@ -277,10 +277,10 @@ export default function AdminListingsPage() {
               </SelectContent>
             </Select>
             <Select value={statusFilter || '__all__'} onValueChange={(v) => setStatusFilter(v === '__all__' ? '' : v)}>
-              <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border text-brand-off-white">
+              <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border border-brand-border text-brand-dark">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
-              <SelectContent className="bg-brand-surface border-brand-border">
+              <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
                 <SelectItem value="__all__">All Status</SelectItem>
                 <SelectItem value="published">Published</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
@@ -291,23 +291,23 @@ export default function AdminListingsPage() {
       </Card>
 
       {/* Table */}
-      <Card className="bg-brand-card border-brand-border">
+      <Card className="bg-white border-brand-border">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="border-brand-border hover:bg-transparent">
-                  <TableHead className="text-brand-warm-grey">Listing</TableHead>
-                  <TableHead className="text-brand-warm-grey">Category</TableHead>
-                  <TableHead className="text-brand-warm-grey">Price</TableHead>
-                  <TableHead className="text-brand-warm-grey">Status</TableHead>
-                  <TableHead className="text-brand-warm-grey text-right">Actions</TableHead>
+                  <TableHead className="text-brand-mid-grey">Listing</TableHead>
+                  <TableHead className="text-brand-mid-grey">Category</TableHead>
+                  <TableHead className="text-brand-mid-grey">Price</TableHead>
+                  <TableHead className="text-brand-mid-grey">Status</TableHead>
+                  <TableHead className="text-brand-mid-grey text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredListings.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-brand-warm-grey py-8">
+                    <TableCell colSpan={5} className="text-center text-brand-mid-grey py-8">
                       No listings found
                     </TableCell>
                   </TableRow>
@@ -316,51 +316,51 @@ export default function AdminListingsPage() {
                     <TableRow key={listing.id} className="border-brand-border">
                       <TableCell>
                         <div className="flex items-center gap-3">
-                          <div className="w-16 h-12 bg-brand-surface rounded overflow-hidden flex-shrink-0">
+                          <div className="w-16 h-12 bg-brand-surface border-brand-border rounded overflow-hidden flex-shrink-0">
                             {listing.images?.[0] ? (
                               <img src={listing.images[0]} alt={listing.name} className="w-full h-full object-cover" />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <ImageIcon className="w-5 h-5 text-brand-warm-grey" />
+                                <ImageIcon className="w-5 h-5 text-brand-mid-grey" />
                               </div>
                             )}
                           </div>
                           <div>
-                            <p className="text-brand-off-white font-medium">{listing.name}</p>
-                            <p className="text-brand-warm-grey text-sm">{listing.year} • {listing.brand}</p>
+                            <p className="text-brand-dark font-medium">{listing.name}</p>
+                            <p className="text-brand-mid-grey text-sm">{listing.year} • {listing.brand}</p>
                           </div>
                         </div>
                       </TableCell>
-                      <TableCell className="text-brand-off-white">{listing.category}</TableCell>
+                      <TableCell className="text-brand-dark">{listing.category}</TableCell>
                       <TableCell className="text-brand-gold font-medium">{formatPrice(listing.price)}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Badge
                             variant={listing.published ? 'default' : 'secondary'}
-                            className={listing.published ? 'bg-green-600' : 'bg-brand-surface text-brand-warm-grey'}
+                            className={listing.published ? 'bg-green-600' : 'bg-brand-surface border-brand-border text-brand-mid-grey'}
                           >
                             {listing.published ? 'Published' : 'Draft'}
                           </Badge>
                           {listing.featured && (
-                            <Badge className="bg-brand-gold text-brand-bg">Featured</Badge>
+                            <Badge className="bg-brand-gold text-white">Featured</Badge>
                           )}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0 text-brand-warm-grey">
+                            <Button variant="ghost" className="h-8 w-8 p-0 text-brand-mid-grey">
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent className="bg-brand-surface border-brand-border">
-                            <DropdownMenuItem onClick={() => openEditDialog(listing)} className="text-brand-off-white">
+                          <DropdownMenuContent className="bg-brand-surface border-brand-border border-brand-border">
+                            <DropdownMenuItem onClick={() => openEditDialog(listing)} className="text-brand-dark">
                               <Edit className="mr-2 h-4 w-4" /> Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => togglePublished(listing)} className="text-brand-off-white">
+                            <DropdownMenuItem onClick={() => togglePublished(listing)} className="text-brand-dark">
                               {listing.published ? 'Unpublish' : 'Publish'}
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => toggleFeatured(listing)} className="text-brand-off-white">
+                            <DropdownMenuItem onClick={() => toggleFeatured(listing)} className="text-brand-dark">
                               {listing.featured ? 'Unfeature' : 'Feature'}
                             </DropdownMenuItem>
                             <DropdownMenuItem
@@ -383,9 +383,9 @@ export default function AdminListingsPage() {
 
       {/* Edit Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-brand-card border-brand-border">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white border-brand-border">
           <DialogHeader>
-            <DialogTitle className="text-brand-off-white">
+            <DialogTitle className="text-brand-dark">
               {selectedListing ? 'Edit Listing' : 'Add New Listing'}
             </DialogTitle>
           </DialogHeader>
@@ -393,33 +393,33 @@ export default function AdminListingsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
             <div className="space-y-4">
               <div>
-                <Label className="text-brand-off-white">Name *</Label>
+                <Label className="text-brand-dark">Name *</Label>
                 <Input
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                  className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
                   placeholder="e.g., Toyota Land Cruiser 300"
                 />
               </div>
 
               <div>
-                <Label className="text-brand-off-white">Slug</Label>
+                <Label className="text-brand-dark">Slug</Label>
                 <Input
                   value={formData.slug}
                   onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                  className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                  className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
                   placeholder="auto-generated if empty"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-brand-off-white">Category *</Label>
+                  <Label className="text-brand-dark">Category *</Label>
                   <Select value={formData.category} onValueChange={(val) => setFormData({ ...formData, category: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white mt-2">
+                    <SelectTrigger className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-surface border-brand-border">
+                    <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
                       {categories.map((cat) => (
                         <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                       ))}
@@ -428,12 +428,12 @@ export default function AdminListingsPage() {
                 </div>
 
                 <div>
-                  <Label className="text-brand-off-white">Condition</Label>
+                  <Label className="text-brand-dark">Condition</Label>
                   <Select value={formData.condition} onValueChange={(val: any) => setFormData({ ...formData, condition: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white mt-2">
+                    <SelectTrigger className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-surface border-brand-border">
+                    <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
                       {conditions.map((cond) => (
                         <SelectItem key={cond} value={cond}>{cond}</SelectItem>
                       ))}
@@ -444,21 +444,21 @@ export default function AdminListingsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-brand-off-white">Brand *</Label>
+                  <Label className="text-brand-dark">Brand *</Label>
                   <Input
                     value={formData.brand}
                     onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                    className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                    className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
                     placeholder="e.g., Toyota"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-brand-off-white">Model *</Label>
+                  <Label className="text-brand-dark">Model *</Label>
                   <Input
                     value={formData.model}
                     onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                    className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                    className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
                     placeholder="e.g., Land Cruiser"
                   />
                 </div>
@@ -466,45 +466,45 @@ export default function AdminListingsPage() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-brand-off-white">Year *</Label>
+                  <Label className="text-brand-dark">Year *</Label>
                   <Input
                     type="number"
                     value={formData.year}
                     onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
-                    className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                    className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-brand-off-white">Price (₦) *</Label>
+                  <Label className="text-brand-dark">Price (₦) *</Label>
                   <Input
                     type="number"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) })}
-                    className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                    className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-brand-off-white">Mileage (km)</Label>
+                  <Label className="text-brand-dark">Mileage (km)</Label>
                   <Input
                     type="number"
                     value={formData.mileage ?? ''}
                     onChange={(e) => setFormData({ ...formData, mileage: e.target.value ? parseInt(e.target.value) : null })}
-                    className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                    className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
                     placeholder="For vehicles"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-brand-off-white">Hours Used</Label>
+                  <Label className="text-brand-dark">Hours Used</Label>
                   <Input
                     type="number"
                     value={formData.hoursUsed ?? ''}
                     onChange={(e) => setFormData({ ...formData, hoursUsed: e.target.value ? parseInt(e.target.value) : null })}
-                    className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                    className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
                     placeholder="For machinery"
                   />
                 </div>
@@ -512,12 +512,12 @@ export default function AdminListingsPage() {
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label className="text-brand-off-white">Transmission</Label>
+                  <Label className="text-brand-dark">Transmission</Label>
                   <Select value={formData.transmission} onValueChange={(val: any) => setFormData({ ...formData, transmission: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white mt-2">
+                    <SelectTrigger className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-surface border-brand-border">
+                    <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
                       {transmissions.map((t) => (
                         <SelectItem key={t} value={t}>{t}</SelectItem>
                       ))}
@@ -526,12 +526,12 @@ export default function AdminListingsPage() {
                 </div>
 
                 <div>
-                  <Label className="text-brand-off-white">Fuel Type</Label>
+                  <Label className="text-brand-dark">Fuel Type</Label>
                   <Select value={formData.fuelType} onValueChange={(val: any) => setFormData({ ...formData, fuelType: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white mt-2">
+                    <SelectTrigger className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-surface border-brand-border">
+                    <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
                       {fuelTypes.map((f) => (
                         <SelectItem key={f} value={f}>{f}</SelectItem>
                       ))}
@@ -540,12 +540,12 @@ export default function AdminListingsPage() {
                 </div>
 
                 <div>
-                  <Label className="text-brand-off-white">Drive System</Label>
+                  <Label className="text-brand-dark">Drive System</Label>
                   <Select value={formData.driveSystem} onValueChange={(val) => setFormData({ ...formData, driveSystem: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white mt-2">
+                    <SelectTrigger className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-surface border-brand-border">
+                    <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
                       {driveSystems.map((d) => (
                         <SelectItem key={d} value={d}>{d}</SelectItem>
                       ))}
@@ -555,11 +555,11 @@ export default function AdminListingsPage() {
               </div>
 
               <div>
-                <Label className="text-brand-off-white">Color</Label>
+                <Label className="text-brand-dark">Color</Label>
                 <Input
                   value={formData.color}
                   onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                  className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
                   placeholder="e.g., Pearl White"
                 />
               </div>
@@ -567,31 +567,31 @@ export default function AdminListingsPage() {
 
             <div className="space-y-4">
               <div>
-                <Label className="text-brand-off-white">Description *</Label>
+                <Label className="text-brand-dark">Description *</Label>
                 <Textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="bg-brand-surface border-brand-border text-brand-off-white min-h-[120px] mt-2"
+                  className="bg-brand-surface border-brand-border border-brand-border text-brand-dark min-h-[120px] mt-2"
                   placeholder="Detailed description..."
                 />
               </div>
 
               <div>
-                <Label className="text-brand-off-white">Images (URLs, one per line)</Label>
+                <Label className="text-brand-dark">Images (URLs, one per line)</Label>
                 <Textarea
                   value={formData.images.join('\n')}
                   onChange={(e) => setFormData({ ...formData, images: e.target.value.split('\n').filter(Boolean) })}
-                  className="bg-brand-surface border-brand-border text-brand-off-white min-h-[80px] mt-2"
+                  className="bg-brand-surface border-brand-border border-brand-border text-brand-dark min-h-[80px] mt-2"
                   placeholder="https://images.pexels.com/..."
                 />
               </div>
 
               <div>
-                <Label className="text-brand-off-white">Features (one per line)</Label>
+                <Label className="text-brand-dark">Features (one per line)</Label>
                 <Textarea
                   value={formData.features?.join('\n') || ''}
                   onChange={(e) => setFormData({ ...formData, features: e.target.value.split('\n').filter(Boolean) })}
-                  className="bg-brand-surface border-brand-border text-brand-off-white min-h-[80px] mt-2"
+                  className="bg-brand-surface border-brand-border border-brand-border text-brand-dark min-h-[80px] mt-2"
                   placeholder="GPS Navigation&#10;Reverse Camera"
                 />
               </div>
@@ -602,7 +602,7 @@ export default function AdminListingsPage() {
                     checked={formData.published}
                     onCheckedChange={(checked) => setFormData({ ...formData, published: checked })}
                   />
-                  <Label className="text-brand-off-white">Published</Label>
+                  <Label className="text-brand-dark">Published</Label>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -610,7 +610,7 @@ export default function AdminListingsPage() {
                     checked={formData.featured}
                     onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
                   />
-                  <Label className="text-brand-off-white">Featured</Label>
+                  <Label className="text-brand-dark">Featured</Label>
                 </div>
               </div>
             </div>
@@ -620,14 +620,14 @@ export default function AdminListingsPage() {
             <Button
               variant="outline"
               onClick={() => setEditDialogOpen(false)}
-              className="border-brand-border text-brand-warm-grey"
+              className="border-brand-border text-brand-mid-grey"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="bg-brand-gold text-brand-bg hover:bg-brand-gold-light"
+              className="bg-brand-gold text-white hover:bg-brand-gold-light"
             >
               {saving ? 'Saving...' : 'Save Listing'}
             </Button>
@@ -637,18 +637,18 @@ export default function AdminListingsPage() {
 
       {/* Delete Confirmation */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <DialogContent className="bg-brand-card border-brand-border">
+        <DialogContent className="bg-white border-brand-border">
           <DialogHeader>
-            <DialogTitle className="text-brand-off-white">Delete Listing</DialogTitle>
+            <DialogTitle className="text-brand-dark">Delete Listing</DialogTitle>
           </DialogHeader>
-          <p className="text-brand-warm-grey">
+          <p className="text-brand-mid-grey">
             Are you sure you want to delete &quot;{selectedListing?.name}&quot;? This action cannot be undone.
           </p>
           <DialogFooter>
             <Button
               variant="outline"
               onClick={() => setDeleteDialogOpen(false)}
-              className="border-brand-border text-brand-warm-grey"
+              className="border-brand-border text-brand-mid-grey"
             >
               Cancel
             </Button>

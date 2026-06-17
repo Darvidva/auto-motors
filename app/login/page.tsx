@@ -22,7 +22,6 @@ export default function AdminLoginPage() {
     setError(null);
     setLoading(true);
 
-    // Mock authentication - accepts any credentials
     setTimeout(() => {
       if (email && password) {
         router.push('/admin');
@@ -34,38 +33,38 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-brand-bg flex items-center justify-center p-4">
+    <div className="min-h-screen bg-brand-surface flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex items-center gap-1">
             <span className="font-display text-3xl font-bold text-brand-gold">DX</span>
             <div className="w-1.5 h-8 bg-brand-gold/30" />
-            <span className="font-display text-3xl font-bold text-brand-off-white">STAR</span>
+            <span className="font-display text-3xl font-bold text-brand-dark">STAR</span>
           </Link>
-          <p className="text-brand-warm-grey text-sm mt-2">Admin Portal</p>
+          <p className="text-brand-mid-grey text-sm mt-2 font-medium">Admin Portal</p>
         </div>
 
-        <Card className="bg-brand-card border-brand-border">
+        <Card className="bg-white border-brand-border shadow-lg">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-display text-brand-off-white">
+            <CardTitle className="text-2xl font-display text-brand-dark">
               Sign In
             </CardTitle>
-            <CardDescription className="text-brand-warm-grey">
+            <CardDescription className="text-brand-mid-grey">
               Enter your admin credentials to access the dashboard
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleLogin}>
             <CardContent className="space-y-4">
               {error && (
-                <Alert variant="destructive" className="bg-red-900/20 border-red-900 text-red-400">
+                <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-600">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-brand-off-white">Email</Label>
+                <Label htmlFor="email" className="text-brand-dark-grey">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -73,12 +72,12 @@ export default function AdminLoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-brand-surface border-brand-border text-brand-off-white placeholder:text-brand-warm-grey"
+                  className="bg-white border-brand-border text-brand-dark placeholder:text-brand-mid-grey"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-brand-off-white">Password</Label>
+                <Label htmlFor="password" className="text-brand-dark-grey">Password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -86,11 +85,11 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="bg-brand-surface border-brand-border text-brand-off-white placeholder:text-brand-warm-grey"
+                  className="bg-white border-brand-border text-brand-dark placeholder:text-brand-mid-grey"
                 />
               </div>
 
-              <div className="text-xs text-brand-warm-grey bg-brand-surface p-3 rounded-lg border border-brand-border">
+              <div className="text-xs text-brand-mid-grey bg-brand-surface p-3 rounded-lg border border-brand-border">
                 <p className="font-medium text-brand-gold mb-1">Demo Mode</p>
                 Enter any email and password to access the admin panel.
                 Data is stored locally and will reset on page reload.
@@ -100,7 +99,7 @@ export default function AdminLoginPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-brand-gold text-brand-bg hover:bg-brand-gold-light"
+                className="w-full bg-brand-gold text-white hover:bg-brand-gold-dark"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">
@@ -121,8 +120,8 @@ export default function AdminLoginPage() {
           </form>
         </Card>
 
-        <p className="text-center text-brand-warm-grey text-sm mt-6">
-          <Link href="/" className="text-brand-gold hover:underline">
+        <p className="text-center text-brand-mid-grey text-sm mt-6">
+          <Link href="/" className="text-brand-gold hover:underline font-medium">
             ← Back to website
           </Link>
         </p>

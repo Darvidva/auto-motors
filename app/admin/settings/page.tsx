@@ -7,9 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Save, Loader2 } from 'lucide-react';
+import { Save, Loader2, CheckCircle2 } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle2 } from 'lucide-react';
 
 export default function AdminSettingsPage() {
   const [saving, setSaving] = useState(false);
@@ -39,13 +38,13 @@ export default function AdminSettingsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="font-display text-3xl font-bold text-brand-off-white">Settings</h1>
-          <p className="text-brand-warm-grey mt-1">Manage business information and settings</p>
+          <h1 className="font-display text-3xl font-bold text-brand-dark">Settings</h1>
+          <p className="text-brand-mid-grey mt-1">Manage business information and settings</p>
         </div>
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="bg-brand-gold text-brand-bg hover:bg-brand-gold-light"
+          className="bg-brand-gold text-white hover:bg-brand-gold-dark"
         >
           {saving ? (
             <>
@@ -62,44 +61,44 @@ export default function AdminSettingsPage() {
       </div>
 
       {saved && (
-        <Alert className="bg-green-900/20 border-green-900 text-green-400">
+        <Alert className="bg-green-50 border-green-200 text-green-700">
           <CheckCircle2 className="h-4 w-4" />
           <AlertDescription>Settings saved successfully! (Demo mode - changes are not persisted)</AlertDescription>
         </Alert>
       )}
 
       {/* Business Information */}
-      <Card className="bg-brand-card border-brand-border">
+      <Card className="bg-white border-brand-border shadow-sm">
         <CardHeader>
-          <CardTitle className="text-brand-off-white">Business Information</CardTitle>
+          <CardTitle className="text-brand-dark">Business Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <Label className="text-brand-off-white">Business Name</Label>
+              <Label className="text-brand-dark-grey">Business Name</Label>
               <Input
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                className="bg-white border-brand-border text-brand-dark mt-2"
               />
             </div>
 
             <div>
-              <Label className="text-brand-off-white">Tagline</Label>
+              <Label className="text-brand-dark-grey">Tagline</Label>
               <Input
                 value={formData.tagline}
                 onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
-                className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                className="bg-white border-brand-border text-brand-dark mt-2"
               />
             </div>
           </div>
 
           <div>
-            <Label className="text-brand-off-white">Address</Label>
+            <Label className="text-brand-dark-grey">Address</Label>
             <Textarea
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+              className="bg-white border-brand-border text-brand-dark mt-2"
               rows={2}
             />
           </div>
@@ -107,41 +106,41 @@ export default function AdminSettingsPage() {
       </Card>
 
       {/* Contact Information */}
-      <Card className="bg-brand-card border-brand-border">
+      <Card className="bg-white border-brand-border shadow-sm">
         <CardHeader>
-          <CardTitle className="text-brand-off-white">Contact Information</CardTitle>
+          <CardTitle className="text-brand-dark">Contact Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <Label className="text-brand-off-white">Phone Number</Label>
+              <Label className="text-brand-dark-grey">Phone Number</Label>
               <Input
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                className="bg-white border-brand-border text-brand-dark mt-2"
                 placeholder="+234 803 456 7890"
               />
             </div>
 
             <div>
-              <Label className="text-brand-off-white">WhatsApp Number</Label>
+              <Label className="text-brand-dark-grey">WhatsApp Number</Label>
               <Input
                 value={formData.whatsapp}
                 onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+                className="bg-white border-brand-border text-brand-dark mt-2"
                 placeholder="2348034567890"
               />
-              <p className="text-brand-warm-grey text-xs mt-1">Without + sign, for wa.me links</p>
+              <p className="text-brand-mid-grey text-xs mt-1">Without + sign, for wa.me links</p>
             </div>
           </div>
 
           <div>
-            <Label className="text-brand-off-white">Email Address</Label>
+            <Label className="text-brand-dark-grey">Email Address</Label>
             <Input
               type="email"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              className="bg-brand-surface border-brand-border text-brand-off-white mt-2"
+              className="bg-white border-brand-border text-brand-dark mt-2"
               placeholder="info@dxstaremporium.com"
             />
           </div>
@@ -149,9 +148,9 @@ export default function AdminSettingsPage() {
       </Card>
 
       {/* Demo Notice */}
-      <Card className="bg-yellow-900/20 border-yellow-900/50">
+      <Card className="bg-yellow-50 border-yellow-200">
         <CardContent className="p-4">
-          <p className="text-yellow-400 text-sm">
+          <p className="text-yellow-700 text-sm">
             <strong>Demo Mode:</strong> This is a preview of the admin settings. Changes are not saved to a database and will reset on page reload.
           </p>
         </CardContent>

@@ -1,6 +1,7 @@
 'use client';
 
 import ListingCard from '@/components/shared/ListingCard';
+import { listings } from '@/lib/placeholder-data';
 import { Listing } from '@/types';
 
 interface RelatedListingsProps {
@@ -9,11 +10,6 @@ interface RelatedListingsProps {
 }
 
 export default function RelatedListings({ currentListingId, category }: RelatedListingsProps) {
-  // TODO: Connect to backend API — GET /api/listings/related
-
-  // Import and filter listings
-  const { listings } = require('@/lib/placeholder-data');
-
   const relatedListings = listings
     .filter(
       (listing: Listing) =>
@@ -29,7 +25,7 @@ export default function RelatedListings({ currentListingId, category }: RelatedL
 
   return (
     <div className="mt-12 sm:mt-16">
-      <h2 className="font-display text-2xl sm:text-3xl font-bold text-brand-off-white mb-6">
+      <h2 className="font-display text-2xl sm:text-3xl font-bold text-brand-dark mb-6">
         You Might Also Like
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -27,20 +27,18 @@ export default function InfoPanel({ listing }: InfoPanelProps) {
 
   return (
     <div className="space-y-6">
-      {/* Breadcrumb */}
       <nav className="flex items-center gap-2 text-sm">
-        <Link href="/" className="text-brand-warm-grey hover:text-brand-gold transition-colors">
+        <Link href="/" className="text-brand-mid-grey hover:text-brand-gold transition-colors">
           <Home className="w-4 h-4" />
         </Link>
-        <ChevronRight className="w-4 h-4 text-brand-border" />
-        <Link href="/inventory" className="text-brand-warm-grey hover:text-brand-gold transition-colors">
+        <ChevronRight className="w-4 h-4 text-brand-border-dark" />
+        <Link href="/inventory" className="text-brand-mid-grey hover:text-brand-gold transition-colors">
           Inventory
         </Link>
-        <ChevronRight className="w-4 h-4 text-brand-border" />
-        <span className="text-brand-gold truncate max-w-[150px]">{listing.name}</span>
+        <ChevronRight className="w-4 h-4 text-brand-border-dark" />
+        <span className="text-brand-gold truncate max-w-[150px] font-medium">{listing.name}</span>
       </nav>
 
-      {/* Badges */}
       <div className="flex flex-wrap gap-2">
         <Badge variant="gold">{listing.category}</Badge>
         <Badge variant={listing.condition === 'New' ? 'default' : 'secondary'}>
@@ -48,42 +46,38 @@ export default function InfoPanel({ listing }: InfoPanelProps) {
         </Badge>
       </div>
 
-      {/* Title */}
-      <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-off-white">
+      <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-dark">
         {listing.name}
       </h1>
 
-      {/* Price */}
       <p className="font-accent text-3xl sm:text-4xl font-bold text-brand-gold">
         {formatPrice(listing.price)}
       </p>
 
       <Separator className="bg-brand-border" />
 
-      {/* Quick Specs */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div className="flex flex-col">
-          <span className="text-xs uppercase tracking-wider text-brand-warm-grey">Year</span>
-          <span className="text-lg text-brand-off-white font-medium">{listing.year}</span>
+          <span className="text-xs uppercase tracking-wider text-brand-mid-grey">Year</span>
+          <span className="text-lg text-brand-dark font-medium">{listing.year}</span>
         </div>
         <div className="flex flex-col">
-          <span className="text-xs uppercase tracking-wider text-brand-warm-grey">
+          <span className="text-xs uppercase tracking-wider text-brand-mid-grey">
             {listing.mileage !== undefined ? 'Mileage' : 'Hours'}
           </span>
-          <span className="text-lg text-brand-off-white font-medium">{getUsageLabel()}</span>
+          <span className="text-lg text-brand-dark font-medium">{getUsageLabel()}</span>
         </div>
         <div className="flex flex-col">
-          <span className="text-xs uppercase tracking-wider text-brand-warm-grey">Transmission</span>
-          <span className="text-lg text-brand-off-white font-medium">{listing.transmission}</span>
+          <span className="text-xs uppercase tracking-wider text-brand-mid-grey">Transmission</span>
+          <span className="text-lg text-brand-dark font-medium">{listing.transmission}</span>
         </div>
         <div className="flex flex-col">
-          <span className="text-xs uppercase tracking-wider text-brand-warm-grey">Fuel Type</span>
-          <span className="text-lg text-brand-off-white font-medium">{listing.fuelType}</span>
+          <span className="text-xs uppercase tracking-wider text-brand-mid-grey">Fuel Type</span>
+          <span className="text-lg text-brand-dark font-medium">{listing.fuelType}</span>
         </div>
       </div>
 
-      {/* Summary Description */}
-      <p className="text-brand-warm-grey leading-relaxed">
+      <p className="text-brand-mid-grey leading-relaxed">
         {listing.description.substring(0, 200)}...
       </p>
     </div>

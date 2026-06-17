@@ -19,30 +19,21 @@ export default function AdminDashboard() {
 
   const formatPrice = (price: number) => `₦${price.toLocaleString()}`;
 
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('en-NG', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
   return (
     <div className="space-y-8">
-      {/* Page Header */}
       <div>
-        <h1 className="font-display text-3xl font-bold text-brand-off-white">Dashboard</h1>
-        <p className="text-brand-warm-grey mt-1">Welcome to DX STAR EMPORIUM admin panel</p>
+        <h1 className="font-display text-3xl font-bold text-brand-dark">Dashboard</h1>
+        <p className="text-brand-mid-grey mt-1">Welcome to DX STAR EMPORIUM admin panel</p>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="bg-brand-card border-brand-border">
+        <Card className="bg-white border-brand-border shadow-sm">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-brand-warm-grey text-sm">Total Listings</p>
-                <p className="font-display text-3xl font-bold text-brand-off-white mt-1">
+                <p className="text-brand-mid-grey text-sm font-medium">Total Listings</p>
+                <p className="font-display text-3xl font-bold text-brand-dark mt-1">
                   {stats.totalListings}
                 </p>
               </div>
@@ -50,53 +41,53 @@ export default function AdminDashboard() {
                 <Car className="w-6 h-6 text-brand-gold" />
               </div>
             </div>
-            <p className="text-brand-warm-grey text-xs mt-3">
+            <p className="text-brand-mid-grey text-xs mt-3">
               {stats.publishedListings} published
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-brand-card border-brand-border">
+        <Card className="bg-white border-brand-border shadow-sm">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-brand-warm-grey text-sm">Total Enquiries</p>
-                <p className="font-display text-3xl font-bold text-brand-off-white mt-1">
+                <p className="text-brand-mid-grey text-sm font-medium">Total Enquiries</p>
+                <p className="font-display text-3xl font-bold text-brand-dark mt-1">
                   {stats.totalEnquiries}
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center">
-                <Mail className="w-6 h-6 text-blue-400" />
+              <div className="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center">
+                <Mail className="w-6 h-6 text-blue-500" />
               </div>
             </div>
-            <p className="text-red-400 text-xs mt-3">
+            <p className="text-red-500 text-xs mt-3 font-medium">
               {stats.unreadEnquiries} unread
             </p>
           </CardContent>
         </Card>
 
-        <Card className="bg-brand-card border-brand-border">
+        <Card className="bg-white border-brand-border shadow-sm">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-brand-warm-grey text-sm">Inventory Value</p>
-                <p className="font-display text-2xl font-bold text-brand-off-white mt-1">
+                <p className="text-brand-mid-grey text-sm font-medium">Inventory Value</p>
+                <p className="font-display text-2xl font-bold text-brand-dark mt-1">
                   {formatPrice(stats.totalValue)}
                 </p>
               </div>
-              <div className="w-12 h-12 rounded-lg bg-green-500/10 flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-green-400" />
+              <div className="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center">
+                <DollarSign className="w-6 h-6 text-green-500" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-brand-card border-brand-border">
+        <Card className="bg-white border-brand-border shadow-sm">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-brand-warm-grey text-sm">Published</p>
-                <p className="font-display text-3xl font-bold text-brand-off-white mt-1">
+                <p className="text-brand-mid-grey text-sm font-medium">Published</p>
+                <p className="font-display text-3xl font-bold text-brand-dark mt-1">
                   {Math.round((stats.publishedListings / (stats.totalListings || 1)) * 100)}%
                 </p>
               </div>
@@ -111,16 +102,16 @@ export default function AdminDashboard() {
       {/* Recent Items */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Recent Enquiries */}
-        <Card className="bg-brand-card border-brand-border">
+        <Card className="bg-white border-brand-border shadow-sm">
           <CardHeader>
-            <CardTitle className="text-brand-off-white flex items-center gap-2">
+            <CardTitle className="text-brand-dark flex items-center gap-2">
               <Mail className="w-5 h-5 text-brand-gold" />
               Recent Enquiries
             </CardTitle>
           </CardHeader>
           <CardContent>
             {recentEnquiries.length === 0 ? (
-              <p className="text-brand-warm-grey text-center py-8">No enquiries yet</p>
+              <p className="text-brand-mid-grey text-center py-8">No enquiries yet</p>
             ) : (
               <div className="space-y-3">
                 {recentEnquiries.map((enquiry) => (
@@ -130,24 +121,24 @@ export default function AdminDashboard() {
                   >
                     <div className="flex items-start justify-between">
                       <div>
-                        <p className="text-brand-off-white font-medium">{enquiry.name}</p>
-                        <p className="text-brand-warm-grey text-sm">{enquiry.email}</p>
+                        <p className="text-brand-dark font-medium">{enquiry.name}</p>
+                        <p className="text-brand-mid-grey text-sm">{enquiry.email}</p>
                       </div>
                       <span
-                        className={`px-2 py-1 rounded text-xs ${
+                        className={`px-2 py-1 rounded text-xs font-medium ${
                           enquiry.status === 'Unread'
-                            ? 'bg-red-900/30 text-red-400'
+                            ? 'bg-red-100 text-red-600'
                             : enquiry.status === 'Read'
-                            ? 'bg-blue-900/30 text-blue-400'
+                            ? 'bg-blue-100 text-blue-600'
                             : enquiry.status === 'Followed Up'
-                            ? 'bg-yellow-900/30 text-yellow-400'
-                            : 'bg-green-900/30 text-green-400'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : 'bg-green-100 text-green-600'
                         }`}
                       >
                         {enquiry.status}
                       </span>
                     </div>
-                    <p className="text-brand-warm-grey text-sm mt-2 line-clamp-2">
+                    <p className="text-brand-mid-grey text-sm mt-2 line-clamp-2">
                       {enquiry.message}
                     </p>
                   </div>
@@ -158,16 +149,16 @@ export default function AdminDashboard() {
         </Card>
 
         {/* Recent Listings */}
-        <Card className="bg-brand-card border-brand-border">
+        <Card className="bg-white border-brand-border shadow-sm">
           <CardHeader>
-            <CardTitle className="text-brand-off-white flex items-center gap-2">
+            <CardTitle className="text-brand-dark flex items-center gap-2">
               <Car className="w-5 h-5 text-brand-gold" />
               Recent Listings
             </CardTitle>
           </CardHeader>
           <CardContent>
             {recentListings.length === 0 ? (
-              <p className="text-brand-warm-grey text-center py-8">No listings yet</p>
+              <p className="text-brand-mid-grey text-center py-8">No listings yet</p>
             ) : (
               <div className="space-y-3">
                 {recentListings.map((listing) => (
@@ -185,21 +176,21 @@ export default function AdminDashboard() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-brand-off-white font-medium truncate">{listing.name}</p>
-                      <p className="text-brand-warm-grey text-sm">{formatPrice(listing.price)}</p>
+                      <p className="text-brand-dark font-medium truncate">{listing.name}</p>
+                      <p className="text-brand-gold text-sm font-semibold">{formatPrice(listing.price)}</p>
                     </div>
                     <div className="flex flex-col items-end gap-1">
                       <span
-                        className={`px-2 py-1 rounded text-xs ${
+                        className={`px-2 py-1 rounded text-xs font-medium ${
                           listing.published
-                            ? 'bg-green-900/30 text-green-400'
-                            : 'bg-brand-border text-brand-warm-grey'
+                            ? 'bg-green-100 text-green-600'
+                            : 'bg-brand-border text-brand-mid-grey'
                         }`}
                       >
                         {listing.published ? 'Published' : 'Draft'}
                       </span>
                       {listing.featured && (
-                        <span className="text-xs text-brand-gold">Featured</span>
+                        <span className="text-xs text-brand-gold font-medium">Featured</span>
                       )}
                     </div>
                   </div>

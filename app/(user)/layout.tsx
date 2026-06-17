@@ -7,7 +7,7 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex flex-col bg-brand-bg">
+    <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />

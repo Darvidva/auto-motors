@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,6 @@ import ListingCard from '@/components/shared/ListingCard';
 import { featuredListings } from '@/lib/placeholder-data';
 
 export default function FeaturedListings() {
-  // TODO: Connect to backend API — GET /api/listings/featured
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: 'left' | 'right') => {
@@ -21,18 +20,16 @@ export default function FeaturedListings() {
   };
 
   return (
-    <section className="bg-brand-card py-16 sm:py-24">
+    <section className="bg-brand-surface py-16 sm:py-24">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-10">
           <div>
-            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-off-white mb-3">
+            <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-brand-dark mb-3">
               Handpicked for You
             </h2>
             <div className="w-16 h-0.5 bg-brand-gold" />
           </div>
 
-          {/* Desktop Grid Navigation */}
           <div className="hidden lg:flex gap-2 mt-6 sm:mt-0">
             <Button
               variant="ghost"
@@ -75,12 +72,11 @@ export default function FeaturedListings() {
           ))}
         </div>
 
-        {/* Browse All Link */}
         <div className="mt-10 text-center">
           <Button
             asChild
-            variant="ghost"
-            className="border border-brand-border hover:border-brand-gold text-brand-warm-grey hover:text-brand-gold rounded-md px-8"
+            variant="outline"
+            className="border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white rounded-md px-8"
           >
             <Link href="/inventory">Browse All Listings</Link>
           </Button>

@@ -30,7 +30,6 @@ interface FilterBarProps {
   totalCount: number;
 }
 
-// Sentinel value used instead of empty string (Radix Select disallows value="")
 const ALL = '__all__';
 
 function toSelectVal(v: string) { return v || ALL; }
@@ -110,23 +109,23 @@ export default function FilterBar({
   const filterPanelContent = (
     <div className="space-y-6">
       <div>
-        <label className="text-sm font-medium text-brand-warm-grey mb-2 block">Search</label>
+        <label className="text-sm font-medium text-brand-dark-grey mb-2 block">Search</label>
         <Input
           placeholder="Search by name, brand, model..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="bg-brand-surface border-brand-border text-brand-off-white placeholder:text-brand-warm-grey"
+          className="bg-white border-brand-border text-brand-dark placeholder:text-brand-mid-grey"
           onKeyDown={handleSearchKeyDown}
         />
       </div>
 
       <div>
-        <label className="text-sm font-medium text-brand-warm-grey mb-2 block">Category</label>
+        <label className="text-sm font-medium text-brand-dark-grey mb-2 block">Category</label>
         <Select value={toSelectVal(category)} onValueChange={(v) => setCategory(fromSelectVal(v))}>
-          <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
+          <SelectTrigger className="bg-white border-brand-border text-brand-dark">
             <SelectValue placeholder="All Categories" />
           </SelectTrigger>
-          <SelectContent className="bg-brand-surface border-brand-border">
+          <SelectContent className="bg-white border-brand-border">
             <SelectItem value={ALL}>All Categories</SelectItem>
             {filterOptions.categories.map((cat) => (
               <SelectItem key={cat} value={cat.toLowerCase().replace(/ /g, '-')}>{cat}</SelectItem>
@@ -136,12 +135,12 @@ export default function FilterBar({
       </div>
 
       <div>
-        <label className="text-sm font-medium text-brand-warm-grey mb-2 block">Condition</label>
+        <label className="text-sm font-medium text-brand-dark-grey mb-2 block">Condition</label>
         <Select value={toSelectVal(condition)} onValueChange={(v) => setCondition(fromSelectVal(v))}>
-          <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
+          <SelectTrigger className="bg-white border-brand-border text-brand-dark">
             <SelectValue placeholder="All Conditions" />
           </SelectTrigger>
-          <SelectContent className="bg-brand-surface border-brand-border">
+          <SelectContent className="bg-white border-brand-border">
             <SelectItem value={ALL}>All Conditions</SelectItem>
             {filterOptions.conditions.map((cond) => (
               <SelectItem key={cond} value={cond.toLowerCase()}>{cond}</SelectItem>
@@ -151,12 +150,12 @@ export default function FilterBar({
       </div>
 
       <div>
-        <label className="text-sm font-medium text-brand-warm-grey mb-2 block">Brand / Make</label>
+        <label className="text-sm font-medium text-brand-dark-grey mb-2 block">Brand / Make</label>
         <Select value={toSelectVal(brand)} onValueChange={(v) => setBrand(fromSelectVal(v))}>
-          <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
+          <SelectTrigger className="bg-white border-brand-border text-brand-dark">
             <SelectValue placeholder="All Brands" />
           </SelectTrigger>
-          <SelectContent className="bg-brand-surface border-brand-border">
+          <SelectContent className="bg-white border-brand-border">
             <SelectItem value={ALL}>All Brands</SelectItem>
             {filterOptions.brands.map((b) => (
               <SelectItem key={b} value={b.toLowerCase()}>{b}</SelectItem>
@@ -166,32 +165,32 @@ export default function FilterBar({
       </div>
 
       <div>
-        <label className="text-sm font-medium text-brand-warm-grey mb-2 block">Price Range (₦)</label>
+        <label className="text-sm font-medium text-brand-dark-grey mb-2 block">Price Range (₦)</label>
         <div className="flex gap-3">
           <Input
             type="number"
             placeholder="Min"
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
-            className="bg-brand-surface border-brand-border text-brand-off-white"
+            className="bg-white border-brand-border text-brand-dark"
           />
           <Input
             type="number"
             placeholder="Max"
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
-            className="bg-brand-surface border-brand-border text-brand-off-white"
+            className="bg-white border-brand-border text-brand-dark"
           />
         </div>
       </div>
 
       <div>
-        <label className="text-sm font-medium text-brand-warm-grey mb-2 block">Fuel / Power</label>
+        <label className="text-sm font-medium text-brand-dark-grey mb-2 block">Fuel / Power</label>
         <Select value={toSelectVal(fuelType)} onValueChange={(v) => setFuelType(fromSelectVal(v))}>
-          <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
+          <SelectTrigger className="bg-white border-brand-border text-brand-dark">
             <SelectValue placeholder="All Types" />
           </SelectTrigger>
-          <SelectContent className="bg-brand-surface border-brand-border">
+          <SelectContent className="bg-white border-brand-border">
             <SelectItem value={ALL}>All Types</SelectItem>
             {filterOptions.fuelTypes.map((ft) => (
               <SelectItem key={ft} value={ft.toLowerCase()}>
@@ -203,12 +202,12 @@ export default function FilterBar({
       </div>
 
       <div>
-        <label className="text-sm font-medium text-brand-warm-grey mb-2 block">Transmission</label>
+        <label className="text-sm font-medium text-brand-dark-grey mb-2 block">Transmission</label>
         <Select value={toSelectVal(transmission)} onValueChange={(v) => setTransmission(fromSelectVal(v))}>
-          <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white">
+          <SelectTrigger className="bg-white border-brand-border text-brand-dark">
             <SelectValue placeholder="All" />
           </SelectTrigger>
-          <SelectContent className="bg-brand-surface border-brand-border">
+          <SelectContent className="bg-white border-brand-border">
             <SelectItem value={ALL}>All</SelectItem>
             {filterOptions.transmissions.map((t) => (
               <SelectItem key={t} value={t.toLowerCase()}>
@@ -222,26 +221,26 @@ export default function FilterBar({
   );
 
   return (
-    <div className="sticky top-20 z-40 bg-brand-card border-b border-brand-border backdrop-blur-sm">
+    <div className="sticky top-20 z-40 bg-white border-b border-brand-border shadow-sm">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
         {/* Desktop Filters */}
         <div className="hidden lg:flex items-center gap-4 flex-wrap">
           <div className="relative flex-1 min-w-[200px] max-w-[300px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-warm-grey" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-mid-grey" />
             <Input
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 bg-brand-surface border-brand-border text-brand-off-white h-10"
+              className="pl-10 bg-white border-brand-border text-brand-dark h-10"
               onKeyDown={handleSearchKeyDown}
             />
           </div>
 
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border text-brand-off-white h-10">
+            <SelectTrigger className="w-[180px] bg-white border-brand-border text-brand-dark h-10">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-brand-surface border-brand-border">
+            <SelectContent className="bg-white border-brand-border">
               <SelectItem value="newest">Newest First</SelectItem>
               <SelectItem value="price-asc">Price: Low to High</SelectItem>
               <SelectItem value="price-desc">Price: High to Low</SelectItem>
@@ -256,7 +255,7 @@ export default function FilterBar({
             onClick={() => setCategory('')}
             className={cn(
               'rounded-md',
-              category === '' ? 'bg-brand-gold text-brand-bg' : 'border-brand-border text-brand-warm-grey hover:text-brand-gold'
+              category === '' ? 'bg-brand-gold text-white hover:bg-brand-gold-dark' : 'border-brand-border text-brand-mid-grey hover:text-brand-gold hover:border-brand-gold'
             )}
           >
             All
@@ -271,7 +270,7 @@ export default function FilterBar({
                 onClick={() => setCategory(category === val ? '' : val)}
                 className={cn(
                   'rounded-md',
-                  category === val ? 'bg-brand-gold text-brand-bg' : 'border-brand-border text-brand-warm-grey hover:text-brand-gold'
+                  category === val ? 'bg-brand-gold text-white hover:bg-brand-gold-dark' : 'border-brand-border text-brand-mid-grey hover:text-brand-gold hover:border-brand-gold'
                 )}
               >
                 {cat}
@@ -286,7 +285,7 @@ export default function FilterBar({
               variant={viewMode === 'grid' ? 'default' : 'ghost'}
               size="icon"
               onClick={() => onViewModeChange('grid')}
-              className={cn('h-10 w-10 rounded-md', viewMode === 'grid' ? 'bg-brand-gold text-brand-bg' : 'text-brand-warm-grey hover:text-brand-gold')}
+              className={cn('h-10 w-10 rounded-md', viewMode === 'grid' ? 'bg-brand-gold text-white' : 'text-brand-mid-grey hover:text-brand-gold')}
             >
               <Grid className="w-4 h-4" />
             </Button>
@@ -294,7 +293,7 @@ export default function FilterBar({
               variant={viewMode === 'list' ? 'default' : 'ghost'}
               size="icon"
               onClick={() => onViewModeChange('list')}
-              className={cn('h-10 w-10 rounded-md', viewMode === 'list' ? 'bg-brand-gold text-brand-bg' : 'text-brand-warm-grey hover:text-brand-gold')}
+              className={cn('h-10 w-10 rounded-md', viewMode === 'list' ? 'bg-brand-gold text-white' : 'text-brand-mid-grey hover:text-brand-gold')}
             >
               <List className="w-4 h-4" />
             </Button>
@@ -304,48 +303,48 @@ export default function FilterBar({
         {/* Mobile Filters */}
         <div className="flex lg:hidden items-center justify-between gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-warm-grey" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-mid-grey" />
             <Input
               placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-10 bg-brand-surface border-brand-border text-brand-off-white h-10"
+              className="pl-10 bg-white border-brand-border text-brand-dark h-10"
               onKeyDown={handleSearchKeyDown}
             />
           </div>
 
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
-              <Button variant="outline" className="border-brand-border text-brand-warm-grey hover:text-brand-gold rounded-md">
+              <Button variant="outline" className="border-brand-border text-brand-mid-grey hover:text-brand-gold rounded-md">
                 <SlidersHorizontal className="w-4 h-4 mr-2" />
                 Filters
                 {activeFilters.length > 0 && (
-                  <Badge className="ml-2 bg-brand-gold text-brand-bg">{activeFilters.length}</Badge>
+                  <Badge className="ml-2 bg-brand-gold text-white">{activeFilters.length}</Badge>
                 )}
               </Button>
             </SheetTrigger>
-            <SheetContent side="bottom" className="bg-brand-card border-brand-border h-[85vh] overflow-y-auto">
+            <SheetContent side="bottom" className="bg-white border-brand-border h-[85vh] overflow-y-auto">
               <SheetHeader className="flex-row items-center justify-between">
-                <SheetTitle className="text-brand-off-white">Filters & Sort</SheetTitle>
+                <SheetTitle className="text-brand-dark">Filters & Sort</SheetTitle>
                 {activeFilters.length > 0 && (
-                  <Button variant="ghost" size="sm" onClick={clearAllFilters} className="text-brand-warm-grey hover:text-brand-gold">
+                  <Button variant="ghost" size="sm" onClick={clearAllFilters} className="text-brand-mid-grey hover:text-brand-gold">
                     Clear All
                   </Button>
                 )}
               </SheetHeader>
               <div className="mt-6">{filterPanelContent}</div>
-              <div className="sticky bottom-0 mt-6 pt-4 bg-brand-card border-t border-brand-border">
+              <div className="sticky bottom-0 mt-6 pt-4 bg-white border-t border-brand-border">
                 <div className="flex gap-3">
                   <Button
                     variant="outline"
                     onClick={clearAllFilters}
-                    className="flex-1 border-brand-border text-brand-warm-grey"
+                    className="flex-1 border-brand-border text-brand-mid-grey"
                   >
                     Clear
                   </Button>
                   <Button
                     onClick={() => { onFilterChangeRef.current(buildFilters()); setMobileOpen(false); }}
-                    className="flex-1 bg-brand-gold text-brand-bg hover:bg-brand-gold-light"
+                    className="flex-1 bg-brand-gold text-white hover:bg-brand-gold-dark"
                   >
                     Show {totalCount} Results
                   </Button>
@@ -369,13 +368,13 @@ export default function FilterBar({
                 <X className="w-3 h-3 ml-1" />
               </Badge>
             ))}
-            <Button variant="ghost" size="sm" onClick={clearAllFilters} className="text-xs text-brand-warm-grey hover:text-brand-gold">
+            <Button variant="ghost" size="sm" onClick={clearAllFilters} className="text-xs text-brand-mid-grey hover:text-brand-gold">
               Clear All
             </Button>
           </div>
         )}
 
-        <div className="mt-3 text-sm text-brand-warm-grey">
+        <div className="mt-3 text-sm text-brand-mid-grey">
           {totalCount} {totalCount === 1 ? 'listing' : 'listings'} found
         </div>
       </div>

@@ -23,12 +23,9 @@ const iconMap: Record<Category, React.ComponentType<{ className?: string }>> = {
 };
 
 export default function CategoryBar() {
-  // TODO: Connect to backend API — GET /api/categories
-
   return (
-    <section className="bg-brand-bg py-8 sm:py-12">
+    <section className="bg-white py-8 sm:py-12 border-b border-brand-border">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Horizontal scroll on mobile, grid on desktop */}
         <div className="flex overflow-x-auto gap-4 pb-2 sm:pb-0 sm:grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 sm:gap-6">
           {categories.map((category) => {
             const Icon = iconMap[category.name];
@@ -38,14 +35,14 @@ export default function CategoryBar() {
                 href={`/inventory?category=${category.slug}`}
                 className="block min-w-[140px] sm:min-w-0 flex-shrink-0"
               >
-                <Card className="bg-brand-card border-brand-border p-4 sm:p-6 flex flex-col items-center text-center group hover:border-brand-gold transition-colors duration-200">
+                <Card className="bg-brand-card border-brand-border p-4 sm:p-6 flex flex-col items-center text-center group hover:border-brand-gold hover:shadow-md transition-all duration-200">
                   <div className="w-12 h-12 rounded-full bg-brand-surface flex items-center justify-center mb-3 group-hover:bg-brand-gold/10 transition-colors duration-200">
                     <Icon className="w-6 h-6 text-brand-gold" />
                   </div>
-                  <h3 className="font-display text-sm sm:text-base text-brand-off-white mb-1">
+                  <h3 className="font-display text-sm sm:text-base text-brand-dark mb-1">
                     {category.name}
                   </h3>
-                  <p className="text-xs text-brand-warm-grey">
+                  <p className="text-xs text-brand-mid-grey">
                     {category.listingCount} {category.listingCount === 1 ? 'listing' : 'listings'}
                   </p>
                 </Card>

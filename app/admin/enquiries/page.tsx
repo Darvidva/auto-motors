@@ -125,37 +125,37 @@ export default function AdminEnquiriesPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="font-display text-3xl font-bold text-brand-off-white">Enquiries</h1>
-        <p className="text-brand-warm-grey mt-1">Customer messages and contact requests</p>
+        <h1 className="font-display text-3xl font-bold text-brand-dark">Enquiries</h1>
+        <p className="text-brand-mid-grey mt-1">Customer messages and contact requests</p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
-        <Card className="bg-brand-card border-brand-border">
+        <Card className="bg-white border-brand-border">
           <CardContent className="p-4">
-            <p className="text-brand-warm-grey text-xs uppercase tracking-wider">Total</p>
-            <p className="font-display text-2xl font-bold text-brand-off-white">{counts.total}</p>
+            <p className="text-brand-mid-grey text-xs uppercase tracking-wider">Total</p>
+            <p className="font-display text-2xl font-bold text-brand-dark">{counts.total}</p>
           </CardContent>
         </Card>
-        <Card className="bg-brand-card border-brand-border cursor-pointer hover:border-brand-border/80" onClick={() => setStatusFilter('Unread')}>
+        <Card className="bg-white border-brand-border cursor-pointer hover:border-brand-border/80" onClick={() => setStatusFilter('Unread')}>
           <CardContent className="p-4">
             <p className="text-red-400 text-xs uppercase tracking-wider">Unread</p>
             <p className="font-display text-2xl font-bold text-red-400">{counts.unread}</p>
           </CardContent>
         </Card>
-        <Card className="bg-brand-card border-brand-border cursor-pointer hover:border-brand-border/80" onClick={() => setStatusFilter('Read')}>
+        <Card className="bg-white border-brand-border cursor-pointer hover:border-brand-border/80" onClick={() => setStatusFilter('Read')}>
           <CardContent className="p-4">
             <p className="text-blue-400 text-xs uppercase tracking-wider">Read</p>
             <p className="font-display text-2xl font-bold text-blue-400">{counts.read}</p>
           </CardContent>
         </Card>
-        <Card className="bg-brand-card border-brand-border cursor-pointer hover:border-brand-border/80" onClick={() => setStatusFilter('Followed Up')}>
+        <Card className="bg-white border-brand-border cursor-pointer hover:border-brand-border/80" onClick={() => setStatusFilter('Followed Up')}>
           <CardContent className="p-4">
             <p className="text-yellow-400 text-xs uppercase tracking-wider">Followed Up</p>
             <p className="font-display text-2xl font-bold text-yellow-400">{counts.followedUp}</p>
           </CardContent>
         </Card>
-        <Card className="bg-brand-card border-brand-border cursor-pointer hover:border-brand-border/80" onClick={() => setStatusFilter('Resolved')}>
+        <Card className="bg-white border-brand-border cursor-pointer hover:border-brand-border/80" onClick={() => setStatusFilter('Resolved')}>
           <CardContent className="p-4">
             <p className="text-green-400 text-xs uppercase tracking-wider">Resolved</p>
             <p className="font-display text-2xl font-bold text-green-400">{counts.resolved}</p>
@@ -164,7 +164,7 @@ export default function AdminEnquiriesPage() {
       </div>
 
       {/* Filters */}
-      <Card className="bg-brand-card border-brand-border">
+      <Card className="bg-white border-brand-border">
         <CardContent className="p-4">
           <div className="flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px]">
@@ -172,14 +172,14 @@ export default function AdminEnquiriesPage() {
                 placeholder="Search by name or email..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="bg-brand-surface border-brand-border text-brand-off-white"
+                className="bg-brand-surface border-brand-border border-brand-border text-brand-dark"
               />
             </div>
             <Select value={statusFilter || '__all__'} onValueChange={(v) => setStatusFilter(v === '__all__' ? '' : v)}>
-              <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border text-brand-off-white">
+              <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border border-brand-border text-brand-dark">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
-              <SelectContent className="bg-brand-surface border-brand-border">
+              <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
                 <SelectItem value="__all__">All Status</SelectItem>
                 {statuses.map((s) => (
                   <SelectItem key={s} value={s}>{s}</SelectItem>
@@ -191,24 +191,24 @@ export default function AdminEnquiriesPage() {
       </Card>
 
       {/* Table */}
-      <Card className="bg-brand-card border-brand-border">
+      <Card className="bg-white border-brand-border">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow className="border-brand-border hover:bg-transparent">
-                  <TableHead className="text-brand-warm-grey">Contact</TableHead>
-                  <TableHead className="text-brand-warm-grey">Message</TableHead>
-                  <TableHead className="text-brand-warm-grey">Listing</TableHead>
-                  <TableHead className="text-brand-warm-grey">Status</TableHead>
-                  <TableHead className="text-brand-warm-grey">Date</TableHead>
-                  <TableHead className="text-brand-warm-grey text-right">Actions</TableHead>
+                  <TableHead className="text-brand-mid-grey">Contact</TableHead>
+                  <TableHead className="text-brand-mid-grey">Message</TableHead>
+                  <TableHead className="text-brand-mid-grey">Listing</TableHead>
+                  <TableHead className="text-brand-mid-grey">Status</TableHead>
+                  <TableHead className="text-brand-mid-grey">Date</TableHead>
+                  <TableHead className="text-brand-mid-grey text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredEnquiries.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center text-brand-warm-grey py-8">
+                    <TableCell colSpan={6} className="text-center text-brand-mid-grey py-8">
                       No enquiries found
                     </TableCell>
                   </TableRow>
@@ -216,15 +216,15 @@ export default function AdminEnquiriesPage() {
                   filteredEnquiries.map((enquiry) => (
                     <TableRow
                       key={enquiry.id}
-                      className="border-brand-border cursor-pointer hover:bg-brand-surface/50"
+                      className="border-brand-border cursor-pointer hover:bg-brand-surface border-brand-border/50"
                       onClick={() => openDetail(enquiry)}
                     >
                       <TableCell>
                         <div>
-                          <p className="text-brand-off-white font-medium">{enquiry.name}</p>
-                          <p className="text-brand-warm-grey text-sm">{enquiry.email}</p>
+                          <p className="text-brand-dark font-medium">{enquiry.name}</p>
+                          <p className="text-brand-mid-grey text-sm">{enquiry.email}</p>
                           {enquiry.phone && (
-                            <p className="text-brand-warm-grey text-xs">{enquiry.phone}</p>
+                            <p className="text-brand-mid-grey text-xs">{enquiry.phone}</p>
                           )}
                         </div>
                       </TableCell>
@@ -235,9 +235,9 @@ export default function AdminEnquiriesPage() {
                       </TableCell>
                       <TableCell>
                         {enquiry.listing_name ? (
-                          <p className="text-brand-off-white text-sm">{enquiry.listing_name}</p>
+                          <p className="text-brand-dark text-sm">{enquiry.listing_name}</p>
                         ) : (
-                          <span className="text-brand-warm-grey text-sm">General Enquiry</span>
+                          <span className="text-brand-mid-grey text-sm">General Enquiry</span>
                         )}
                       </TableCell>
                       <TableCell>
@@ -245,22 +245,22 @@ export default function AdminEnquiriesPage() {
                           {enquiry.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-brand-warm-grey text-sm">
+                      <TableCell className="text-brand-mid-grey text-sm">
                         {formatDate(enquiry.created_at)}
                       </TableCell>
                       <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="h-8 w-8 p-0 text-brand-warm-grey">
+                            <Button variant="ghost" className="h-8 w-8 p-0 text-brand-mid-grey">
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent className="bg-brand-surface border-brand-border">
+                          <DropdownMenuContent className="bg-brand-surface border-brand-border border-brand-border">
                             {statuses.map((s) => (
                               <DropdownMenuItem
                                 key={s}
                                 onClick={() => updateStatus(enquiry.id, s)}
-                                className="text-brand-off-white"
+                                className="text-brand-dark"
                               >
                                 Mark as {s}
                               </DropdownMenuItem>
@@ -279,9 +279,9 @@ export default function AdminEnquiriesPage() {
 
       {/* Detail Sheet */}
       <Sheet open={detailOpen} onOpenChange={setDetailOpen}>
-        <SheetContent className="bg-brand-card border-brand-border sm:max-w-lg overflow-y-auto">
+        <SheetContent className="bg-white border-brand-border sm:max-w-lg overflow-y-auto">
           <SheetHeader>
-            <SheetTitle className="text-brand-off-white">Enquiry Details</SheetTitle>
+            <SheetTitle className="text-brand-dark">Enquiry Details</SheetTitle>
           </SheetHeader>
 
           {selectedEnquiry && (
@@ -294,13 +294,13 @@ export default function AdminEnquiriesPage() {
                     </span>
                   </div>
                   <div>
-                    <p className="text-brand-off-white font-medium">{selectedEnquiry.name}</p>
-                    <p className="text-brand-warm-grey text-sm">{selectedEnquiry.email}</p>
+                    <p className="text-brand-dark font-medium">{selectedEnquiry.name}</p>
+                    <p className="text-brand-mid-grey text-sm">{selectedEnquiry.email}</p>
                   </div>
                 </div>
 
                 {selectedEnquiry.phone && (
-                  <div className="flex items-center gap-3 text-brand-warm-grey">
+                  <div className="flex items-center gap-3 text-brand-mid-grey">
                     <Phone className="w-4 h-4" />
                     <a href={`tel:${selectedEnquiry.phone}`} className="hover:text-brand-gold">
                       {selectedEnquiry.phone}
@@ -308,22 +308,22 @@ export default function AdminEnquiriesPage() {
                   </div>
                 )}
 
-                <div className="flex items-center gap-3 text-brand-warm-grey">
+                <div className="flex items-center gap-3 text-brand-mid-grey">
                   <Calendar className="w-4 h-4" />
                   <span>{formatDate(selectedEnquiry.created_at)}</span>
                 </div>
               </div>
 
               <div>
-                <Label className="text-brand-off-white">Status</Label>
+                <Label className="text-brand-dark">Status</Label>
                 <Select
                   value={selectedEnquiry.status}
                   onValueChange={(val) => updateStatus(selectedEnquiry.id, val)}
                 >
-                  <SelectTrigger className="bg-brand-surface border-brand-border text-brand-off-white mt-2">
+                  <SelectTrigger className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-brand-surface border-brand-border">
+                  <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
                     {statuses.map((s) => (
                       <SelectItem key={s} value={s}>{s}</SelectItem>
                     ))}
@@ -332,8 +332,8 @@ export default function AdminEnquiriesPage() {
               </div>
 
               <div>
-                <Label className="text-brand-off-white">Message</Label>
-                <div className="mt-2 p-4 bg-brand-surface rounded-lg border border-brand-border">
+                <Label className="text-brand-dark">Message</Label>
+                <div className="mt-2 p-4 bg-brand-surface border-brand-border rounded-lg border border-brand-border">
                   <p className="text-brand-grey whitespace-pre-wrap">
                     {selectedEnquiry.message}
                   </p>
@@ -342,7 +342,7 @@ export default function AdminEnquiriesPage() {
 
               {selectedEnquiry.listing_name && (
                 <div>
-                  <Label className="text-brand-off-white">Related Listing</Label>
+                  <Label className="text-brand-dark">Related Listing</Label>
                   <p className="mt-2 text-brand-gold">{selectedEnquiry.listing_name}</p>
                 </div>
               )}
