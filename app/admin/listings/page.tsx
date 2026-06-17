@@ -46,6 +46,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import ImageUpload from '@/components/admin/ImageUpload';
+import FeatureTagsInput from '@/components/admin/FeatureTagsInput';
 
 const categories = ['Cars', 'Trucks', 'Tractors', 'Excavators', 'Heavy Machinery', 'Equipment'];
 const conditions = ['New', 'Used'];
@@ -66,7 +68,6 @@ export default function AdminListingsPage() {
   // Form state
   const [formData, setFormData] = useState({
     name: '',
-    slug: '',
     category: 'Cars',
     brand: '',
     model: '',
@@ -80,12 +81,13 @@ export default function AdminListingsPage() {
     condition: 'Used' as 'New' | 'Used',
     color: '',
     description: '',
-    specifications: {} as Record<string, string>,
     features: [] as string[],
     images: [] as string[],
     featured: false,
     published: false,
   });
+
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
   const filteredListings = useMemo(() => {
     let result = [...listings];
@@ -108,12 +110,19 @@ export default function AdminListingsPage() {
     return result;
   }, [listings, search, categoryFilter, statusFilter]);
 
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+  };
+
   const openEditDialog = (listing?: Listing) => {
+    setFormErrors({});
     if (listing) {
       setSelectedListing(listing);
       setFormData({
         name: listing.name,
-        slug: listing.slug,
         category: listing.category,
         brand: listing.brand,
         model: listing.model,
@@ -127,9 +136,8 @@ export default function AdminListingsPage() {
         condition: listing.condition,
         color: listing.color,
         description: listing.description,
-        specifications: listing.specifications,
-        features: listing.features,
-        images: listing.images,
+        features: listing.features || [],
+        images: listing.images || [],
         featured: listing.featured,
         published: listing.published,
       });
@@ -137,7 +145,6 @@ export default function AdminListingsPage() {
       setSelectedListing(null);
       setFormData({
         name: '',
-        slug: '',
         category: 'Cars',
         brand: '',
         model: '',
@@ -151,7 +158,6 @@ export default function AdminListingsPage() {
         condition: 'Used',
         color: '',
         description: '',
-        specifications: {},
         features: [],
         images: [],
         featured: false,
@@ -161,10 +167,26 @@ export default function AdminListingsPage() {
     setEditDialogOpen(true);
   };
 
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
+
+    if (!formData.name.trim()) errors.name = 'Name is required';
+    if (!formData.brand.trim()) errors.brand = 'Brand is required';
+    if (!formData.model.trim()) errors.model = 'Model is required';
+    if (!formData.description.trim()) errors.description = 'Description is required';
+    if (formData.images.length === 0) errors.images = 'At least 1 image is required';
+    if (formData.price <= 0) errors.price = 'Price must be greater than 0';
+
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSave = () => {
+    if (!validateForm()) return;
+
     setSaving(true);
     setTimeout(() => {
-      const slug = formData.slug || formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      const slug = generateSlug(formData.name);
 
       if (selectedListing) {
         setListings(prev => prev.map(l =>
@@ -197,7 +219,7 @@ export default function AdminListingsPage() {
           condition: formData.condition,
           color: formData.color,
           description: formData.description,
-          specifications: formData.specifications,
+          specifications: {},
           features: formData.features,
           images: formData.images,
           featured: formData.featured,
@@ -246,7 +268,7 @@ export default function AdminListingsPage() {
         </div>
         <Button
           onClick={() => openEditDialog()}
-          className="bg-brand-gold text-white hover:bg-brand-gold-light"
+          className="bg-brand-gold text-white hover:bg-brand-gold-dark"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Listing
@@ -254,7 +276,7 @@ export default function AdminListingsPage() {
       </div>
 
       {/* Filters */}
-      <Card className="bg-white border-brand-border">
+      <Card className="bg-white border-brand-border shadow-sm">
         <CardContent className="p-4">
           <div className="flex flex-wrap gap-4">
             <div className="flex-1 min-w-[200px]">
@@ -262,14 +284,14 @@ export default function AdminListingsPage() {
                 placeholder="Search listings..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="bg-brand-surface border-brand-border border-brand-border text-brand-dark"
+                className="bg-white border-brand-border text-brand-dark"
               />
             </div>
             <Select value={categoryFilter || '__all__'} onValueChange={(v) => setCategoryFilter(v === '__all__' ? '' : v)}>
-              <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border border-brand-border text-brand-dark">
+              <SelectTrigger className="w-[180px] bg-white border-brand-border text-brand-dark">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
-              <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
+              <SelectContent className="bg-white border-brand-border">
                 <SelectItem value="__all__">All Categories</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>{cat}</SelectItem>
@@ -277,10 +299,10 @@ export default function AdminListingsPage() {
               </SelectContent>
             </Select>
             <Select value={statusFilter || '__all__'} onValueChange={(v) => setStatusFilter(v === '__all__' ? '' : v)}>
-              <SelectTrigger className="w-[180px] bg-brand-surface border-brand-border border-brand-border text-brand-dark">
+              <SelectTrigger className="w-[180px] bg-white border-brand-border text-brand-dark">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
-              <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
+              <SelectContent className="bg-white border-brand-border">
                 <SelectItem value="__all__">All Status</SelectItem>
                 <SelectItem value="published">Published</SelectItem>
                 <SelectItem value="draft">Draft</SelectItem>
@@ -291,7 +313,7 @@ export default function AdminListingsPage() {
       </Card>
 
       {/* Table */}
-      <Card className="bg-white border-brand-border">
+      <Card className="bg-white border-brand-border shadow-sm">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
@@ -332,17 +354,17 @@ export default function AdminListingsPage() {
                         </div>
                       </TableCell>
                       <TableCell className="text-brand-dark">{listing.category}</TableCell>
-                      <TableCell className="text-brand-gold font-medium">{formatPrice(listing.price)}</TableCell>
+                      <TableCell className="text-brand-gold font-semibold">{formatPrice(listing.price)}</TableCell>
                       <TableCell>
                         <div className="flex gap-2">
                           <Badge
                             variant={listing.published ? 'default' : 'secondary'}
-                            className={listing.published ? 'bg-green-600' : 'bg-brand-surface border-brand-border text-brand-mid-grey'}
+                            className={listing.published ? 'bg-green-100 text-green-700' : 'bg-brand-surface text-brand-mid-grey'}
                           >
                             {listing.published ? 'Published' : 'Draft'}
                           </Badge>
                           {listing.featured && (
-                            <Badge className="bg-brand-gold text-white">Featured</Badge>
+                            <Badge className="bg-brand-gold/10 text-brand-gold border border-brand-gold/20">Featured</Badge>
                           )}
                         </div>
                       </TableCell>
@@ -353,7 +375,7 @@ export default function AdminListingsPage() {
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent className="bg-brand-surface border-brand-border border-brand-border">
+                          <DropdownMenuContent className="bg-white border-brand-border">
                             <DropdownMenuItem onClick={() => openEditDialog(listing)} className="text-brand-dark">
                               <Edit className="mr-2 h-4 w-4" /> Edit
                             </DropdownMenuItem>
@@ -365,7 +387,7 @@ export default function AdminListingsPage() {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => { setSelectedListing(listing); setDeleteDialogOpen(true); }}
-                              className="text-red-400"
+                              className="text-red-500"
                             >
                               <Trash2 className="mr-2 h-4 w-4" /> Delete
                             </DropdownMenuItem>
@@ -385,139 +407,155 @@ export default function AdminListingsPage() {
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-white border-brand-border">
           <DialogHeader>
-            <DialogTitle className="text-brand-dark">
+            <DialogTitle className="text-brand-dark text-xl">
               {selectedListing ? 'Edit Listing' : 'Add New Listing'}
             </DialogTitle>
+            <p className="text-brand-mid-grey text-sm">
+              {selectedListing ? 'Update the details below.' : 'Fill in the details to add a new listing.'}
+            </p>
           </DialogHeader>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
+          <div className="py-4 space-y-6">
+            {/* Basic Info */}
             <div className="space-y-4">
-              <div>
-                <Label className="text-brand-dark">Name *</Label>
-                <Input
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
-                  placeholder="e.g., Toyota Land Cruiser 300"
-                />
-              </div>
+              <h3 className="font-medium text-brand-dark border-b border-brand-border pb-2">Basic Information</h3>
 
-              <div>
-                <Label className="text-brand-dark">Slug</Label>
-                <Input
-                  value={formData.slug}
-                  onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                  className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
-                  placeholder="auto-generated if empty"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-brand-dark">Category *</Label>
+                  <Label className="text-brand-dark-grey">Name *</Label>
+                  <Input
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    className={`bg-white mt-1.5 ${formErrors.name ? 'border-red-400' : 'border-brand-border'} text-brand-dark`}
+                    placeholder="e.g., Toyota Land Cruiser 300"
+                  />
+                  {formErrors.name && <p className="text-red-500 text-xs mt-1">{formErrors.name}</p>}
+                </div>
+
+                <div>
+                  <Label className="text-brand-dark-grey">Category *</Label>
                   <Select value={formData.category} onValueChange={(val) => setFormData({ ...formData, category: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2">
+                    <SelectTrigger className="bg-white border-brand-border text-brand-dark mt-1.5">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
+                    <SelectContent className="bg-white border-brand-border">
                       {categories.map((cat) => (
                         <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-brand-dark-grey">Brand *</Label>
+                  <Input
+                    value={formData.brand}
+                    onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
+                    className={`bg-white mt-1.5 ${formErrors.brand ? 'border-red-400' : 'border-brand-border'} text-brand-dark`}
+                    placeholder="e.g., Toyota"
+                  />
+                  {formErrors.brand && <p className="text-red-500 text-xs mt-1">{formErrors.brand}</p>}
+                </div>
 
                 <div>
-                  <Label className="text-brand-dark">Condition</Label>
+                  <Label className="text-brand-dark-grey">Model *</Label>
+                  <Input
+                    value={formData.model}
+                    onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+                    className={`bg-white mt-1.5 ${formErrors.model ? 'border-red-400' : 'border-brand-border'} text-brand-dark`}
+                    placeholder="e.g., Land Cruiser"
+                  />
+                  {formErrors.model && <p className="text-red-500 text-xs mt-1">{formErrors.model}</p>}
+                </div>
+
+                <div>
+                  <Label className="text-brand-dark-grey">Year *</Label>
+                  <Input
+                    type="number"
+                    value={formData.year}
+                    onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) || new Date().getFullYear() })}
+                    className="bg-white border-brand-border text-brand-dark mt-1.5"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-brand-dark-grey">Price (₦) *</Label>
+                  <Input
+                    type="number"
+                    value={formData.price || ''}
+                    onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) || 0 })}
+                    className={`bg-white mt-1.5 ${formErrors.price ? 'border-red-400' : 'border-brand-border'} text-brand-dark`}
+                    placeholder="e.g., 85000000"
+                  />
+                  {formErrors.price && <p className="text-red-500 text-xs mt-1">{formErrors.price}</p>}
+                </div>
+
+                <div>
+                  <Label className="text-brand-dark-grey">Condition</Label>
                   <Select value={formData.condition} onValueChange={(val: any) => setFormData({ ...formData, condition: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2">
+                    <SelectTrigger className="bg-white border-brand-border text-brand-dark mt-1.5">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
+                    <SelectContent className="bg-white border-brand-border">
                       {conditions.map((cond) => (
                         <SelectItem key={cond} value={cond}>{cond}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-brand-dark">Brand *</Label>
-                  <Input
-                    value={formData.brand}
-                    onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                    className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
-                    placeholder="e.g., Toyota"
-                  />
-                </div>
 
                 <div>
-                  <Label className="text-brand-dark">Model *</Label>
+                  <Label className="text-brand-dark-grey">Color</Label>
                   <Input
-                    value={formData.model}
-                    onChange={(e) => setFormData({ ...formData, model: e.target.value })}
-                    className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
-                    placeholder="e.g., Land Cruiser"
+                    value={formData.color}
+                    onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+                    className="bg-white border-brand-border text-brand-dark mt-1.5"
+                    placeholder="e.g., Pearl White"
                   />
                 </div>
               </div>
+            </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-brand-dark">Year *</Label>
-                  <Input
-                    type="number"
-                    value={formData.year}
-                    onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) })}
-                    className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
-                  />
-                </div>
+            {/* Vehicle Details */}
+            <div className="space-y-4">
+              <h3 className="font-medium text-brand-dark border-b border-brand-border pb-2">Vehicle / Machinery Details</h3>
 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-brand-dark">Price (₦) *</Label>
-                  <Input
-                    type="number"
-                    value={formData.price}
-                    onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) })}
-                    className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-brand-dark">Mileage (km)</Label>
+                  <Label className="text-brand-dark-grey">Mileage (km)</Label>
                   <Input
                     type="number"
                     value={formData.mileage ?? ''}
                     onChange={(e) => setFormData({ ...formData, mileage: e.target.value ? parseInt(e.target.value) : null })}
-                    className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
+                    className="bg-white border-brand-border text-brand-dark mt-1.5"
                     placeholder="For vehicles"
                   />
                 </div>
 
                 <div>
-                  <Label className="text-brand-dark">Hours Used</Label>
+                  <Label className="text-brand-dark-grey">Hours Used</Label>
                   <Input
                     type="number"
                     value={formData.hoursUsed ?? ''}
                     onChange={(e) => setFormData({ ...formData, hoursUsed: e.target.value ? parseInt(e.target.value) : null })}
-                    className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
+                    className="bg-white border-brand-border text-brand-dark mt-1.5"
                     placeholder="For machinery"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label className="text-brand-dark">Transmission</Label>
+                  <Label className="text-brand-dark-grey">Transmission</Label>
                   <Select value={formData.transmission} onValueChange={(val: any) => setFormData({ ...formData, transmission: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2">
+                    <SelectTrigger className="bg-white border-brand-border text-brand-dark mt-1.5">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
+                    <SelectContent className="bg-white border-brand-border">
                       {transmissions.map((t) => (
                         <SelectItem key={t} value={t}>{t}</SelectItem>
                       ))}
@@ -526,12 +564,12 @@ export default function AdminListingsPage() {
                 </div>
 
                 <div>
-                  <Label className="text-brand-dark">Fuel Type</Label>
+                  <Label className="text-brand-dark-grey">Fuel Type</Label>
                   <Select value={formData.fuelType} onValueChange={(val: any) => setFormData({ ...formData, fuelType: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2">
+                    <SelectTrigger className="bg-white border-brand-border text-brand-dark mt-1.5">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
+                    <SelectContent className="bg-white border-brand-border">
                       {fuelTypes.map((f) => (
                         <SelectItem key={f} value={f}>{f}</SelectItem>
                       ))}
@@ -540,12 +578,12 @@ export default function AdminListingsPage() {
                 </div>
 
                 <div>
-                  <Label className="text-brand-dark">Drive System</Label>
+                  <Label className="text-brand-dark-grey">Drive System</Label>
                   <Select value={formData.driveSystem} onValueChange={(val) => setFormData({ ...formData, driveSystem: val })}>
-                    <SelectTrigger className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2">
+                    <SelectTrigger className="bg-white border-brand-border text-brand-dark mt-1.5">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
+                    <SelectContent className="bg-white border-brand-border">
                       {driveSystems.map((d) => (
                         <SelectItem key={d} value={d}>{d}</SelectItem>
                       ))}
@@ -553,70 +591,62 @@ export default function AdminListingsPage() {
                   </Select>
                 </div>
               </div>
-
-              <div>
-                <Label className="text-brand-dark">Color</Label>
-                <Input
-                  value={formData.color}
-                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2"
-                  placeholder="e.g., Pearl White"
-                />
-              </div>
             </div>
 
-            <div className="space-y-4">
-              <div>
-                <Label className="text-brand-dark">Description *</Label>
-                <Textarea
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  className="bg-brand-surface border-brand-border border-brand-border text-brand-dark min-h-[120px] mt-2"
-                  placeholder="Detailed description..."
+            {/* Images */}
+            <div className="space-y-3">
+              <h3 className="font-medium text-brand-dark border-b border-brand-border pb-2">Photos *</h3>
+              <ImageUpload
+                images={formData.images}
+                onChange={(images) => setFormData({ ...formData, images })}
+                maxImages={5}
+              />
+              {formErrors.images && <p className="text-red-500 text-xs">{formErrors.images}</p>}
+            </div>
+
+            {/* Description */}
+            <div className="space-y-3">
+              <h3 className="font-medium text-brand-dark border-b border-brand-border pb-2">Description *</h3>
+              <Textarea
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                className={`bg-white ${formErrors.description ? 'border-red-400' : 'border-brand-border'} text-brand-dark min-h-[100px]`}
+                placeholder="Write a detailed description of the vehicle or machinery..."
+              />
+              {formErrors.description && <p className="text-red-500 text-xs">{formErrors.description}</p>}
+            </div>
+
+            {/* Features */}
+            <div className="space-y-3">
+              <h3 className="font-medium text-brand-dark border-b border-brand-border pb-2">Features</h3>
+              <FeatureTagsInput
+                features={formData.features}
+                onChange={(features) => setFormData({ ...formData, features })}
+                placeholder="e.g., GPS Navigation, Reverse Camera"
+              />
+            </div>
+
+            {/* Status */}
+            <div className="flex items-center gap-6 pt-4 border-t border-brand-border">
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={formData.published}
+                  onCheckedChange={(checked) => setFormData({ ...formData, published: checked })}
                 />
+                <Label className="text-brand-dark-grey">Publish immediately</Label>
               </div>
 
-              <div>
-                <Label className="text-brand-dark">Images (URLs, one per line)</Label>
-                <Textarea
-                  value={formData.images.join('\n')}
-                  onChange={(e) => setFormData({ ...formData, images: e.target.value.split('\n').filter(Boolean) })}
-                  className="bg-brand-surface border-brand-border border-brand-border text-brand-dark min-h-[80px] mt-2"
-                  placeholder="https://images.pexels.com/..."
+              <div className="flex items-center gap-2">
+                <Switch
+                  checked={formData.featured}
+                  onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
                 />
-              </div>
-
-              <div>
-                <Label className="text-brand-dark">Features (one per line)</Label>
-                <Textarea
-                  value={formData.features?.join('\n') || ''}
-                  onChange={(e) => setFormData({ ...formData, features: e.target.value.split('\n').filter(Boolean) })}
-                  className="bg-brand-surface border-brand-border border-brand-border text-brand-dark min-h-[80px] mt-2"
-                  placeholder="GPS Navigation&#10;Reverse Camera"
-                />
-              </div>
-
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={formData.published}
-                    onCheckedChange={(checked) => setFormData({ ...formData, published: checked })}
-                  />
-                  <Label className="text-brand-dark">Published</Label>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Switch
-                    checked={formData.featured}
-                    onCheckedChange={(checked) => setFormData({ ...formData, featured: checked })}
-                  />
-                  <Label className="text-brand-dark">Featured</Label>
-                </div>
+                <Label className="text-brand-dark-grey">Mark as featured</Label>
               </div>
             </div>
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="gap-2 sm:gap-0">
             <Button
               variant="outline"
               onClick={() => setEditDialogOpen(false)}
@@ -627,9 +657,9 @@ export default function AdminListingsPage() {
             <Button
               onClick={handleSave}
               disabled={saving}
-              className="bg-brand-gold text-white hover:bg-brand-gold-light"
+              className="bg-brand-gold text-white hover:bg-brand-gold-dark"
             >
-              {saving ? 'Saving...' : 'Save Listing'}
+              {saving ? 'Saving...' : selectedListing ? 'Update Listing' : 'Add Listing'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -642,7 +672,7 @@ export default function AdminListingsPage() {
             <DialogTitle className="text-brand-dark">Delete Listing</DialogTitle>
           </DialogHeader>
           <p className="text-brand-mid-grey">
-            Are you sure you want to delete &quot;{selectedListing?.name}&quot;? This action cannot be undone.
+            Are you sure you want to delete &quot;{selectedListing?.name}&quot;? This cannot be undone.
           </p>
           <DialogFooter>
             <Button
@@ -656,7 +686,7 @@ export default function AdminListingsPage() {
               variant="destructive"
               onClick={handleDelete}
               disabled={saving}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-500 hover:bg-red-600"
             >
               {saving ? 'Deleting...' : 'Delete'}
             </Button>
