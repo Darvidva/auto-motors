@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPrisma } from '@/lib/prisma';
 import { settingsSchema } from '@/lib/validations';
 
 export async function GET() {
   try {
+    const prisma = await getPrisma();
     const settings = await prisma.businessSettings.findFirst();
     return NextResponse.json(settings);
   } catch (error) {
@@ -14,6 +15,7 @@ export async function GET() {
 
 export async function PATCH(request: NextRequest) {
   try {
+    const prisma = await getPrisma();
     const body = await request.json();
     
     // Validate request body

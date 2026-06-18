@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { getPrisma } from '@/lib/prisma';
 import { contactSchema } from '@/lib/validations';
 
 export async function GET() {
   try {
+    const prisma = await getPrisma();
     const enquiries = await prisma.enquiry.findMany({
       orderBy: { createdAt: 'desc' },
     });
@@ -16,6 +17,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    const prisma = await getPrisma();
     const body = await request.json();
     
     // Validate request body
