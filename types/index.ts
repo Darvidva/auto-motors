@@ -30,6 +30,12 @@ export interface Listing {
   driveSystem: DriveSystem;
   condition: Condition;
   color: string;
+  interiorColor?: string;
+  bodyType?: string;
+  engineCapacity?: string;
+  vin?: string;
+  serviceHistory?: string;
+  numberOfKeys?: number;
   description: string;
   specifications: Record<string, string>;
   features: string[];

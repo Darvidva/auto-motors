@@ -3,33 +3,41 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema, type LoginFormValues } from '@/lib/validations';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle, Lock } from 'lucide-react';
+import { BarLoader } from '@/components/ui/bar-loader';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: '', password: '' },
+  });
 
-    setTimeout(() => {
-      if (email && password) {
-        router.push('/admin');
-      } else {
-        setError('Please enter email and password');
-      }
-      setLoading(false);
-    }, 500);
+  const onSubmit = async (data: LoginFormValues) => {
+    setServerError(null);
+
+    // simulate auth delay
+    await new Promise((r) => setTimeout(r, 500));
+
+    if (data.email && data.password) {
+      router.push('/admin');
+    } else {
+      setServerError('Please enter email and password');
+    }
   };
 
   return (
@@ -54,12 +62,12 @@ export default function AdminLoginPage() {
               Enter your admin credentials to access the dashboard
             </CardDescription>
           </CardHeader>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <CardContent className="space-y-4">
-              {error && (
+              {serverError && (
                 <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-600">
                   <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{error}</AlertDescription>
+                  <AlertDescription>{serverError}</AlertDescription>
                 </Alert>
               )}
 
@@ -69,11 +77,12 @@ export default function AdminLoginPage() {
                   id="email"
                   type="email"
                   placeholder="admin@dxstaremporium.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
+                  {...register('email')}
                   className="bg-white border-brand-border text-brand-dark placeholder:text-brand-mid-grey"
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -82,32 +91,24 @@ export default function AdminLoginPage() {
                   id="password"
                   type="password"
                   placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  {...register('password')}
                   className="bg-white border-brand-border text-brand-dark placeholder:text-brand-mid-grey"
                 />
-              </div>
-
-              <div className="text-xs text-brand-mid-grey bg-brand-surface p-3 rounded-lg border border-brand-border">
-                <p className="font-medium text-brand-gold mb-1">Demo Mode</p>
-                Enter any email and password to access the admin panel.
-                Data is stored locally and will reset on page reload.
+                {errors.password && (
+                  <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                )}
               </div>
             </CardContent>
             <CardFooter>
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={isSubmitting}
                 className="w-full bg-brand-gold text-white hover:bg-brand-gold-dark"
               >
-                {loading ? (
-                  <span className="flex items-center gap-2">
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                    </svg>
-                    Signing in...
+                {isSubmitting ? (
+                  <span className="flex items-center gap-3">
+                    <BarLoader size="sm" color="bg-white" />
+                    Signing in…
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">

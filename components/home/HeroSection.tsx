@@ -66,7 +66,7 @@ export default function HeroSection() {
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="https://images.pexels.com/photos/2519374/pexels-photo-2519374.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          src="/images/hero/home.jpg"
           alt="Premium vehicles and machinery"
           fill
           className="object-cover"

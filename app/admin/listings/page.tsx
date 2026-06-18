@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { listings as allListings } from '@/lib/placeholder-data';
+import { listingSchema } from '@/lib/validations';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,6 +49,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import ImageUpload from '@/components/admin/ImageUpload';
 import FeatureTagsInput from '@/components/admin/FeatureTagsInput';
+import { BarLoader } from '@/components/ui/bar-loader';
 
 const categories = ['Cars', 'Trucks', 'Tractors', 'Excavators', 'Heavy Machinery', 'Equipment'];
 const conditions = ['New', 'Used'];
@@ -80,6 +82,12 @@ export default function AdminListingsPage() {
     driveSystem: '4WD' as string,
     condition: 'Used' as 'New' | 'Used',
     color: '',
+    interiorColor: '',
+    bodyType: '',
+    engineCapacity: '',
+    vin: '',
+    serviceHistory: '',
+    numberOfKeys: null as number | null,
     description: '',
     features: [] as string[],
     images: [] as string[],
@@ -135,6 +143,12 @@ export default function AdminListingsPage() {
         driveSystem: listing.driveSystem,
         condition: listing.condition,
         color: listing.color,
+        interiorColor: listing.interiorColor || '',
+        bodyType: listing.bodyType || '',
+        engineCapacity: listing.engineCapacity || '',
+        vin: listing.vin || '',
+        serviceHistory: listing.serviceHistory || '',
+        numberOfKeys: listing.numberOfKeys ?? null,
         description: listing.description,
         features: listing.features || [],
         images: listing.images || [],
@@ -157,6 +171,12 @@ export default function AdminListingsPage() {
         driveSystem: '4WD',
         condition: 'Used',
         color: '',
+        interiorColor: '',
+        bodyType: '',
+        engineCapacity: '',
+        vin: '',
+        serviceHistory: '',
+        numberOfKeys: null,
         description: '',
         features: [],
         images: [],
@@ -168,17 +188,20 @@ export default function AdminListingsPage() {
   };
 
   const validateForm = (): boolean => {
-    const errors: Record<string, string> = {};
-
-    if (!formData.name.trim()) errors.name = 'Name is required';
-    if (!formData.brand.trim()) errors.brand = 'Brand is required';
-    if (!formData.model.trim()) errors.model = 'Model is required';
-    if (!formData.description.trim()) errors.description = 'Description is required';
-    if (formData.images.length === 0) errors.images = 'At least 1 image is required';
-    if (formData.price <= 0) errors.price = 'Price must be greater than 0';
-
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
+    const result = listingSchema.safeParse(formData);
+    if (result.success) {
+      setFormErrors({});
+      return true;
+    }
+    const fieldErrors: Record<string, string> = {};
+    for (const issue of result.error.issues) {
+      const key = issue.path[0]?.toString();
+      if (key && !fieldErrors[key]) {
+        fieldErrors[key] = issue.message;
+      }
+    }
+    setFormErrors(fieldErrors);
+    return false;
   };
 
   const handleSave = () => {
@@ -198,6 +221,7 @@ export default function AdminListingsPage() {
                 category: formData.category as any,
                 mileage: formData.mileage ?? undefined,
                 hoursUsed: formData.hoursUsed ?? undefined,
+                numberOfKeys: formData.numberOfKeys ?? undefined,
               }
             : l
         ));
@@ -218,6 +242,12 @@ export default function AdminListingsPage() {
           driveSystem: formData.driveSystem,
           condition: formData.condition,
           color: formData.color,
+          interiorColor: formData.interiorColor,
+          bodyType: formData.bodyType,
+          engineCapacity: formData.engineCapacity,
+          vin: formData.vin,
+          serviceHistory: formData.serviceHistory,
+          numberOfKeys: formData.numberOfKeys ?? undefined,
           description: formData.description,
           specifications: {},
           features: formData.features,
@@ -509,12 +539,77 @@ export default function AdminListingsPage() {
                 </div>
 
                 <div>
-                  <Label className="text-brand-dark-grey">Color</Label>
+                  <Label className="text-brand-dark-grey">Color (Exterior)</Label>
                   <Input
                     value={formData.color}
                     onChange={(e) => setFormData({ ...formData, color: e.target.value })}
                     className="bg-white border-brand-border text-brand-dark mt-1.5"
                     placeholder="e.g., Pearl White"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-brand-dark-grey">Interior Color</Label>
+                  <Input
+                    value={formData.interiorColor}
+                    onChange={(e) => setFormData({ ...formData, interiorColor: e.target.value })}
+                    className="bg-white border-brand-border text-brand-dark mt-1.5"
+                    placeholder="e.g., Beige Leather"
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-brand-dark-grey">Body Type</Label>
+                  <Input
+                    value={formData.bodyType}
+                    onChange={(e) => setFormData({ ...formData, bodyType: e.target.value })}
+                    className="bg-white border-brand-border text-brand-dark mt-1.5"
+                    placeholder="e.g., SUV, Sedan, Tractor"
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-brand-dark-grey">Engine Capacity</Label>
+                  <Input
+                    value={formData.engineCapacity}
+                    onChange={(e) => setFormData({ ...formData, engineCapacity: e.target.value })}
+                    className="bg-white border-brand-border text-brand-dark mt-1.5"
+                    placeholder="e.g., 3.5L V6"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-brand-dark-grey">VIN (Vehicle ID Number)</Label>
+                  <Input
+                    value={formData.vin}
+                    onChange={(e) => setFormData({ ...formData, vin: e.target.value })}
+                    className="bg-white border-brand-border text-brand-dark mt-1.5"
+                    placeholder="e.g., 1HGCM82633A..."
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-brand-dark-grey">Service History</Label>
+                  <Input
+                    value={formData.serviceHistory}
+                    onChange={(e) => setFormData({ ...formData, serviceHistory: e.target.value })}
+                    className="bg-white border-brand-border text-brand-dark mt-1.5"
+                    placeholder="e.g., Full Dealership History"
+                  />
+                </div>
+
+                <div>
+                  <Label className="text-brand-dark-grey">Number of Keys</Label>
+                  <Input
+                    type="number"
+                    value={formData.numberOfKeys ?? ''}
+                    onChange={(e) => setFormData({ ...formData, numberOfKeys: e.target.value ? parseInt(e.target.value) : null })}
+                    className="bg-white border-brand-border text-brand-dark mt-1.5"
+                    placeholder="e.g., 2"
                   />
                 </div>
               </div>
@@ -659,7 +754,12 @@ export default function AdminListingsPage() {
               disabled={saving}
               className="bg-brand-gold text-white hover:bg-brand-gold-dark"
             >
-              {saving ? 'Saving...' : selectedListing ? 'Update Listing' : 'Add Listing'}
+              {saving ? (
+                <span className="flex items-center gap-2">
+                  <BarLoader size="sm" color="bg-white" />
+                  Saving…
+                </span>
+              ) : selectedListing ? 'Update Listing' : 'Add Listing'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -688,7 +788,12 @@ export default function AdminListingsPage() {
               disabled={saving}
               className="bg-red-500 hover:bg-red-600"
             >
-              {saving ? 'Deleting...' : 'Delete'}
+              {saving ? (
+                <span className="flex items-center gap-2">
+                  <BarLoader size="sm" color="bg-white" />
+                  Deleting…
+                </span>
+              ) : 'Delete'}
             </Button>
           </DialogFooter>
         </DialogContent>

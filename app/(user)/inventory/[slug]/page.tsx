@@ -5,9 +5,9 @@ import { listings } from '@/lib/placeholder-data';
 // TODO: Connect to backend API — GET /api/listings/[slug]
 
 interface ListingPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 // Generate static params for all listings
@@ -17,8 +17,9 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function ListingPage({ params }: ListingPageProps) {
-  const listing = listings.find((l) => l.slug === params.slug);
+export default async function ListingPage({ params }: ListingPageProps) {
+  const { slug } = await params;
+  const listing = listings.find((l) => l.slug === slug);
 
   if (!listing) {
     notFound();

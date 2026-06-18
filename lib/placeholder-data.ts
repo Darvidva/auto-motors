@@ -539,19 +539,19 @@ export const teamMembers: TeamMember[] = [
   {
     name: 'Adewale Okonkwo',
     role: 'Founder & Managing Director',
-    image: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=400',
+    image: '/images/team/member-1.jpg',
     bio: 'With over 15 years in the automotive and machinery industry, Adewale founded DX STAR EMPORIUM with a vision for quality and trust.',
   },
   {
     name: 'Chioma Nwankwo',
     role: 'Head of Operations',
-    image: 'https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg?auto=compress&cs=tinysrgb&w=400',
+    image: '/images/team/member-2.jpg',
     bio: 'Chioma ensures every vehicle and piece of machinery meets our rigorous standards before reaching our showroom.',
   },
   {
     name: 'Emeka Obi',
     role: 'Lead Sales Consultant',
-    image: 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=400',
+    image: '/images/team/member-3.jpg',
     bio: 'Emeka brings deep knowledge of both luxury vehicles and industrial equipment to help clients find the perfect fit.',
   },
 ];

@@ -91,6 +91,10 @@ const config: Config = {
           '0%': { transform: 'scale(1)' },
           '100%': { transform: 'scale(1.05)' },
         },
+        'bar-pulse': {
+          '0%, 100%': { transform: 'scaleY(0.4)', opacity: '0.4' },
+          '50%': { transform: 'scaleY(1)', opacity: '1' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -98,6 +102,7 @@ const config: Config = {
         shimmer: 'shimmer 2s infinite',
         'fade-up': 'fade-up 0.4s ease-out forwards',
         'ken-burns': 'ken-burns 8s ease-in-out infinite alternate',
+        'bar-pulse': 'bar-pulse 0.8s ease-in-out infinite',
       },
     },
   },

@@ -67,14 +67,14 @@ export default function AboutPage() {
       {/* Hero Section */}
       <div className="relative h-[50vh] sm:h-[60vh] flex items-center justify-center">
         <Image
-          src="https://images.pexels.com/photos/1335077/pexels-photo-1335077.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          src="/images/hero/about.jpg"
           alt="About Us"
           fill
           className="object-cover"
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-white/85" />
+        <div className="absolute inset-0 bg-white/80" />
         <div className="relative z-10 text-center px-4">
           <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-brand-dark mb-4">
             Our Story

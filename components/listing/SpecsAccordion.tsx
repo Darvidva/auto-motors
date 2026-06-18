@@ -8,6 +8,7 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
+import { businessInfo } from '@/lib/placeholder-data';
 
 interface SpecsAccordionProps {
   listing: Listing;
@@ -31,11 +32,39 @@ export default function SpecsAccordion({ listing }: SpecsAccordionProps) {
         </AccordionTrigger>
         <AccordionContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 rounded-lg overflow-hidden border border-brand-border">
+              <div className="flex justify-between py-3 px-4 bg-white">
+                <span className="text-brand-mid-grey">Exterior Color</span>
+                <span className="text-brand-dark font-medium">{listing.color}</span>
+              </div>
+              {listing.interiorColor && (
+                <div className="flex justify-between py-3 px-4 bg-brand-surface">
+                  <span className="text-brand-mid-grey">Interior Color</span>
+                  <span className="text-brand-dark font-medium">{listing.interiorColor}</span>
+                </div>
+              )}
+              {listing.bodyType && (
+                <div className="flex justify-between py-3 px-4 bg-white">
+                  <span className="text-brand-mid-grey">Body Type</span>
+                  <span className="text-brand-dark font-medium">{listing.bodyType}</span>
+                </div>
+              )}
+              {listing.engineCapacity && (
+                <div className="flex justify-between py-3 px-4 bg-brand-surface">
+                  <span className="text-brand-mid-grey">Engine Capacity</span>
+                  <span className="text-brand-dark font-medium">{listing.engineCapacity}</span>
+                </div>
+              )}
+              {listing.vin && (
+                <div className="flex justify-between py-3 px-4 bg-white">
+                  <span className="text-brand-mid-grey">VIN</span>
+                  <span className="text-brand-dark font-medium font-mono text-sm">{listing.vin}</span>
+                </div>
+              )}
             {Object.entries(listing.specifications).map(([key, value], index) => (
               <div
                 key={key}
                 className={`flex justify-between py-3 px-4 ${
-                  index % 2 === 0 ? 'bg-white' : 'bg-brand-surface'
+                  index % 2 === 1 ? 'bg-white' : 'bg-brand-surface'
                 }`}
               >
                 <span className="text-brand-mid-grey">{key}</span>
@@ -52,12 +81,24 @@ export default function SpecsAccordion({ listing }: SpecsAccordionProps) {
         </AccordionTrigger>
         <AccordionContent>
           <div className="space-y-4">
-            <div className="flex justify-between">
+            <div className="flex justify-between border-b border-brand-border pb-3">
               <span className="text-brand-mid-grey">Condition</span>
               <Badge variant={listing.condition === 'New' ? 'default' : 'secondary'}>
                 {listing.condition}
               </Badge>
             </div>
+            {listing.serviceHistory && (
+              <div className="flex justify-between border-b border-brand-border pb-3">
+                <span className="text-brand-mid-grey">Service History</span>
+                <span className="text-brand-dark font-medium">{listing.serviceHistory}</span>
+              </div>
+            )}
+            {listing.numberOfKeys !== undefined && listing.numberOfKeys !== null && (
+              <div className="flex justify-between border-b border-brand-border pb-3">
+                <span className="text-brand-mid-grey">Keys Included</span>
+                <span className="text-brand-dark">{listing.numberOfKeys}</span>
+              </div>
+            )}
             {listing.mileage !== undefined && (
               <div className="flex justify-between">
                 <span className="text-brand-mid-grey">Mileage</span>
@@ -103,16 +144,25 @@ export default function SpecsAccordion({ listing }: SpecsAccordionProps) {
           <div className="space-y-4">
             <div>
               <p className="text-brand-mid-grey text-sm mb-1">Address</p>
-              <p className="text-brand-dark">1234 Industrial Way, Commerce City, CA 90210</p>
+              <p className="text-brand-dark">{businessInfo.address}</p>
             </div>
             <div>
               <p className="text-brand-mid-grey text-sm mb-1">Hours</p>
-              <p className="text-brand-dark">Mon-Fri 9:00 AM - 6:00 PM, Sat 10:00 AM - 4:00 PM</p>
+              <p className="text-brand-dark">
+                {businessInfo.hours.find(h => !h.closed)?.open} - {businessInfo.hours.find(h => !h.closed)?.close} (Contact for details)
+              </p>
             </div>
-            <div className="aspect-video rounded-lg overflow-hidden bg-brand-surface relative">
-              <div className="absolute inset-0 flex items-center justify-center text-brand-mid-grey">
-                <p>Google Maps embed will be displayed here</p>
-              </div>
+            <div className="aspect-video rounded-lg overflow-hidden bg-brand-surface relative border border-brand-border">
+              <iframe
+                title="Dealership Location"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(businessInfo.address)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+              />
             </div>
             <p className="text-brand-mid-grey text-sm">
               Appointment recommended. Contact us to schedule a viewing.

@@ -2,34 +2,37 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { contactSchema, type ContactFormValues } from '@/lib/validations';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Phone, Mail, MapPin, Clock, CheckCircle2, Send } from 'lucide-react';
 import { businessInfo } from '@/lib/placeholder-data';
+import { BarLoader } from '@/components/ui/bar-loader';
 
 export default function ContactPage() {
   const [formState, setFormState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
+
+  const {
+    register,
+    handleSubmit: hookFormSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: { name: '', email: '', phone: '', message: '' },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (_data: ContactFormValues) => {
     setFormState('submitting');
 
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     setFormState('success');
-    setFormData({ name: '', email: '', phone: '', message: '' });
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    reset();
   };
 
   return (
@@ -37,14 +40,14 @@ export default function ContactPage() {
       {/* Hero Section */}
       <div className="relative h-[40vh] sm:h-[50vh] flex items-center justify-center">
         <Image
-          src="https://images.pexels.com/photos/2199293/pexels-photo-2199293.jpeg?auto=compress&cs=tinysrgb&w=1920"
+          src="/images/hero/contact.jpg"
           alt="Contact Us"
           fill
           className="object-cover"
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-white/85" />
+        <div className="absolute inset-0 bg-white/80" />
         <div className="relative z-10 text-center px-4">
           <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-brand-dark mb-4">
             Get in Touch
@@ -160,9 +163,8 @@ export default function ContactPage() {
                 {businessInfo.hours.map((day, index) => (
                   <div
                     key={day.day}
-                    className={`flex justify-between py-3 px-4 ${
-                      index % 2 === 0 ? 'bg-brand-surface' : 'bg-white'
-                    }`}
+                    className={`flex justify-between py-3 px-4 ${index % 2 === 0 ? 'bg-brand-surface' : 'bg-white'
+                      }`}
                   >
                     <span className="text-brand-mid-grey">{day.day}</span>
                     <span className="text-brand-dark font-medium">
@@ -173,14 +175,18 @@ export default function ContactPage() {
               </div>
             </div>
 
-            {/* Map Placeholder */}
+            {/* Map Embed */}
             <div className="aspect-video rounded-lg overflow-hidden bg-brand-surface relative border border-brand-border">
-              <div className="absolute inset-0 flex items-center justify-center text-brand-mid-grey">
-                <div className="text-center">
-                  <MapPin className="w-12 h-12 text-brand-gold mx-auto mb-2" />
-                  <p>Google Maps embed will be displayed here</p>
-                </div>
-              </div>
+              <iframe
+                title="Google Maps Location"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                loading="lazy"
+                allowFullScreen
+                referrerPolicy="no-referrer-when-downgrade"
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(businessInfo.address)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+              />
             </div>
           </div>
 
@@ -215,20 +221,20 @@ export default function ContactPage() {
                     Fill out the form below and we&apos;ll get back to you promptly.
                   </p>
 
-                  <form onSubmit={handleSubmit} className="space-y-6">
+                  <form onSubmit={hookFormSubmit(onSubmit)} className="space-y-6">
                     <div>
                       <label className="text-sm text-brand-dark-grey mb-2 block font-medium">
                         Your Name *
                       </label>
                       <Input
-                        name="name"
+                        {...register('name')}
                         type="text"
                         placeholder="John Smith"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
                         className="bg-white border-brand-border text-brand-dark placeholder:text-brand-mid-grey focus:border-brand-gold"
                       />
+                      {errors.name && (
+                        <p className="text-red-500 text-xs mt-1">{errors.name.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -236,14 +242,14 @@ export default function ContactPage() {
                         Email Address *
                       </label>
                       <Input
-                        name="email"
+                        {...register('email')}
                         type="email"
                         placeholder="john@example.com"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
                         className="bg-white border-brand-border text-brand-dark placeholder:text-brand-mid-grey focus:border-brand-gold"
                       />
+                      {errors.email && (
+                        <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -251,13 +257,14 @@ export default function ContactPage() {
                         Phone Number
                       </label>
                       <Input
-                        name="phone"
+                        {...register('phone')}
                         type="tel"
                         placeholder="+1 (555) 123-4567"
-                        value={formData.phone}
-                        onChange={handleChange}
                         className="bg-white border-brand-border text-brand-dark placeholder:text-brand-mid-grey focus:border-brand-gold"
                       />
+                      {errors.phone && (
+                        <p className="text-red-500 text-xs mt-1">{errors.phone.message}</p>
+                      )}
                     </div>
 
                     <div>
@@ -265,14 +272,14 @@ export default function ContactPage() {
                         Message *
                       </label>
                       <Textarea
-                        name="message"
+                        {...register('message')}
                         placeholder="I'm interested in learning more about..."
-                        value={formData.message}
-                        onChange={handleChange}
-                        required
                         rows={5}
                         className="bg-white border-brand-border text-brand-dark placeholder:text-brand-mid-grey focus:border-brand-gold resize-none"
                       />
+                      {errors.message && (
+                        <p className="text-red-500 text-xs mt-1">{errors.message.message}</p>
+                      )}
                     </div>
 
                     <Button
@@ -281,28 +288,9 @@ export default function ContactPage() {
                       className="w-full bg-brand-gold text-white hover:bg-brand-gold-dark rounded-md h-12 text-base"
                     >
                       {formState === 'submitting' ? (
-                        <span className="flex items-center gap-2">
-                          <svg
-                            className="animate-spin h-5 w-5"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            />
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            />
-                          </svg>
-                          Sending...
+                        <span className="flex items-center gap-3">
+                          <BarLoader size="sm" color="bg-white" />
+                          Sending…
                         </span>
                       ) : (
                         <span className="flex items-center gap-2">

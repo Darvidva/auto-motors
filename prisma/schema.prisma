@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Listings ───────────────────────────────────────────────────────────────
+
+model Listing {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug           String   @unique
+  name           String
+  category       String // enum enforced at app layer: Cars | Trucks | Tractors | Excavators | Heavy Machinery | Equipment
+  brand          String
+  model          String
+  year           Int
+  price          BigInt
+  mileage        Int?
+  hoursUsed      Int?     @map("hours_used")
+  transmission   String   @default("Automatic")
+  fuelType       String   @default("Diesel") @map("fuel_type")
+  driveSystem    String   @default("4WD") @map("drive_system")
+  condition      String   @default("Used") // New | Used
+  color          String
+  interiorColor  String?  @map("interior_color")
+  bodyType       String?  @map("body_type")
+  engineCapacity String?  @map("engine_capacity")
+  vin            String?
+  serviceHistory String?  @map("service_history")
+  numberOfKeys   Int?     @map("number_of_keys")
+  description    String
+  specifications Json     @default("{}")
+  features       Json     @default("[]")
+  images         Json     @default("[]")
+  featured       Boolean  @default(false)
+  published      Boolean  @default(false)
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  enquiries Enquiry[]
+
+  @@index([category], map: "idx_listings_category")
+  @@index([brand], map: "idx_listings_brand")
+  @@index([published], map: "idx_listings_published")
+  @@index([featured], map: "idx_listings_featured")
+  @@map("listings")
+}
+
+// ─── Enquiries ──────────────────────────────────────────────────────────────
+
+model Enquiry {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  email       String
+  phone       String?
+  message     String
+  listingId   String?  @map("listing_id") @db.Uuid
+  listingName String?  @map("listing_name")
+  status      String   @default("Unread") // Unread | Read | Followed Up | Resolved
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  listing Listing? @relation(fields: [listingId], references: [id], onDelete: SetNull)
+
+  @@index([status], map: "idx_enquiries_status")
+  @@index([createdAt(sort: Desc)], map: "idx_enquiries_created")
+  @@map("enquiries")
+}
+
+// ─── Business Settings ──────────────────────────────────────────────────────
+
+model BusinessSettings {
+  id            String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name          String   @default("DX STAR EMPORIUM")
+  tagline       String   @default("Quality Vehicles and Equipment")
+  phone         String   @default("+234 803 456 7890")
+  whatsapp      String   @default("2348034567890")
+  email         String   @default("info@dxstaremporium.com")
+  address       String   @default("15 Adeniran Ogunsanya Street, Surulere, Lagos, Nigeria")
+  businessHours Json     @default("[]") @map("business_hours")
+  socialMedia   Json     @default("[]") @map("social_media")
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("business_settings")
+}
+
+// ─── Admin Users ────────────────────────────────────────────────────────────
+
+model AdminUser {
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  name         String
+  role         String    @default("admin")
+  lastLogin    DateTime? @map("last_login") @db.Timestamptz
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime  @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("admin_users")
+}
