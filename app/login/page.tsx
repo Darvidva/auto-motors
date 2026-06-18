@@ -2,41 +2,47 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { loginSchema, type LoginFormValues } from '@/lib/validations';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Car, Loader2, Lock } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertCircle, Lock } from 'lucide-react';
-import { BarLoader } from '@/components/ui/bar-loader';
 
-export default function AdminLoginPage() {
+export default function LoginPage() {
   const router = useRouter();
-  const [serverError, setServerError] = useState<string | null>(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: { email: '', password: '' },
-  });
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
 
-  const onSubmit = async (data: LoginFormValues) => {
-    setServerError(null);
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    // simulate auth delay
-    await new Promise((r) => setTimeout(r, 500));
+      const data = await res.json();
 
-    if (data.email && data.password) {
+      if (!res.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+
+      // Successful login
       router.push('/admin');
-    } else {
-      setServerError('Please enter email and password');
+      router.refresh(); // Force refresh to update middleware state on client
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,88 +50,78 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-brand-surface flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-1">
-            <span className="font-display text-3xl font-bold text-brand-gold">DX</span>
-            <div className="w-1.5 h-8 bg-brand-gold/30" />
-            <span className="font-display text-3xl font-bold text-brand-dark">STAR</span>
-          </Link>
-          <p className="text-brand-mid-grey text-sm mt-2 font-medium">Admin Portal</p>
+        <div className="flex justify-center mb-8">
+          <div className="flex items-center gap-2">
+            <Car className="w-8 h-8 text-brand-gold" />
+            <div className="flex flex-col">
+              <span className="font-display text-2xl font-bold leading-none text-brand-dark">DX STAR</span>
+              <span className="text-[10px] tracking-widest text-brand-mid-grey font-medium uppercase">Emporium</span>
+            </div>
+          </div>
         </div>
 
         <Card className="bg-white border-brand-border shadow-lg">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-display text-brand-dark">
-              Sign In
-            </CardTitle>
-            <CardDescription className="text-brand-mid-grey">
-              Enter your admin credentials to access the dashboard
+          <CardHeader className="space-y-1 pb-6">
+            <CardTitle className="text-2xl font-display text-brand-dark text-center">Admin Portal</CardTitle>
+            <CardDescription className="text-center text-brand-mid-grey">
+              Sign in to manage inventory and settings
             </CardDescription>
           </CardHeader>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <CardContent className="space-y-4">
-              {serverError && (
-                <Alert variant="destructive" className="bg-red-50 border-red-200 text-red-600">
-                  <AlertCircle className="h-4 w-4" />
-                  <AlertDescription>{serverError}</AlertDescription>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <Alert variant="destructive" className="bg-red-50 text-red-600 border-red-200">
+                  <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-
+              
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-brand-dark-grey">Email</Label>
+                <Label htmlFor="email" className="text-brand-dark">Email Address</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="admin@dxstaremporium.com"
-                  {...register('email')}
-                  className="bg-white border-brand-border text-brand-dark placeholder:text-brand-mid-grey"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="border-brand-border bg-brand-surface text-brand-dark focus:border-brand-gold"
+                  disabled={loading}
                 />
-                {errors.email && (
-                  <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>
-                )}
               </div>
-
+              
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-brand-dark-grey">Password</Label>
+                <Label htmlFor="password" className="text-brand-dark">Password</Label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="Enter your password"
-                  {...register('password')}
-                  className="bg-white border-brand-border text-brand-dark placeholder:text-brand-mid-grey"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="border-brand-border bg-brand-surface text-brand-dark focus:border-brand-gold"
+                  disabled={loading}
                 />
-                {errors.password && (
-                  <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
-                )}
               </div>
-            </CardContent>
-            <CardFooter>
+
               <Button
                 type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-brand-gold text-white hover:bg-brand-gold-dark"
+                className="w-full bg-brand-gold text-brand-bg hover:bg-brand-gold-dark h-11 mt-6"
+                disabled={loading}
               >
-                {isSubmitting ? (
-                  <span className="flex items-center gap-3">
-                    <BarLoader size="sm" color="bg-white" />
-                    Signing in…
-                  </span>
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Authenticating...
+                  </>
                 ) : (
-                  <span className="flex items-center gap-2">
-                    <Lock className="w-4 h-4" />
+                  <>
+                    <Lock className="w-4 h-4 mr-2" />
                     Sign In
-                  </span>
+                  </>
                 )}
               </Button>
-            </CardFooter>
-          </form>
+            </form>
+          </CardContent>
         </Card>
-
-        <p className="text-center text-brand-mid-grey text-sm mt-6">
-          <Link href="/" className="text-brand-gold hover:underline font-medium">
-            ← Back to website
-          </Link>
-        </p>
       </div>
     </div>
   );

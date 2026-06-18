@@ -1,6 +1,14 @@
-import { PrismaClient } from '@prisma/client';
+require('dotenv').config();
+const { PrismaClient } = require('@prisma/client');
+const { PrismaPg } = require('@prisma/adapter-pg');
+const { Pool } = require('pg');
+const bcrypt = require('bcryptjs');
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+
+const prisma = new PrismaClient({ adapter, log: ['info', 'warn', 'error'] });
 
 async function main() {
   console.log('Start seeding...');
@@ -60,6 +68,20 @@ async function main() {
     },
   });
   console.log('Listing seeded:', listing.name);
+
+  // 3. Seed initial Admin User
+  const hashedPassword = await bcrypt.hash('password123', 10);
+  const admin = await prisma.adminUser.upsert({
+    where: { email: 'admin@dxstaremporium.com' },
+    update: {},
+    create: {
+      email: 'admin@dxstaremporium.com',
+      passwordHash: hashedPassword,
+      name: 'Admin',
+      role: 'admin',
+    },
+  });
+  console.log('Admin user seeded:', admin.email);
 
   console.log('Seeding finished.');
 }

@@ -35,8 +35,15 @@ export default function AdminLayout({
 
   const userEmail = 'admin@dxstaremporium.com';
 
-  const handleLogout = () => {
-    router.push('/login');
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (e) {
+      console.error(e);
+    } finally {
+      router.push('/login');
+      router.refresh();
+    }
   };
 
   return (
