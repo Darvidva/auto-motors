@@ -1,9 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: { unoptimized: true },
-  serverExternalPackages: ['@prisma/client', 'prisma'],
-  experimental: {
-    turbopack: false
+  serverExternalPackages: ['@prisma/client', 'prisma', 'pg'],
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push('@prisma/client', 'pg')
+    }
+    return config
   }
 }
 
