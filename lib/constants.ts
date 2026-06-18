@@ -1,0 +1,107 @@
+import {
+  TrustPoint,
+  CategoryInfo,
+  Stat,
+  TeamMember,
+} from '@/types';
+
+// ─── Static UI Constants ────────────────────────────────────────────────────
+// These are branding/marketing data that do not need to live in the database.
+
+export const trustPoints: TrustPoint[] = [
+  {
+    id: '1',
+    icon: 'ShieldCheck',
+    title: 'Verified Listings',
+    description:
+      'Every vehicle and machine goes through a quality check before listing.',
+  },
+  {
+    id: '2',
+    icon: 'Eye',
+    title: 'Transparent Pricing',
+    description:
+      'No hidden fees, no pressure. What you see is the price.',
+  },
+  {
+    id: '3',
+    icon: 'Globe',
+    title: 'Wide Selection',
+    description:
+      'Cars, trucks, tractors, and heavy machinery — all in one place.',
+  },
+  {
+    id: '4',
+    icon: 'Phone',
+    title: 'Direct Contact',
+    description:
+      'Talk to us directly — call, WhatsApp, or email. No middlemen.',
+  },
+];
+
+export const stats: Stat[] = [
+  { label: 'Years in Business', value: 8, suffix: '+' },
+  { label: 'Units Sold', value: 500, suffix: '+' },
+  { label: 'Happy Clients', value: 350, suffix: '+' },
+];
+
+export const teamMembers: TeamMember[] = [
+  {
+    name: 'Adewale Okonkwo',
+    role: 'Founder & Managing Director',
+    image: '/images/team/member-1.jpg',
+    bio: 'With over 15 years in the automotive and machinery industry, Adewale founded DX STAR EMPORIUM with a vision for quality and trust.',
+  },
+  {
+    name: 'Chioma Nwankwo',
+    role: 'Head of Operations',
+    image: '/images/team/member-2.jpg',
+    bio: 'Chioma ensures every vehicle and piece of machinery meets our rigorous standards before reaching our showroom.',
+  },
+  {
+    name: 'Emeka Obi',
+    role: 'Lead Sales Consultant',
+    image: '/images/team/member-3.jpg',
+    bio: 'Emeka brings deep knowledge of both luxury vehicles and industrial equipment to help clients find the perfect fit.',
+  },
+];
+
+export const categories: CategoryInfo[] = [
+  { name: 'Cars', slug: 'cars', icon: 'Car', listingCount: 0 },
+  { name: 'Trucks', slug: 'trucks', icon: 'Truck', listingCount: 0 },
+  { name: 'Tractors', slug: 'tractors', icon: 'Tractor', listingCount: 0 },
+  { name: 'Excavators', slug: 'excavators', icon: 'HardHat', listingCount: 0 },
+  { name: 'Heavy Machinery', slug: 'heavy-machinery', icon: 'Cog', listingCount: 0 },
+  { name: 'Equipment', slug: 'equipment', icon: 'Package', listingCount: 0 },
+];
+
+export const brands = [
+  'Toyota',
+  'Ford',
+  'Mercedes-Benz',
+  'BMW',
+  'Lexus',
+  'Honda',
+  'John Deere',
+  'Caterpillar',
+  'Kubota',
+  'Hitachi',
+  'Volvo',
+  'JCB',
+];
+
+export const filterOptions = {
+  categories: categories.map((c) => c.name),
+  conditions: ['New', 'Used'] as const,
+  brands,
+  fuelTypes: ['Petrol', 'Diesel', 'Electric', 'Hybrid', 'N/A'] as const,
+  transmissions: ['Automatic', 'Manual', 'N/A'] as const,
+  priceRange: {
+    min: 10000000,
+    max: 500000000,
+  },
+  yearRange: {
+    min: 2015,
+    max: new Date().getFullYear(),
+  },
+};

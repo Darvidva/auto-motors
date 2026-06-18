@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -50,21 +51,22 @@ export default function LoginPage() {
     <div className="min-h-screen bg-brand-surface flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <div className="flex items-center gap-2">
-            <Car className="w-8 h-8 text-brand-gold" />
-            <div className="flex flex-col">
-              <span className="font-display text-2xl font-bold leading-none text-brand-dark">DX STAR</span>
-              <span className="text-[10px] tracking-widest text-brand-mid-grey font-medium uppercase">Emporium</span>
-            </div>
-          </div>
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-1">
+            <span className="font-display text-3xl font-bold text-brand-gold">DX</span>
+            <div className="w-1.5 h-8 bg-brand-gold/30" />
+            <span className="font-display text-3xl font-bold text-brand-off-white">STAR</span>
+          </Link>
+          <p className="text-brand-warm-grey text-sm mt-2">Admin Portal</p>
         </div>
 
         <Card className="bg-white border-brand-border shadow-lg">
-          <CardHeader className="space-y-1 pb-6">
-            <CardTitle className="text-2xl font-display text-brand-dark text-center">Admin Portal</CardTitle>
-            <CardDescription className="text-center text-brand-mid-grey">
-              Sign in to manage inventory and settings
+          <CardHeader className="space-y-1">
+            <CardTitle className="text-2xl font-display text-brand-off-white">
+              Sign In
+            </CardTitle>
+            <CardDescription className="text-brand-warm-grey">
+              Enter your admin credentials to access the dashboard
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -74,7 +76,7 @@ export default function LoginPage() {
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
-              
+
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-brand-dark">Email Address</Label>
                 <Input
@@ -88,7 +90,7 @@ export default function LoginPage() {
                   disabled={loading}
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-brand-dark">Password</Label>
                 <Input
