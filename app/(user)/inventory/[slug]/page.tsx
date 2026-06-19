@@ -29,5 +29,5 @@ export default async function ListingPage({ params }: ListingPageProps) {
     getBusinessSettings(),
   ]);
 
-  return <ListingDetailClient listing={listing} relatedListings={relatedListings} businessInfo={businessInfo} />;
+  return <ListingDetailClient listing={listing as any} relatedListings={relatedListings as any} businessInfo={businessInfo} />;
 }

@@ -124,7 +124,6 @@ export default function AdminSettingsPage() {
               whatsapp: data.whatsapp || '',
               email: data.email || '',
               address: data.address || '',
-              address: data.address || '',
               heroImages: data.heroImages || { home: '', inventory: '', about: '', contact: '' },
               teamMembers: data.teamMembers || [],
             });

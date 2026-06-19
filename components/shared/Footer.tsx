@@ -138,7 +138,7 @@ export default async function Footer() {
             </ul>
             {/* Social Media */}
             <div className="flex gap-3 mt-4">
-              {info.socialMedia.map((social) => {
+              {info.socialMedia.map((social: any) => {
                 const Icon = getSocialIcon(social.platform);
                 if (!Icon) return null;
                 return (
