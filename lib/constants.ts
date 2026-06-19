@@ -39,9 +39,9 @@ export const trustPoints: TrustPoint[] = [
 ];
 
 export const stats: Stat[] = [
-  { label: 'Years in Business', value: 8, suffix: '+' },
-  { label: 'Units Sold', value: 500, suffix: '+' },
-  { label: 'Happy Clients', value: 350, suffix: '+' },
+  { label: 'Years in Business', value: 10, suffix: '+' },
+  { label: 'Units Sold', value: 1000, suffix: '+' },
+  { label: 'Happy Clients', value: 750, suffix: '+' },
 ];
 
 export const categories: CategoryInfo[] = [

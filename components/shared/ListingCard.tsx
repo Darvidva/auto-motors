@@ -18,13 +18,13 @@ export default function ListingCard({ listing }: ListingCardProps) {
   };
 
   const getUsageLabel = () => {
-    if (listing.mileage !== undefined) {
+    if (listing.mileage != null) {
       return `${listing.mileage.toLocaleString()} km`;
     }
-    if (listing.hoursUsed !== undefined) {
+    if (listing.hoursUsed != null) {
       return `${listing.hoursUsed.toLocaleString()} hrs`;
     }
-    return 'N/A';
+    return null;
   };
 
   const UsageIcon = listing.mileage !== undefined ? Gauge : Calculator;
