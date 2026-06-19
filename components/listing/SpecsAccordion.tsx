@@ -101,16 +101,16 @@ export default function SpecsAccordion({ listing, businessInfo }: SpecsAccordion
                 <span className="text-brand-dark">{listing.numberOfKeys}</span>
               </div>
             )}
-            {listing.mileage != null && (
+            {listing.mileage !== null && listing.mileage !== undefined && (
               <div className="flex justify-between">
                 <span className="text-brand-mid-grey">Mileage</span>
-                <span className="text-brand-dark">{listing.mileage.toLocaleString()} km</span>
+                <span className="text-brand-dark">{Number(listing.mileage).toLocaleString()} km</span>
               </div>
             )}
-            {listing.hoursUsed != null && (
+            {listing.hoursUsed !== null && listing.hoursUsed !== undefined && (
               <div className="flex justify-between">
                 <span className="text-brand-mid-grey">Operating Hours</span>
-                <span className="text-brand-dark">{listing.hoursUsed.toLocaleString()} hrs</span>
+                <span className="text-brand-dark">{Number(listing.hoursUsed).toLocaleString()} hrs</span>
               </div>
             )}
           </div>
