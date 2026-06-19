@@ -13,7 +13,8 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     });
 
-    return NextResponse.json(listings);
+    const serializedListings = listings.map(l => ({ ...l, price: Number(l.price) }));
+    return NextResponse.json(serializedListings);
   } catch (error) {
     console.error('Failed to fetch listings:', error);
     return NextResponse.json({ error: 'Failed to fetch listings' }, { status: 500 });
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(newListing, { status: 201 });
+    return NextResponse.json({ ...newListing, price: Number(newListing.price) }, { status: 201 });
   } catch (error: any) {
     console.error('Failed to create listing:', error);
     return NextResponse.json(

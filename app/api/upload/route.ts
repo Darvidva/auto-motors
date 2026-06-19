@@ -59,17 +59,42 @@ export async function POST(request: NextRequest) {
       .from('listing-images')
       .upload(filepath, buffer, {
         contentType: contentType,
-        upsert: false,
       });
 
-    if (error) {
+    let finalPath = '';
+
+    if (error && error.message.includes('Bucket not found')) {
+      // Try to create the bucket
+      const { error: createError } = await supabase.storage.createBucket('listing-images', {
+        public: true,
+        fileSizeLimit: 5242880, // 5MB
+      });
+      
+      if (!createError) {
+        // Retry upload
+        const retry = await supabase.storage.from('listing-images').upload(filepath, buffer, {
+          contentType: contentType,
+          upsert: false,
+        });
+        if (retry.error || !retry.data) {
+          console.error('Upload retry error:', retry.error);
+          return NextResponse.json({ error: 'Failed to upload image after creating bucket' }, { status: 500 });
+        }
+        finalPath = retry.data.path;
+      } else {
+        console.error('Failed to create bucket:', createError);
+        return NextResponse.json({ error: 'Storage bucket "listing-images" does not exist and could not be created automatically. Please create a public bucket named "listing-images" in your Supabase dashboard.' }, { status: 500 });
+      }
+    } else if (error || !data) {
       console.error('Upload error:', error);
       return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });
+    } else {
+      finalPath = data.path;
     }
 
     const { data: publicUrl } = supabase.storage
       .from('listing-images')
-      .getPublicUrl(data.path);
+      .getPublicUrl(finalPath);
 
     return NextResponse.json({ url: publicUrl.publicUrl });
   } catch (error) {

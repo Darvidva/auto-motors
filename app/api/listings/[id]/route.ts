@@ -44,7 +44,7 @@ export async function PATCH(
       },
     });
 
-    return NextResponse.json(updatedListing);
+    return NextResponse.json({ ...updatedListing, price: Number(updatedListing.price) });
   } catch (error: any) {
     console.error('Failed to update listing:', error);
     return NextResponse.json(
