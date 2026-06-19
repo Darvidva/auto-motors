@@ -16,11 +16,11 @@ export default function InfoPanel({ listing }: InfoPanelProps) {
   };
 
   const getUsageLabel = () => {
-    if (listing.mileage !== undefined) {
-      return `${listing.mileage.toLocaleString()} km`;
+    if (listing.mileage !== undefined && listing.mileage !== null) {
+      return `${Number(listing.mileage).toLocaleString()} km`;
     }
-    if (listing.hoursUsed !== undefined) {
-      return `${listing.hoursUsed.toLocaleString()} hrs`;
+    if (listing.hoursUsed !== undefined && listing.hoursUsed !== null) {
+      return `${Number(listing.hoursUsed).toLocaleString()} hrs`;
     }
     return 'N/A';
   };
@@ -63,7 +63,7 @@ export default function InfoPanel({ listing }: InfoPanelProps) {
         </div>
         <div className="flex flex-col">
           <span className="text-xs uppercase tracking-wider text-brand-mid-grey">
-            {listing.mileage !== undefined ? 'Mileage' : 'Hours'}
+            {listing.mileage !== undefined && listing.mileage !== null ? 'Mileage' : 'Hours'}
           </span>
           <span className="text-lg text-brand-dark font-medium">{getUsageLabel()}</span>
         </div>
