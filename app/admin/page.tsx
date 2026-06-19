@@ -1,20 +1,46 @@
 'use client';
 
-import { listings, mockEnquiries } from '@/lib/placeholder-data';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { CardHeader, CardTitle } from '@/components/ui/card';
 import { Car, Mail, DollarSign, TrendingUp } from 'lucide-react';
+import { BarLoader } from '@/components/ui/bar-loader';
 
 export default function AdminDashboard() {
+  const [listings, setListings] = useState<any[]>([]);
+  const [enquiries, setEnquiries] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      fetch('/api/listings').then(r => r.json()),
+      fetch('/api/enquiries').then(r => r.json()),
+    ])
+      .then(([listingsData, enquiriesData]) => {
+        if (Array.isArray(listingsData)) setListings(listingsData);
+        if (Array.isArray(enquiriesData)) setEnquiries(enquiriesData);
+      })
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[400px] items-center justify-center">
+        <BarLoader size="lg" color="bg-brand-gold" />
+      </div>
+    );
+  }
+
   const stats = {
     totalListings: listings.length,
     publishedListings: listings.filter(l => l.published).length,
-    totalEnquiries: mockEnquiries.length,
-    unreadEnquiries: mockEnquiries.filter(e => e.status === 'Unread').length,
+    totalEnquiries: enquiries.length,
+    unreadEnquiries: enquiries.filter(e => e.status === 'Unread').length,
     totalValue: listings.reduce((sum, l) => sum + l.price, 0),
   };
 
-  const recentEnquiries = mockEnquiries.slice(0, 5);
+  const recentEnquiries = enquiries.slice(0, 5);
   const recentListings = listings.slice(0, 5);
 
   const formatPrice = (price: number) => `₦${price.toLocaleString()}`;

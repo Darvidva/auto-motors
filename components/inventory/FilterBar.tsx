@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { filterOptions } from '@/lib/placeholder-data';
+import { filterOptions } from '@/lib/constants';
 
 interface FilterBarProps {
   onFilterChange: (filters: Record<string, string | number | undefined>) => void;

@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { mockEnquiries } from '@/lib/placeholder-data';
+import { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -64,11 +63,36 @@ const statusColors: Record<string, string> = {
 };
 
 export default function AdminEnquiriesPage() {
-  const [enquiries, setEnquiries] = useState<Enquiry[]>(mockEnquiries);
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/enquiries')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          // Map backend fields to the interface
+          const mapped = data.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            email: item.email,
+            phone: item.phone,
+            message: item.message,
+            listing_id: item.listingId,
+            listing_name: item.listingName,
+            status: item.status,
+            created_at: item.createdAt,
+          }));
+          setEnquiries(mapped);
+        }
+      })
+      .catch((err) => console.error(err))
+      .finally(() => setIsLoading(false));
+  }, []);
 
   const filteredEnquiries = useMemo(() => {
     let result = [...enquiries];

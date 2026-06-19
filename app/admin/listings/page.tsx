@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { listings as allListings } from '@/lib/placeholder-data';
+import { useState, useMemo, useEffect } from 'react';
 import { listingSchema } from '@/lib/validations';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -58,7 +57,21 @@ const fuelTypes = ['Petrol', 'Diesel', 'Electric', 'Hybrid', 'N/A'];
 const driveSystems = ['2WD', '4WD', 'AWD', '6x6', 'N/A'];
 
 export default function AdminListingsPage() {
-  const [listings, setListings] = useState<Listing[]>(allListings);
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/listings')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setListings(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setIsLoading(false);
+      });
+  }, []);
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -204,86 +217,89 @@ export default function AdminListingsPage() {
     return false;
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!validateForm()) return;
 
     setSaving(true);
-    setTimeout(() => {
-      const slug = generateSlug(formData.name);
+    const slug = generateSlug(formData.name);
+    const payload = { ...formData, slug };
 
+    try {
       if (selectedListing) {
-        setListings(prev => prev.map(l =>
-          l.id === selectedListing.id
-            ? {
-                ...l,
-                ...formData,
-                slug,
-                category: formData.category as any,
-                mileage: formData.mileage ?? undefined,
-                hoursUsed: formData.hoursUsed ?? undefined,
-                numberOfKeys: formData.numberOfKeys ?? undefined,
-              }
-            : l
-        ));
+        const res = await fetch(`/api/listings/${selectedListing.id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          const updated = await res.json();
+          setListings(prev => prev.map(l => l.id === updated.id ? updated : l));
+        }
       } else {
-        const newListing: Listing = {
-          id: Date.now().toString(),
-          slug,
-          name: formData.name,
-          category: formData.category as any,
-          brand: formData.brand,
-          model: formData.model,
-          year: formData.year,
-          price: formData.price,
-          mileage: formData.mileage ?? undefined,
-          hoursUsed: formData.hoursUsed ?? undefined,
-          transmission: formData.transmission,
-          fuelType: formData.fuelType,
-          driveSystem: formData.driveSystem,
-          condition: formData.condition,
-          color: formData.color,
-          interiorColor: formData.interiorColor,
-          bodyType: formData.bodyType,
-          engineCapacity: formData.engineCapacity,
-          vin: formData.vin,
-          serviceHistory: formData.serviceHistory,
-          numberOfKeys: formData.numberOfKeys ?? undefined,
-          description: formData.description,
-          specifications: {},
-          features: formData.features,
-          images: formData.images,
-          featured: formData.featured,
-          published: formData.published,
-          createdAt: new Date().toISOString(),
-        };
-        setListings(prev => [newListing, ...prev]);
+        const res = await fetch('/api/listings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          const created = await res.json();
+          setListings(prev => [created, ...prev]);
+        }
       }
-
       setEditDialogOpen(false);
+    } catch (err) {
+      console.error(err);
+    } finally {
       setSaving(false);
-    }, 500);
+    }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!selectedListing) return;
     setSaving(true);
-    setTimeout(() => {
-      setListings(prev => prev.filter(l => l.id !== selectedListing.id));
-      setDeleteDialogOpen(false);
+    try {
+      const res = await fetch(`/api/listings/${selectedListing.id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setListings(prev => prev.filter(l => l.id !== selectedListing.id));
+        setDeleteDialogOpen(false);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
       setSaving(false);
-    }, 300);
+    }
   };
 
-  const togglePublished = (listing: Listing) => {
-    setListings(prev => prev.map(l =>
-      l.id === listing.id ? { ...l, published: !l.published } : l
-    ));
+  const togglePublished = async (listing: Listing) => {
+    try {
+      const res = await fetch(`/api/listings/${listing.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ published: !listing.published }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setListings(prev => prev.map(l => l.id === updated.id ? updated : l));
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const toggleFeatured = (listing: Listing) => {
-    setListings(prev => prev.map(l =>
-      l.id === listing.id ? { ...l, featured: !l.featured } : l
-    ));
+  const toggleFeatured = async (listing: Listing) => {
+    try {
+      const res = await fetch(`/api/listings/${listing.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ featured: !listing.featured }),
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        setListings(prev => prev.map(l => l.id === updated.id ? updated : l));
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const formatPrice = (price: number) => `₦${price?.toLocaleString() || 0}`;

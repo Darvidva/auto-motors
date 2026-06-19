@@ -39,35 +39,7 @@ async function main() {
   });
   console.log('Business Settings seeded:', settings.name);
 
-  // 2. Seed an initial Listing
-  const listing = await prisma.listing.create({
-    data: {
-      slug: 'toyota-land-cruiser-300-2023',
-      name: 'Toyota Land Cruiser 300',
-      category: 'Cars',
-      brand: 'Toyota',
-      model: 'Land Cruiser',
-      year: 2023,
-      price: 85000000,
-      mileage: 150,
-      transmission: 'Automatic',
-      fuelType: 'Petrol',
-      driveSystem: '4WD',
-      condition: 'New',
-      color: 'Pearl White',
-      interiorColor: 'Beige Leather',
-      bodyType: 'SUV',
-      engineCapacity: '3.5L Twin-Turbo V6',
-      description: 'Brand new Toyota Land Cruiser 300 series. Top of the line specification with full premium options.',
-      features: ['Leather Seats', 'Sunroof', '360 Camera', 'CoolBox', 'JBL Sound System'],
-      images: [
-        'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=1000',
-      ],
-      featured: true,
-      published: true,
-    },
-  });
-  console.log('Listing seeded:', listing.name);
+
 
   // 3. Seed initial Admin User
   const adminEmail = process.env.ADMIN_SEED_EMAIL || 'admin@dxstaremporium.com';

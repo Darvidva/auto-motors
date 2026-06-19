@@ -10,7 +10,7 @@ import {
   Package,
 } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { categories } from '@/lib/placeholder-data';
+import { categories } from '@/lib/constants';
 import { Category } from '@/types';
 
 const iconMap: Record<Category, React.ComponentType<{ className?: string }>> = {

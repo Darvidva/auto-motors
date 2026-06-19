@@ -85,6 +85,8 @@ model BusinessSettings {
   address       String   @default("15 Adeniran Ogunsanya Street, Surulere, Lagos, Nigeria")
   businessHours Json     @default("[]") @map("business_hours")
   socialMedia   Json     @default("[]") @map("social_media")
+  heroImages    Json     @default("{}") @map("hero_images")
+  teamMembers   Json     @default("[]") @map("team_members")
   createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
   updatedAt     DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz
 

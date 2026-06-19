@@ -31,17 +31,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File too large. Max 5MB' }, { status: 400 });
     }
 
-    const ext = file.name.split('.').pop() || 'jpg';
-    const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
-    const filepath = `listings/${filename}`;
+    let ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+    let filename = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+    let filepath = `listings/${filename}`;
+    let contentType = file.type;
 
     const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    let buffer: Buffer = Buffer.from(arrayBuffer);
+
+    try {
+      const sharp = (await import('sharp')).default;
+      buffer = await sharp(buffer as any)
+        .resize({ width: 1920, withoutEnlargement: true })
+        .webp({ quality: 80 })
+        .toBuffer();
+      
+      ext = 'webp';
+      filename = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+      filepath = `listings/${filename}`;
+      contentType = 'image/webp';
+    } catch (sharpError) {
+      console.warn('Image compression skipped or failed:', sharpError);
+      // fallback to original buffer if sharp is missing or fails
+    }
 
     const { data, error } = await supabase.storage
       .from('listing-images')
       .upload(filepath, buffer, {
-        contentType: file.type,
+        contentType: contentType,
         upsert: false,
       });
 

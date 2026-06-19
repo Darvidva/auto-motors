@@ -2,7 +2,7 @@
 
 import { ShieldCheck, Eye, Globe, Phone } from 'lucide-react';
 import { Card } from '@/components/ui/card';
-import { trustPoints } from '@/lib/placeholder-data';
+import { trustPoints } from '@/lib/constants';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   ShieldCheck,

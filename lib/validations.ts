@@ -86,6 +86,18 @@ export const settingsSchema = z.object({
     ),
   email: safeEmail,
   address: safeString('Address', 5, 500),
+  heroImages: z.object({
+    home: safeString('Home Hero Image', 0, 500).optional().or(z.literal('')),
+    inventory: safeString('Inventory Hero Image', 0, 500).optional().or(z.literal('')),
+    about: safeString('About Hero Image', 0, 500).optional().or(z.literal('')),
+    contact: safeString('Contact Hero Image', 0, 500).optional().or(z.literal('')),
+  }).default({ home: '', inventory: '', about: '', contact: '' }),
+  teamMembers: z.array(z.object({
+    name: safeString('Name', 1, 100),
+    role: safeString('Role', 1, 100),
+    image: safeString('Image', 1, 500),
+    bio: safeString('Bio', 1, 1000)
+  })).default([]),
 });
 export type SettingsFormValues = z.infer<typeof settingsSchema>;
 

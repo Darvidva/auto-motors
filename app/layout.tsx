@@ -1,26 +1,5 @@
 import './globals.css';
 import type { Metadata } from 'next';
-import { Inter, Playfair_Display, Barlow_Condensed } from 'next/font/google';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
-
-const playfair = Playfair_Display({
-  subsets: ['latin'],
-  variable: '--font-playfair',
-  display: 'swap',
-  weight: ['400', '500', '600', '700'],
-});
-
-const barlow = Barlow_Condensed({
-  subsets: ['latin'],
-  variable: '--font-barlow',
-  display: 'swap',
-  weight: ['500', '600', '700'],
-});
 
 export const metadata: Metadata = {
   title: 'DX STAR EMPORIUM | Premium Vehicles & Machinery in Nigeria',
@@ -34,7 +13,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} ${playfair.variable} ${barlow.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      </head>
+      <body>
         {children}
       </body>
     </html>

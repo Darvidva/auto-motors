@@ -1,23 +1,13 @@
 'use client';
 
 import ListingCard from '@/components/shared/ListingCard';
-import { listings } from '@/lib/placeholder-data';
 import { Listing } from '@/types';
 
 interface RelatedListingsProps {
-  currentListingId: string;
-  category: string;
+  relatedListings: Listing[];
 }
 
-export default function RelatedListings({ currentListingId, category }: RelatedListingsProps) {
-  const relatedListings = listings
-    .filter(
-      (listing: Listing) =>
-        listing.id !== currentListingId &&
-        listing.category === category &&
-        listing.published
-    )
-    .slice(0, 3);
+export default function RelatedListings({ relatedListings }: RelatedListingsProps) {
 
   if (relatedListings.length === 0) {
     return null;

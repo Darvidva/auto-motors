@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ListingCard from '@/components/shared/ListingCard';
-import { featuredListings } from '@/lib/placeholder-data';
+import { Listing } from '@/types';
 
-export default function FeaturedListings() {
+export default function FeaturedListings({ featuredListings }: { featuredListings: Listing[] }) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: 'left' | 'right') => {

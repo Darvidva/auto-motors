@@ -4,16 +4,22 @@ import TrustSection from '@/components/home/TrustSection';
 import FeaturedListings from '@/components/home/FeaturedListings';
 import HowItWorks from '@/components/home/HowItWorks';
 import CTABanner from '@/components/home/CTABanner';
+import { getFeaturedListings, getBusinessSettings } from '@/lib/queries';
 
-export default function HomePage() {
-  // TODO: Connect to backend API — GET /api/homepage-content
+export const dynamic = 'force-dynamic';
+
+export default async function HomePage() {
+  const [featuredListings, settings] = await Promise.all([
+    getFeaturedListings(),
+    getBusinessSettings(),
+  ]);
 
   return (
     <>
-      <HeroSection />
+      <HeroSection heroImage={settings.heroImages?.home} />
       <CategoryBar />
       <TrustSection />
-      <FeaturedListings />
+      <FeaturedListings featuredListings={featuredListings as any} />
       <HowItWorks />
       <CTABanner />
     </>

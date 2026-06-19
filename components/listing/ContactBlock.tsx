@@ -2,14 +2,17 @@
 
 import { Phone, Mail, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { businessInfo } from '@/lib/placeholder-data';
 
 interface ContactBlockProps {
   listingName: string;
   listingId: string;
+  businessInfo?: any;
 }
 
-export default function ContactBlock({ listingName }: ContactBlockProps) {
+export default function ContactBlock({ listingName, businessInfo }: ContactBlockProps) {
+  const phone = businessInfo?.phone || '+234 803 456 7890';
+  const whatsapp = businessInfo?.whatsapp || '2348034567890';
+  const email = businessInfo?.email || 'info@dxstaremporium.com';
   const whatsappMessage = encodeURIComponent(
     `Hi, I'm interested in the ${listingName} listed on your website.`
   );
@@ -30,7 +33,7 @@ export default function ContactBlock({ listingName }: ContactBlockProps) {
           asChild
           className="flex-1 bg-brand-gold text-white hover:bg-brand-gold-dark rounded-md h-12"
         >
-          <a href={`tel:${businessInfo.phone.replace(/\s/g, '')}`}>
+          <a href={`tel:${phone.replace(/\s/g, '')}`}>
             <Phone className="w-5 h-5 mr-2" />
             Call Us
           </a>
@@ -43,7 +46,7 @@ export default function ContactBlock({ listingName }: ContactBlockProps) {
           className="flex-1 bg-transparent border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white rounded-md h-12"
         >
           <a
-            href={`https://wa.me/${businessInfo.whatsapp}?text=${whatsappMessage}`}
+            href={`https://wa.me/${whatsapp}?text=${whatsappMessage}`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -56,18 +59,18 @@ export default function ContactBlock({ listingName }: ContactBlockProps) {
       {/* Contact Details */}
       <div className="space-y-3 pt-4 border-t border-brand-border">
         <a
-          href={`tel:${businessInfo.phone.replace(/\s/g, '')}`}
+          href={`tel:${phone.replace(/\s/g, '')}`}
           className="flex items-center gap-2 text-sm text-brand-mid-grey hover:text-brand-gold transition-colors"
         >
           <Phone className="w-4 h-4 text-brand-gold" />
-          {businessInfo.phone}
+          {phone}
         </a>
         <a
-          href={`mailto:${businessInfo.email}`}
+          href={`mailto:${email}`}
           className="flex items-center gap-2 text-sm text-brand-mid-grey hover:text-brand-gold transition-colors"
         >
           <Mail className="w-4 h-4 text-brand-gold" />
-          {businessInfo.email}
+          {email}
         </a>
       </div>
     </div>

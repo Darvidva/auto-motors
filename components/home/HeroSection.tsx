@@ -6,7 +6,8 @@ import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { stats } from '@/lib/placeholder-data';
+import { stats } from '@/lib/constants';
+
 
 function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string }) {
   const [displayValue, setDisplayValue] = useState(0);
@@ -58,15 +59,14 @@ function AnimatedNumber({ value, suffix = '' }: { value: number; suffix?: string
   );
 }
 
-export default function HeroSection() {
-  const heroStats = stats;
+export default function HeroSection({ heroImage }: { heroImage?: string }) {
 
   return (
     <section className="relative min-h-screen flex items-center overflow-hidden bg-brand-surface">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Image
-          src="/images/hero/home.jpg"
+          src={heroImage || "/images/hero/home.jpg"}
           alt="Premium vehicles and machinery"
           fill
           className="object-cover"
@@ -123,7 +123,7 @@ export default function HeroSection() {
           </div>
 
           <div className="flex flex-wrap items-center gap-6 sm:gap-8 opacity-0 animate-fade-up animation-delay-300">
-            {heroStats.map((stat, index) => (
+            {stats.map((stat, index) => (
               <div key={stat.label} className="flex items-center gap-3">
                 {index > 0 && (
                   <Separator

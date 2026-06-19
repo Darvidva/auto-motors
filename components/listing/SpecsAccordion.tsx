@@ -8,13 +8,15 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { Badge } from '@/components/ui/badge';
-import { businessInfo } from '@/lib/placeholder-data';
 
 interface SpecsAccordionProps {
   listing: Listing;
+  businessInfo?: any;
 }
 
-export default function SpecsAccordion({ listing }: SpecsAccordionProps) {
+export default function SpecsAccordion({ listing, businessInfo }: SpecsAccordionProps) {
+  const address = businessInfo?.address || '15 Adeniran Ogunsanya Street, Surulere, Lagos, Nigeria';
+  const hours = businessInfo?.hours || [];
   return (
     <Accordion type="multiple" defaultValue={['overview', 'specifications']} className="w-full">
       <AccordionItem value="overview">
@@ -93,19 +95,19 @@ export default function SpecsAccordion({ listing }: SpecsAccordionProps) {
                 <span className="text-brand-dark font-medium">{listing.serviceHistory}</span>
               </div>
             )}
-            {listing.numberOfKeys !== undefined && listing.numberOfKeys !== null && (
+            {listing.numberOfKeys != null && (
               <div className="flex justify-between border-b border-brand-border pb-3">
                 <span className="text-brand-mid-grey">Keys Included</span>
                 <span className="text-brand-dark">{listing.numberOfKeys}</span>
               </div>
             )}
-            {listing.mileage !== undefined && (
+            {listing.mileage != null && (
               <div className="flex justify-between">
                 <span className="text-brand-mid-grey">Mileage</span>
                 <span className="text-brand-dark">{listing.mileage.toLocaleString()} km</span>
               </div>
             )}
-            {listing.hoursUsed !== undefined && (
+            {listing.hoursUsed != null && (
               <div className="flex justify-between">
                 <span className="text-brand-mid-grey">Operating Hours</span>
                 <span className="text-brand-dark">{listing.hoursUsed.toLocaleString()} hrs</span>
@@ -144,14 +146,16 @@ export default function SpecsAccordion({ listing }: SpecsAccordionProps) {
           <div className="space-y-4">
             <div>
               <p className="text-brand-mid-grey text-sm mb-1">Address</p>
-              <p className="text-brand-dark">{businessInfo.address}</p>
+              <p className="text-brand-dark">{address}</p>
             </div>
+            {hours.length > 0 && (
             <div>
               <p className="text-brand-mid-grey text-sm mb-1">Hours</p>
               <p className="text-brand-dark">
-                {businessInfo.hours.find(h => !h.closed)?.open} - {businessInfo.hours.find(h => !h.closed)?.close} (Contact for details)
+                {hours.find((h: any) => !h.closed)?.open} - {hours.find((h: any) => !h.closed)?.close} (Contact for details)
               </p>
             </div>
+            )}
             <div className="aspect-video rounded-lg overflow-hidden bg-brand-surface relative border border-brand-border">
               <iframe
                 title="Dealership Location"
@@ -161,7 +165,7 @@ export default function SpecsAccordion({ listing }: SpecsAccordionProps) {
                 loading="lazy"
                 allowFullScreen
                 referrerPolicy="no-referrer-when-downgrade"
-                src={`https://maps.google.com/maps?q=${encodeURIComponent(businessInfo.address)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
+                src={`https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=13&ie=UTF8&iwloc=&output=embed`}
               />
             </div>
             <p className="text-brand-mid-grey text-sm">

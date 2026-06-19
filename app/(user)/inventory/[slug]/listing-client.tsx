@@ -9,9 +9,11 @@ import { Listing } from '@/types';
 
 interface ListingDetailClientProps {
   listing: Listing;
+  relatedListings?: Listing[];
+  businessInfo?: any;
 }
 
-export default function ListingDetailClient({ listing }: ListingDetailClientProps) {
+export default function ListingDetailClient({ listing, relatedListings = [], businessInfo }: ListingDetailClientProps) {
   return (
     <div className="min-h-screen bg-white pt-20">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
@@ -28,6 +30,7 @@ export default function ListingDetailClient({ listing }: ListingDetailClientProp
             <ContactBlock
               listingName={listing.name}
               listingId={listing.id}
+              businessInfo={businessInfo}
             />
           </div>
         </div>
@@ -37,13 +40,12 @@ export default function ListingDetailClient({ listing }: ListingDetailClientProp
 
         {/* Accordion Details */}
         <div className="max-w-4xl">
-          <SpecsAccordion listing={listing} />
+          <SpecsAccordion listing={listing} businessInfo={businessInfo} />
         </div>
 
         {/* Related Listings */}
         <RelatedListings
-          currentListingId={listing.id}
-          category={listing.category}
+          relatedListings={relatedListings}
         />
       </div>
     </div>

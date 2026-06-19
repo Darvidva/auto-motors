@@ -34,6 +34,8 @@ export async function PATCH(request: NextRequest) {
           whatsapp: validatedData.whatsapp,
           email: validatedData.email,
           address: validatedData.address,
+          heroImages: validatedData.heroImages,
+          teamMembers: validatedData.teamMembers,
         },
       });
     } else {
@@ -47,6 +49,8 @@ export async function PATCH(request: NextRequest) {
           address: validatedData.address,
           businessHours: [],
           socialMedia: [],
+          heroImages: validatedData.heroImages,
+          teamMembers: validatedData.teamMembers,
         },
       });
     }

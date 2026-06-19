@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
-import { businessInfo } from '@/lib/placeholder-data';
+import { getBusinessSettings } from '@/lib/queries';
 
 const footerLinks = [
   { name: 'Home', href: '/' },
@@ -16,8 +16,8 @@ const categoryLinks = [
   { name: 'Heavy Machinery', href: '/inventory?category=heavy-machinery' },
 ];
 
-export default function Footer() {
-  const info = businessInfo;
+export default async function Footer() {
+  const info = await getBusinessSettings();
 
   const getSocialIcon = (platform: string) => {
     switch (platform.toLowerCase()) {
