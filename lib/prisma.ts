@@ -1,6 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
-import { Pool } from 'pg';
 
 declare global {
   var prismaClientSingleton: PrismaClient | undefined;
@@ -17,14 +15,9 @@ function getDatabaseUrl() {
 }
 
 function createPrismaClient() {
-  const pool = new Pool({
-    connectionString: getDatabaseUrl(),
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: true } : undefined,
-  });
+  process.env.DATABASE_URL = getDatabaseUrl();
 
-  const adapter = new PrismaPg(pool);
-
-  return new PrismaClient({ adapter });
+  return new PrismaClient();
 }
 
 export async function getPrisma() {
