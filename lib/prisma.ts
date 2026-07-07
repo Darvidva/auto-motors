@@ -13,7 +13,17 @@ function getDatabaseUrl() {
     throw new Error('DATABASE_URL is not configured');
   }
 
-  return databaseUrl;
+  if (process.env.NODE_ENV !== 'production') {
+    return databaseUrl;
+  }
+
+  const parsedUrl = new URL(databaseUrl);
+
+  if (!parsedUrl.searchParams.has('sslmode')) {
+    parsedUrl.searchParams.set('sslmode', 'verify-full');
+  }
+
+  return parsedUrl.toString();
 }
 
 function createPrismaClient() {
