@@ -1,7 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { getPrisma } from '@/lib/prisma';
+import { requireAdminRequest } from '@/lib/auth';
 import { listingSchema } from '@/lib/validations';
+
+function generateSlug(name: string) {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+async function ensureUniqueSlug(baseSlug: string) {
+  const prisma = await getPrisma();
+  let slug = baseSlug;
+  let counter = 1;
+
+  while (await prisma.listing.findUnique({ where: { slug } })) {
+    slug = `${baseSlug}-${counter}`;
+    counter += 1;
+  }
+
+  return slug;
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,7 +36,11 @@ export async function GET(request: NextRequest) {
       orderBy: { createdAt: 'desc' },
     });
 
-    const serializedListings = listings.map(l => ({ ...l, price: Number(l.price) }));
+    const serializedListings = listings.map((listing) => ({
+      ...listing,
+      price: Number(listing.price),
+    }));
+
     return NextResponse.json(serializedListings);
   } catch (error) {
     console.error('Failed to fetch listings:', error);
@@ -23,22 +49,27 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const authResult = await requireAdminRequest(request);
+
+  if ('error' in authResult) {
+    return authResult.error;
+  }
+
   try {
     const prisma = await getPrisma();
     const body = await request.json();
-    
-    // Validate request body
     const validatedData = listingSchema.parse(body);
+    const slug = await ensureUniqueSlug(generateSlug(validatedData.name));
 
     const newListing = await prisma.listing.create({
       data: {
-        slug: body.slug,
+        slug,
         name: validatedData.name,
-        category: validatedData.category as any,
+        category: validatedData.category,
         brand: validatedData.brand,
         model: validatedData.model,
         year: validatedData.year,
-        price: validatedData.price,
+        price: BigInt(validatedData.price),
         mileage: validatedData.mileage ?? null,
         hoursUsed: validatedData.hoursUsed ?? null,
         transmission: validatedData.transmission,
@@ -53,8 +84,8 @@ export async function POST(request: NextRequest) {
         serviceHistory: validatedData.serviceHistory || null,
         numberOfKeys: validatedData.numberOfKeys ?? null,
         description: validatedData.description,
-        features: validatedData.features || [],
-        images: validatedData.images || [],
+        features: validatedData.features,
+        images: validatedData.images,
         featured: validatedData.featured,
         published: validatedData.published,
       },

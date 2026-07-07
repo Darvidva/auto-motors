@@ -2,15 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { SignJWT } from 'jose';
 import { getPrisma } from '@/lib/prisma';
+import { getJwtSecret } from '@/lib/auth';
+import { loginSchema } from '@/lib/validations';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password } = body;
-
-    if (!email || !password) {
-      return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
-    }
+    const { email, password } = loginSchema.parse(body);
 
     const prisma = await getPrisma();
     const user = await prisma.adminUser.findUnique({
@@ -34,7 +32,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Create JWT
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || 'fallback-secret-do-not-use');
+    const secret = getJwtSecret();
     const token = await new SignJWT({ sub: user.id, email: user.email, role: user.role })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()

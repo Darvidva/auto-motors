@@ -1,21 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getPrisma } from '@/lib/prisma';
+import { requireAdminRequest } from '@/lib/auth';
+import { enquiryStatusSchema } from '@/lib/validations';
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authResult = await requireAdminRequest(request);
+
+  if ('error' in authResult) {
+    return authResult.error;
+  }
+
   try {
     const prisma = await getPrisma();
     const { id } = await params;
     const body = await request.json();
-    
-    // Allow updating status
+    const { status } = enquiryStatusSchema.parse(body);
+
     const updatedEnquiry = await prisma.enquiry.update({
       where: { id },
-      data: {
-        status: body.status,
-      },
+      data: { status },
     });
 
     return NextResponse.json(updatedEnquiry);
@@ -32,9 +38,16 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authResult = await requireAdminRequest(request);
+
+  if ('error' in authResult) {
+    return authResult.error;
+  }
+
   try {
     const prisma = await getPrisma();
     const { id } = await params;
+
     await prisma.enquiry.delete({
       where: { id },
     });

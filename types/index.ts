@@ -131,4 +131,11 @@ export interface BusinessInfo {
     platform: string;
     url: string;
   }[];
+  heroImages: {
+    home: string;
+    inventory: string;
+    about: string;
+    contact: string;
+  };
+  teamMembers: TeamMember[];
 }

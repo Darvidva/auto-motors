@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import ListingDetailClient from './listing-client';
-import { getListingBySlug, getListings, getRelatedListings, getBusinessSettings } from '@/lib/queries';
+import { getListingBySlug, getRelatedListings, getBusinessSettings } from '@/lib/queries';
 
 interface ListingPageProps {
   params: Promise<{
@@ -8,13 +8,7 @@ interface ListingPageProps {
   }>;
 }
 
-// Generate static params for all listings
-export async function generateStaticParams() {
-  const listings = await getListings();
-  return listings.map((listing) => ({
-    slug: listing.slug,
-  }));
-}
+export const dynamic = 'force-dynamic';
 
 export default async function ListingPage({ params }: ListingPageProps) {
   const { slug } = await params;

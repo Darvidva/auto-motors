@@ -5,8 +5,8 @@ import { z } from 'zod';
 /** Strip HTML tags and collapse whitespace — used to sanitise free-text inputs */
 function sanitize(value: string): string {
   return value
-    .replace(/<[^>]*>/g, '')   // strip HTML tags
-    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '') // strip control chars (keep \n, \r, \t)
+    .replace(/<[^>]*>/g, '')
+    .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')
     .trim();
 }
 
@@ -20,6 +20,12 @@ const safeString = (label: string, min = 1, max = 255) =>
         .min(min, `${label} must be at least ${min} character(s)`)
         .max(max, `${label} must be at most ${max} characters`)
     );
+
+const optionalSafeString = (label: string, max = 255) =>
+  z
+    .union([z.string(), z.null(), z.undefined()])
+    .transform((value) => (typeof value === 'string' ? sanitize(value) : ''))
+    .refine((value) => value.length <= max, `${label} must be at most ${max} characters`);
 
 const safeEmail = z
   .string({ required_error: 'Email is required' })
@@ -37,6 +43,15 @@ const safePhone = z
   )
   .optional()
   .or(z.literal(''));
+
+const optionalUuid = z
+  .union([z.string(), z.null(), z.undefined()])
+  .transform((value) => (typeof value === 'string' ? sanitize(value) : ''))
+  .refine(
+    (value) => value === '' || /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value),
+    'Invalid identifier'
+  )
+  .transform((value) => value || null);
 
 // ─── Login Schema ───────────────────────────────────────────────────────────
 
@@ -58,6 +73,17 @@ export const contactSchema = z.object({
   message: safeString('Message', 10, 2000),
 });
 export type ContactFormValues = z.infer<typeof contactSchema>;
+
+export const enquirySubmissionSchema = contactSchema.extend({
+  listingId: optionalUuid,
+  listingName: optionalSafeString('Listing name', 200).transform((value) => value || null),
+});
+export type EnquirySubmissionValues = z.infer<typeof enquirySubmissionSchema>;
+
+export const enquiryStatusSchema = z.object({
+  status: z.enum(['Unread', 'Read', 'Followed Up', 'Resolved']),
+});
+export type EnquiryStatusValues = z.infer<typeof enquiryStatusSchema>;
 
 // ─── Admin Settings Schema ──────────────────────────────────────────────────
 
@@ -86,18 +112,24 @@ export const settingsSchema = z.object({
     ),
   email: safeEmail,
   address: safeString('Address', 5, 500),
-  heroImages: z.object({
-    home: safeString('Home Hero Image', 0, 500).optional().or(z.literal('')),
-    inventory: safeString('Inventory Hero Image', 0, 500).optional().or(z.literal('')),
-    about: safeString('About Hero Image', 0, 500).optional().or(z.literal('')),
-    contact: safeString('Contact Hero Image', 0, 500).optional().or(z.literal('')),
-  }).default({ home: '', inventory: '', about: '', contact: '' }),
-  teamMembers: z.array(z.object({
-    name: safeString('Name', 1, 100),
-    role: safeString('Role', 1, 100),
-    image: safeString('Image', 1, 500),
-    bio: safeString('Bio', 1, 1000)
-  })).default([]),
+  heroImages: z
+    .object({
+      home: optionalSafeString('Home Hero Image', 500),
+      inventory: optionalSafeString('Inventory Hero Image', 500),
+      about: optionalSafeString('About Hero Image', 500),
+      contact: optionalSafeString('Contact Hero Image', 500),
+    })
+    .default({ home: '', inventory: '', about: '', contact: '' }),
+  teamMembers: z
+    .array(
+      z.object({
+        name: safeString('Name', 1, 100),
+        role: safeString('Role', 1, 100),
+        image: safeString('Image', 1, 500),
+        bio: safeString('Bio', 1, 1000),
+      })
+    )
+    .default([]),
 });
 export type SettingsFormValues = z.infer<typeof settingsSchema>;
 
@@ -121,12 +153,12 @@ export const listingSchema = z.object({
   fuelType: z.enum(fuelTypes).default('Diesel'),
   driveSystem: safeString('Drive system', 1, 20).default('4WD'),
   condition: z.enum(conditions).default('Used'),
-  color: safeString('Color', 0, 50).optional().or(z.literal('')),
-  interiorColor: safeString('Interior Color', 0, 50).optional().or(z.literal('')),
-  bodyType: safeString('Body Type', 0, 50).optional().or(z.literal('')),
-  engineCapacity: safeString('Engine Capacity', 0, 50).optional().or(z.literal('')),
-  vin: safeString('VIN', 0, 50).optional().or(z.literal('')),
-  serviceHistory: safeString('Service History', 0, 100).optional().or(z.literal('')),
+  color: optionalSafeString('Color', 50),
+  interiorColor: optionalSafeString('Interior Color', 50),
+  bodyType: optionalSafeString('Body Type', 50),
+  engineCapacity: optionalSafeString('Engine Capacity', 50),
+  vin: optionalSafeString('VIN', 50),
+  serviceHistory: optionalSafeString('Service History', 100),
   numberOfKeys: z.coerce.number().int().nonnegative().nullable().optional(),
   description: safeString('Description', 10, 5000),
   features: z.array(z.string().transform(sanitize)).default([]),
