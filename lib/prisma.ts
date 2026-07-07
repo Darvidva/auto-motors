@@ -7,17 +7,17 @@ declare global {
 function getDatabaseUrl() {
   const databaseUrl = process.env.DATABASE_URL;
 
-  if (!databaseUrl) {
+  if (!databaseUrl || !databaseUrl.trim()) {
     throw new Error('DATABASE_URL is not configured');
   }
 
-  return databaseUrl;
+  return databaseUrl.trim();
 }
 
 function createPrismaClient() {
-  process.env.DATABASE_URL = getDatabaseUrl();
+  getDatabaseUrl();
 
-  return new PrismaClient();
+  return new PrismaClient({});
 }
 
 export async function getPrisma() {
