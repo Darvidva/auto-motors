@@ -4,31 +4,21 @@ import { Pool } from 'pg';
 
 declare global {
   var prismaClientSingleton: PrismaClient | undefined;
-  var prismaPoolSingleton: Pool | undefined;
-}
-
-function getDatabaseUrl() {
-  const databaseUrl = process.env.DATABASE_URL;
-
-  if (!databaseUrl || !databaseUrl.trim()) {
-    throw new Error('DATABASE_URL is not configured');
-  }
-
-  return databaseUrl.trim();
-}
-
-function getPool() {
-  if (!globalThis.prismaPoolSingleton) {
-    globalThis.prismaPoolSingleton = new Pool({
-      connectionString: getDatabaseUrl(),
-    });
-  }
-
-  return globalThis.prismaPoolSingleton;
 }
 
 function createPrismaClient() {
-  const adapter = new PrismaPg(getPool());
+  const connectionString = process.env.DATABASE_URL;
+
+  if (!connectionString || !connectionString.trim()) {
+    throw new Error('DATABASE_URL is not configured');
+  }
+
+  const pool = new Pool({
+    connectionString: connectionString.trim(),
+    ssl: { rejectUnauthorized: false },
+  });
+
+  const adapter = new PrismaPg(pool);
 
   return new PrismaClient({ adapter });
 }
