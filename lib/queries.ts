@@ -33,61 +33,94 @@ function parseHeroImages(value: unknown): BusinessInfo['heroImages'] {
   };
 }
 
-export async function getBusinessSettings(): Promise<BusinessInfo> {
-  const prisma = await getPrisma();
-  const settings = await prisma.businessSettings.findFirst();
+function logPublicQueryError(queryName: string, error: unknown) {
+  console.error(`[public-query:${queryName}]`, error);
+}
 
-  if (!settings) {
+export async function getBusinessSettings(): Promise<BusinessInfo> {
+  try {
+    const prisma = await getPrisma();
+    const settings = await prisma.businessSettings.findFirst();
+
+    if (!settings) {
+      return defaultBusinessInfo;
+    }
+
+    return {
+      name: settings.name,
+      tagline: settings.tagline,
+      phone: settings.phone,
+      whatsapp: settings.whatsapp,
+      email: settings.email,
+      address: settings.address,
+      hours: parseArray<BusinessInfo['hours'][number]>(settings.businessHours),
+      socialMedia: parseArray(settings.socialMedia),
+      heroImages: parseHeroImages(settings.heroImages),
+      teamMembers: parseArray<TeamMember>(settings.teamMembers),
+    };
+  } catch (error) {
+    logPublicQueryError('getBusinessSettings', error);
     return defaultBusinessInfo;
   }
-
-  return {
-    name: settings.name,
-    tagline: settings.tagline,
-    phone: settings.phone,
-    whatsapp: settings.whatsapp,
-    email: settings.email,
-    address: settings.address,
-    hours: parseArray<BusinessInfo['hours'][number]>(settings.businessHours),
-    socialMedia: parseArray(settings.socialMedia),
-    heroImages: parseHeroImages(settings.heroImages),
-    teamMembers: parseArray<TeamMember>(settings.teamMembers),
-  };
 }
 
 export async function getListings() {
-  const prisma = await getPrisma();
-  return prisma.listing.findMany({
-    where: { published: true },
-    orderBy: { createdAt: 'desc' },
-  });
+  try {
+    const prisma = await getPrisma();
+
+    return await prisma.listing.findMany({
+      where: { published: true },
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch (error) {
+    logPublicQueryError('getListings', error);
+    return [];
+  }
 }
 
 export async function getListingBySlug(slug: string) {
-  const prisma = await getPrisma();
-  return prisma.listing.findFirst({
-    where: { slug, published: true },
-  });
+  try {
+    const prisma = await getPrisma();
+
+    return await prisma.listing.findFirst({
+      where: { slug, published: true },
+    });
+  } catch (error) {
+    logPublicQueryError('getListingBySlug', error);
+    return null;
+  }
 }
 
 export async function getFeaturedListings() {
-  const prisma = await getPrisma();
-  return prisma.listing.findMany({
-    where: { featured: true, published: true },
-    orderBy: { createdAt: 'desc' },
-    take: 4,
-  });
+  try {
+    const prisma = await getPrisma();
+
+    return await prisma.listing.findMany({
+      where: { featured: true, published: true },
+      orderBy: { createdAt: 'desc' },
+      take: 4,
+    });
+  } catch (error) {
+    logPublicQueryError('getFeaturedListings', error);
+    return [];
+  }
 }
 
 export async function getRelatedListings(currentId: string, category: string) {
-  const prisma = await getPrisma();
-  return prisma.listing.findMany({
-    where: {
-      id: { not: currentId },
-      category,
-      published: true,
-    },
-    take: 3,
-    orderBy: { createdAt: 'desc' },
-  });
+  try {
+    const prisma = await getPrisma();
+
+    return await prisma.listing.findMany({
+      where: {
+        id: { not: currentId },
+        category,
+        published: true,
+      },
+      take: 3,
+      orderBy: { createdAt: 'desc' },
+    });
+  } catch (error) {
+    logPublicQueryError('getRelatedListings', error);
+    return [];
+  }
 }
