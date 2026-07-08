@@ -7,20 +7,20 @@ const steps = [
   {
     number: '01',
     icon: Search,
-    title: 'Browse Our Inventory',
-    description: 'Explore our curated selection of vehicles and machinery.',
+    title: 'Check Available Stock',
+    description: 'Go through the listings and note the vehicles or equipment that match what you need.',
   },
   {
     number: '02',
     icon: Phone,
-    title: 'Contact Us',
-    description: 'Call, WhatsApp, or email — we respond within 24 hours.',
+    title: 'Speak With Us',
+    description: 'Call, send a WhatsApp message or email us to ask questions and confirm availability.',
   },
   {
     number: '03',
     icon: CheckCircle2,
-    title: 'Inspect & Close',
-    description: 'Visit us, inspect the product, and close the deal.',
+    title: 'Inspect and Decide',
+    description: 'Come in, inspect the unit properly and move ahead only when you are satisfied.',
   },
 ];
 

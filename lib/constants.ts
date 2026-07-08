@@ -11,30 +11,30 @@ export const trustPoints: TrustPoint[] = [
   {
     id: '1',
     icon: 'ShieldCheck',
-    title: 'Verified Listings',
+    title: 'Clear Listing Details',
     description:
-      'Every vehicle and machine goes through a quality check before listing.',
+      'We post the key information buyers usually ask for, so you can quickly tell what fits your needs.',
   },
   {
     id: '2',
     icon: 'Eye',
-    title: 'Transparent Pricing',
+    title: 'Straightforward Pricing',
     description:
-      'No hidden fees, no pressure. What you see is the price.',
+      'The listed price is the starting point of the conversation, without vague wording or unnecessary pressure.',
   },
   {
     id: '3',
     icon: 'Globe',
-    title: 'Wide Selection',
+    title: 'Stock for Different Jobs',
     description:
-      'Cars, trucks, tractors, and heavy machinery — all in one place.',
+      'From everyday cars to work trucks and site equipment, we keep options for both personal and business use.',
   },
   {
     id: '4',
     icon: 'Phone',
-    title: 'Direct Contact',
+    title: 'Easy to Reach Us',
     description:
-      'Talk to us directly — call, WhatsApp, or email. No middlemen.',
+      'You can call, send a WhatsApp message or email us directly and get a real response from our team.',
   },
 ];
 

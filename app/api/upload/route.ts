@@ -6,15 +6,23 @@ export const dynamic = 'force-dynamic';
 export async function POST(request: NextRequest) {
   try {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceKey) {
-      return NextResponse.json({ error: 'Storage not configured. Add SUPABASE_SERVICE_ROLE_KEY to environment.' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Storage not configured. Add NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY to environment.' },
+        { status: 500 }
+      );
     }
 
     // Dynamic import to avoid build-time errors
     const { createClient } = await import('@supabase/supabase-js');
-    const supabase = createClient(supabaseUrl, serviceKey);
+    const supabase = createClient(supabaseUrl, serviceKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
 
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -41,56 +49,51 @@ export async function POST(request: NextRequest) {
 
     try {
       const sharp = (await import('sharp')).default;
-      buffer = await sharp(buffer as any)
+      buffer = await sharp(buffer)
         .resize({ width: 1920, withoutEnlargement: true })
         .webp({ quality: 80 })
         .toBuffer();
-      
+
       ext = 'webp';
       filename = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
       filepath = `listings/${filename}`;
       contentType = 'image/webp';
     } catch (sharpError) {
-      console.warn('Image compression skipped or failed:', sharpError);
-      // fallback to original buffer if sharp is missing or fails
+      console.warn('Image compression skipped; uploading original image buffer instead.', sharpError);
     }
 
     const { data, error } = await supabase.storage
       .from('listing-images')
       .upload(filepath, buffer, {
-        contentType: contentType,
+        contentType,
+        upsert: false,
       });
 
-    let finalPath = '';
-
-    if (error && error.message.includes('Bucket not found')) {
-      // Try to create the bucket
-      const { error: createError } = await supabase.storage.createBucket('listing-images', {
-        public: true,
-        fileSizeLimit: 5242880, // 5MB
-      });
-      
-      if (!createError) {
-        // Retry upload
-        const retry = await supabase.storage.from('listing-images').upload(filepath, buffer, {
-          contentType: contentType,
-          upsert: false,
-        });
-        if (retry.error || !retry.data) {
-          console.error('Upload retry error:', retry.error);
-          return NextResponse.json({ error: 'Failed to upload image after creating bucket' }, { status: 500 });
-        }
-        finalPath = retry.data.path;
-      } else {
-        console.error('Failed to create bucket:', createError);
-        return NextResponse.json({ error: 'Storage bucket "listing-images" does not exist and could not be created automatically. Please create a public bucket named "listing-images" in your Supabase dashboard.' }, { status: 500 });
-      }
-    } else if (error || !data) {
+    if (error || !data) {
       console.error('Upload error:', error);
+
+      if (error?.message?.includes('Bucket not found')) {
+        return NextResponse.json(
+          {
+            error: 'Storage bucket "listing-images" was not found. Create a public bucket with that exact name in your Supabase dashboard before uploading.',
+          },
+          { status: 500 }
+        );
+      }
+
+      if (error?.message?.toLowerCase().includes('row-level security')) {
+        return NextResponse.json(
+          {
+            error: 'Storage upload failed due to Supabase permissions. Confirm SUPABASE_SERVICE_ROLE_KEY is set correctly and that the "listing-images" bucket exists.',
+          },
+          { status: 500 }
+        );
+      }
+
       return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });
-    } else {
-      finalPath = data.path;
     }
+
+    const finalPath = data.path;
 
     const { data: publicUrl } = supabase.storage
       .from('listing-images')

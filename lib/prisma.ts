@@ -1,7 +1,10 @@
 import { PrismaClient } from '@prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 
 declare global {
   var prismaClientSingleton: PrismaClient | undefined;
+  var prismaPoolSingleton: Pool | undefined;
 }
 
 function getDatabaseUrl() {
@@ -14,10 +17,20 @@ function getDatabaseUrl() {
   return databaseUrl.trim();
 }
 
-function createPrismaClient() {
-  getDatabaseUrl();
+function getPool() {
+  if (!globalThis.prismaPoolSingleton) {
+    globalThis.prismaPoolSingleton = new Pool({
+      connectionString: getDatabaseUrl(),
+    });
+  }
 
-  return new PrismaClient({});
+  return globalThis.prismaPoolSingleton;
+}
+
+function createPrismaClient() {
+  const adapter = new PrismaPg(getPool());
+
+  return new PrismaClient({ adapter });
 }
 
 export async function getPrisma() {

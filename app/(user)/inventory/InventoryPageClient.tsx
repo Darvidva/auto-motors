@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import FilterBar from '@/components/inventory/FilterBar';
 import ListingGrid from '@/components/inventory/ListingGrid';
@@ -10,6 +10,7 @@ import Link from 'next/link';
 export default function InventoryPageClient({ initialListings, heroImage }: { initialListings: any[]; heroImage?: string }) {
   const [filters, setFilters] = useState<Record<string, string | number | undefined>>({ sortBy: 'newest' });
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [visibleCount, setVisibleCount] = useState(9);
   const allListings = initialListings;
 
   const filteredListings = useMemo(() => {
@@ -81,12 +82,24 @@ export default function InventoryPageClient({ initialListings, heroImage }: { in
     return result;
   }, [filters]);
 
+  useEffect(() => {
+    setVisibleCount(9);
+  }, [filters, viewMode]);
+
+  const paginatedListings = filteredListings.slice(0, visibleCount);
+  const hasMoreListings = filteredListings.length > visibleCount;
+
   const handleFilterChange = (newFilters: Record<string, string | number | undefined>) => {
     setFilters(newFilters);
   };
 
   const resetFilters = () => {
     setFilters({ sortBy: 'newest' });
+    setVisibleCount(9);
+  };
+
+  const handleLoadMore = () => {
+    setVisibleCount((prev) => prev + 9);
   };
 
   return (
@@ -127,14 +140,18 @@ export default function InventoryPageClient({ initialListings, heroImage }: { in
       {/* Listing Grid/List */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 bg-brand-surface">
         <ListingGrid
-          listings={filteredListings}
+          listings={paginatedListings}
           viewMode={viewMode}
           onResetFilters={resetFilters}
         />
 
-        {filteredListings.length > 0 && filteredListings.length >= 9 && (
+        {hasMoreListings && (
           <div className="mt-10 text-center">
-            <button className="px-8 py-3 border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white transition-colors duration-200 rounded-md font-medium">
+            <button
+              type="button"
+              onClick={handleLoadMore}
+              className="px-8 py-3 border border-brand-gold text-brand-gold hover:bg-brand-gold hover:text-white transition-colors duration-200 rounded-md font-medium"
+            >
               Load More
             </button>
           </div>

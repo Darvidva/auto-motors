@@ -85,22 +85,22 @@ export default function AboutPageClient({ heroImage, teamMembers }: { heroImage?
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <div className="max-w-3xl mx-auto">
           <p className="text-brand-dark-grey text-lg leading-relaxed mb-6">
-            DX STAR EMPORIUM was founded with a simple mission: to provide Nigerians
-            with access to quality vehicles and heavy machinery at fair prices.
-            What started as a small operation in Lagos has grown into a trusted
-            dealership serving individuals and businesses across the country.
+            DX STAR EMPORIUM started in Lagos with a clear focus: help customers find
+            dependable vehicles and machinery without the usual guesswork. From private
+            buyers to business owners, people come to us for stock they can inspect,
+            ask questions about and buy with confidence.
           </p>
           <p className="text-brand-dark-grey text-lg leading-relaxed mb-6">
-            Our commitment is simple: quality products, honest pricing, and
-            direct communication. We believe that when you invest in a vehicle
-            or piece of machinery, you deserve transparency at every step.
+            We keep the process straightforward. Accurate listing details, honest
+            conversations and practical support matter more than sales talk. When a
+            customer is spending on a car, truck or machine, the information should be
+            clear from the start.
           </p>
           <p className="text-brand-dark-grey text-lg leading-relaxed mb-12">
-            Whether you&apos;re a first-time buyer looking for a reliable Toyota Camry
-            or a business owner sourcing heavy equipment for construction projects,
-            we treat every customer with the same level of care and respect. Our
-            showroom in Surulere, Lagos is more than a place to browse inventory —
-            it&apos;s a place where trust is built and deals are made with a handshake.
+            That approach still shapes how we work today. Whether someone needs a
+            family car, a work truck or equipment for a project site, we take time to
+            understand the need and point them to the right options. Our Surulere
+            showroom is where many of those conversations begin.
           </p>
 
           {/* Mission Quote */}
@@ -110,7 +110,7 @@ export default function AboutPageClient({ heroImage, teamMembers }: { heroImage?
               lives, their businesses, and their futures.&rdquo;
             </blockquote>
             <p className="text-brand-gold mt-4 font-medium">
-              — Adewale Okonkwo, Founder
+              Adewale Okonkwo, Founder
             </p>
           </div>
         </div>

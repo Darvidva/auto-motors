@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { settingsSchema, type SettingsFormValues } from '@/lib/validations';
@@ -9,9 +9,22 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Save, CheckCircle2, Trash2, Plus, Upload, Loader2 } from 'lucide-react';
+import { Save, CheckCircle2, Trash2, Plus, Upload, Loader2, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { BarLoader } from '@/components/ui/bar-loader';
+import { Progress } from '@/components/ui/progress';
+
+type UploadState = {
+  status: 'idle' | 'uploading' | 'success' | 'error';
+  progress: number;
+  message: string;
+};
+
+const defaultUploadState: UploadState = {
+  status: 'idle',
+  progress: 0,
+  message: '',
+};
 
 export default function AdminSettingsPage() {
   const [saved, setSaved] = useState(false);
@@ -46,34 +59,108 @@ export default function AdminSettingsPage() {
   const currentTeamMembers = watch('teamMembers') || [];
   const currentHeroImages = watch('heroImages') || { home: '', inventory: '', about: '', contact: '' };
   const [uploadingHeroField, setUploadingHeroField] = useState<string | null>(null);
+  const [heroUploadState, setHeroUploadState] = useState<Record<string, UploadState>>({});
+  const [teamUploadState, setTeamUploadState] = useState<Record<number, UploadState>>({});
+  const heroUploadTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
+  const teamUploadTimers = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
+
+  const clearHeroUploadTimer = (field: string) => {
+    const timer = heroUploadTimers.current[field];
+    if (timer) {
+      clearTimeout(timer);
+      delete heroUploadTimers.current[field];
+    }
+  };
+
+  const clearTeamUploadTimer = (index: number) => {
+    const timer = teamUploadTimers.current[index];
+    if (timer) {
+      clearTimeout(timer);
+      delete teamUploadTimers.current[index];
+    }
+  };
+
+  const queueHeroUploadReset = (field: string) => {
+    clearHeroUploadTimer(field);
+    heroUploadTimers.current[field] = setTimeout(() => {
+      setHeroUploadState((prev) => ({ ...prev, [field]: defaultUploadState }));
+      delete heroUploadTimers.current[field];
+    }, 2500);
+  };
+
+  const queueTeamUploadReset = (index: number) => {
+    clearTeamUploadTimer(index);
+    teamUploadTimers.current[index] = setTimeout(() => {
+      setTeamUploadState((prev) => ({ ...prev, [index]: defaultUploadState }));
+      delete teamUploadTimers.current[index];
+    }, 2500);
+  };
 
   const handleHeroImageUpload = async (field: 'home' | 'inventory' | 'about' | 'contact', e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    clearHeroUploadTimer(field);
+
     if (!file.type.startsWith('image/')) {
-      alert('Must be an image');
+      setHeroUploadState((prev) => ({
+        ...prev,
+        [field]: { status: 'error', progress: 0, message: 'File must be an image.' },
+      }));
+      queueHeroUploadReset(field);
       return;
     }
+
     if (file.size > 5 * 1024 * 1024) {
-      alert('Image must be less than 5MB');
+      setHeroUploadState((prev) => ({
+        ...prev,
+        [field]: { status: 'error', progress: 0, message: 'Image must be less than 5MB.' },
+      }));
+      queueHeroUploadReset(field);
       return;
     }
 
     setUploadingHeroField(field);
+    setHeroUploadState((prev) => ({
+      ...prev,
+      [field]: { status: 'uploading', progress: 20, message: 'Preparing upload...' },
+    }));
+
     const formData = new FormData();
     formData.append('file', file);
 
     try {
+      setHeroUploadState((prev) => ({
+        ...prev,
+        [field]: { status: 'uploading', progress: 55, message: 'Uploading image...' },
+      }));
+
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      if (!res.ok) throw new Error('Upload failed');
-      const { url } = await res.json();
-      setValue(`heroImages.${field}`, url, { shouldValidate: true });
+      const payload = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        throw new Error(payload?.error || 'Upload failed');
+      }
+
+      setValue(`heroImages.${field}`, payload.url, { shouldValidate: true });
+      setHeroUploadState((prev) => ({
+        ...prev,
+        [field]: { status: 'success', progress: 100, message: 'Image uploaded successfully.' },
+      }));
+      queueHeroUploadReset(field);
     } catch (err) {
       console.error(err);
-      alert('Upload failed');
+      setHeroUploadState((prev) => ({
+        ...prev,
+        [field]: {
+          status: 'error',
+          progress: 100,
+          message: err instanceof Error ? err.message : 'Upload failed',
+        },
+      }));
     } finally {
       setUploadingHeroField(null);
+      e.target.value = '';
     }
   };
 
@@ -81,34 +168,79 @@ export default function AdminSettingsPage() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    clearTeamUploadTimer(index);
+
     if (!file.type.startsWith('image/')) {
-      alert('Must be an image');
+      setTeamUploadState((prev) => ({
+        ...prev,
+        [index]: { status: 'error', progress: 0, message: 'File must be an image.' },
+      }));
+      queueTeamUploadReset(index);
       return;
     }
+
     if (file.size > 5 * 1024 * 1024) {
-      alert('Image must be less than 5MB');
+      setTeamUploadState((prev) => ({
+        ...prev,
+        [index]: { status: 'error', progress: 0, message: 'Image must be less than 5MB.' },
+      }));
+      queueTeamUploadReset(index);
       return;
     }
 
     setUploadingImageIndex(index);
+    setTeamUploadState((prev) => ({
+      ...prev,
+      [index]: { status: 'uploading', progress: 20, message: 'Preparing upload...' },
+    }));
+
     const formData = new FormData();
     formData.append('file', file);
 
     try {
+      setTeamUploadState((prev) => ({
+        ...prev,
+        [index]: { status: 'uploading', progress: 55, message: 'Uploading image...' },
+      }));
+
       const res = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
-      if (!res.ok) throw new Error('Upload failed');
-      const { url } = await res.json();
-      setValue(`teamMembers.${index}.image`, url, { shouldValidate: true });
+      const payload = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        throw new Error(payload?.error || 'Upload failed');
+      }
+
+      setValue(`teamMembers.${index}.image`, payload.url, { shouldValidate: true });
+      setTeamUploadState((prev) => ({
+        ...prev,
+        [index]: { status: 'success', progress: 100, message: 'Image uploaded successfully.' },
+      }));
+      queueTeamUploadReset(index);
     } catch (err) {
       console.error(err);
-      alert('Upload failed');
+      setTeamUploadState((prev) => ({
+        ...prev,
+        [index]: {
+          status: 'error',
+          progress: 100,
+          message: err instanceof Error ? err.message : 'Upload failed',
+        },
+      }));
     } finally {
       setUploadingImageIndex(null);
+      e.target.value = '';
     }
   };
+
+  useEffect(() => {
+    return () => {
+      Object.values(heroUploadTimers.current).forEach(clearTimeout);
+      Object.values(teamUploadTimers.current).forEach(clearTimeout);
+    };
+  }, []);
 
   useEffect(() => {
     async function loadSettings() {
@@ -134,7 +266,7 @@ export default function AdminSettingsPage() {
       } catch (err) {
         console.error('Failed to load settings via API', err);
       }
-      
+
       setIsLoading(false);
     }
     loadSettings();
@@ -142,7 +274,7 @@ export default function AdminSettingsPage() {
 
   const onSubmit = async (data: SettingsFormValues) => {
     setSaved(false);
-    
+
     try {
       await fetch('/api/settings', {
         method: 'PATCH',
@@ -152,7 +284,7 @@ export default function AdminSettingsPage() {
     } catch (err) {
       console.error('Failed to save settings via API', err);
     }
-    
+
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
@@ -290,13 +422,42 @@ export default function AdminSettingsPage() {
               <div key={field}>
                 <Label className="capitalize">{field} Page Hero</Label>
                 <div className="flex flex-col gap-3 mt-2">
+                  {heroUploadState[field] && heroUploadState[field].status !== 'idle' && (
+                    <div
+                      className={`rounded-md border p-3 ${heroUploadState[field]?.status === 'error'
+                        ? 'border-red-200 bg-red-50 text-red-700'
+                        : heroUploadState[field]?.status === 'success'
+                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                          : 'border-brand-border bg-white text-brand-dark'
+                        }`}
+                    >
+                      <div className="flex items-center gap-2 text-sm font-medium">
+                        {heroUploadState[field]?.status === 'error' ? (
+                          <AlertCircle className="h-4 w-4" />
+                        ) : heroUploadState[field]?.status === 'success' ? (
+                          <CheckCircle2 className="h-4 w-4" />
+                        ) : (
+                          <Loader2 className="h-4 w-4 animate-spin text-brand-gold" />
+                        )}
+                        <span>{heroUploadState[field]?.message}</span>
+                      </div>
+                      <Progress
+                        value={heroUploadState[field]?.progress ?? 0}
+                        className="mt-3 h-2 bg-brand-surface"
+                      />
+                    </div>
+                  )}
                   <div className="w-full aspect-[21/9] bg-brand-surface border border-brand-border rounded-lg overflow-hidden flex items-center justify-center relative group">
                     {currentHeroImages[field] ? (
                       <>
                         <img src={currentHeroImages[field]} alt={`${field} hero`} className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <Label htmlFor={`hero-upload-${field}`} className="cursor-pointer bg-white text-brand-dark px-4 py-2 rounded-md text-sm font-medium hover:bg-brand-surface">
-                            Change Image
+                          <Label
+                            htmlFor={`hero-upload-${field}`}
+                            className={`cursor-pointer bg-white text-brand-dark px-4 py-2 rounded-md text-sm font-medium hover:bg-brand-surface ${uploadingHeroField === field ? 'pointer-events-none opacity-70' : ''
+                              }`}
+                          >
+                            {uploadingHeroField === field ? 'Uploading...' : 'Change Image'}
                           </Label>
                         </div>
                       </>
@@ -376,7 +537,8 @@ export default function AdminSettingsPage() {
                     <input type="hidden" {...register(`teamMembers.${index}.image`)} />
                     <Label
                       htmlFor={`team-image-upload-${index}`}
-                      className="inline-flex items-center justify-center h-10 px-4 py-2 bg-white border border-brand-border rounded-md text-sm font-medium transition-colors hover:bg-brand-surface cursor-pointer"
+                      className={`inline-flex items-center justify-center h-10 px-4 py-2 bg-white border border-brand-border rounded-md text-sm font-medium transition-colors hover:bg-brand-surface cursor-pointer ${uploadingImageIndex === index ? 'pointer-events-none opacity-70' : ''
+                        }`}
                     >
                       {uploadingImageIndex === index ? (
                         <Loader2 className="w-4 h-4 mr-2 animate-spin text-brand-gold" />
@@ -393,6 +555,31 @@ export default function AdminSettingsPage() {
                       onChange={(e) => handleImageUpload(index, e)}
                       disabled={uploadingImageIndex === index}
                     />
+                    {teamUploadState[index] && teamUploadState[index].status !== 'idle' && (
+                      <div
+                        className={`mt-3 rounded-md border p-3 ${teamUploadState[index]?.status === 'error'
+                          ? 'border-red-200 bg-red-50 text-red-700'
+                          : teamUploadState[index]?.status === 'success'
+                            ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                            : 'border-brand-border bg-white text-brand-dark'
+                          }`}
+                      >
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          {teamUploadState[index]?.status === 'error' ? (
+                            <AlertCircle className="h-4 w-4" />
+                          ) : teamUploadState[index]?.status === 'success' ? (
+                            <CheckCircle2 className="h-4 w-4" />
+                          ) : (
+                            <Loader2 className="h-4 w-4 animate-spin text-brand-gold" />
+                          )}
+                          <span>{teamUploadState[index]?.message}</span>
+                        </div>
+                        <Progress
+                          value={teamUploadState[index]?.progress ?? 0}
+                          className="mt-3 h-2 bg-brand-surface"
+                        />
+                      </div>
+                    )}
                     {errors.teamMembers?.[index]?.image && <p className="text-red-500 text-xs mt-1">{errors.teamMembers[index]?.image?.message}</p>}
                   </div>
                 </div>

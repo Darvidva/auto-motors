@@ -86,7 +86,7 @@ export default function HeroSection({ heroImage }: { heroImage?: string }) {
       <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-32">
         <div className="max-w-2xl">
           <p className="text-brand-gold text-xs tracking-[0.25em] uppercase mb-4 opacity-0 animate-fade-up font-medium">
-            DX STAR EMPORIUM — Premium Vehicles & Machinery
+            DX STAR EMPORIUM | Vehicles, Trucks and Equipment
           </p>
 
           <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-medium text-brand-dark leading-tight mb-6 opacity-0 animate-fade-up animation-delay-100">
@@ -96,8 +96,8 @@ export default function HeroSection({ heroImage }: { heroImage?: string }) {
           </h1>
 
           <p className="text-base sm:text-lg text-brand-mid-grey leading-relaxed mb-8 max-w-lg opacity-0 animate-fade-up animation-delay-200">
-            Quality cars, trucks, tractors, and heavy machinery in Nigeria. Every product
-            verified. Transparent pricing. Direct contact only.
+            Cars, trucks, tractors and heavy equipment sourced for Nigerian roads and worksites.
+            Clear prices, real details and direct support before you buy.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 mb-12 opacity-0 animate-fade-up animation-delay-300">

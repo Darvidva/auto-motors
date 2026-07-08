@@ -48,6 +48,22 @@ export async function DELETE(
     const prisma = await getPrisma();
     const { id } = await params;
 
+    const enquiry = await prisma.enquiry.findUnique({
+      where: { id },
+      select: { id: true, status: true },
+    });
+
+    if (!enquiry) {
+      return NextResponse.json({ error: 'Enquiry not found' }, { status: 404 });
+    }
+
+    if (!['Followed Up', 'Resolved'].includes(enquiry.status)) {
+      return NextResponse.json(
+        { error: 'Only followed up or resolved enquiries can be deleted' },
+        { status: 400 }
+      );
+    }
+
     await prisma.enquiry.delete({
       where: { id },
     });

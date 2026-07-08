@@ -75,6 +75,7 @@ export async function getFeaturedListings() {
   return prisma.listing.findMany({
     where: { featured: true, published: true },
     orderBy: { createdAt: 'desc' },
+    take: 4,
   });
 }
 

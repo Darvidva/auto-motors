@@ -2,6 +2,8 @@ import Link from 'next/link';
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
 import { getBusinessSettings } from '@/lib/queries';
 
+const CURRENT_YEAR = 2026;
+
 const footerLinks = [
   { name: 'Home', href: '/' },
   { name: 'Inventory', href: '/inventory' },
@@ -161,7 +163,7 @@ export default async function Footer() {
         <div className="mt-12 pt-8 border-t border-brand-dark-grey/30">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-xs text-brand-light-grey">
-              &copy; {new Date().getFullYear()} DX STAR EMPORIUM. All rights reserved.
+              &copy; {CURRENT_YEAR} DX STAR EMPORIUM. All rights reserved.
             </p>
             <Link
               href="/privacy"

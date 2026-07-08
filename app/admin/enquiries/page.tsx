@@ -33,6 +33,7 @@ import {
   Phone,
   Calendar,
   MoreHorizontal,
+  Trash2,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -40,6 +41,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface Enquiry {
   id: string;
@@ -69,6 +80,8 @@ export default function AdminEnquiriesPage() {
   const [selectedEnquiry, setSelectedEnquiry] = useState<Enquiry | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [deleteTarget, setDeleteTarget] = useState<Enquiry | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     fetch('/api/enquiries')
@@ -118,12 +131,85 @@ export default function AdminEnquiriesPage() {
     }
   };
 
-  const updateStatus = (id: string, status: string) => {
+  const canDeleteEnquiry = (status: string) =>
+    status === 'Followed Up' || status === 'Resolved';
+
+  const updateStatus = async (id: string, status: string) => {
+    const previousEnquiries = enquiries;
+    const previousSelected = selectedEnquiry;
+
     setEnquiries(prev => prev.map(e =>
       e.id === id ? { ...e, status } : e
     ));
     if (selectedEnquiry?.id === id) {
       setSelectedEnquiry({ ...selectedEnquiry, status });
+    }
+
+    try {
+      const res = await fetch(`/api/enquiries/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!res.ok) {
+        throw new Error('Failed to update enquiry status');
+      }
+
+      const updated = await res.json();
+
+      setEnquiries(prev => prev.map(e =>
+        e.id === id
+          ? {
+            ...e,
+            status: updated.status,
+          }
+          : e
+      ));
+
+      if (previousSelected?.id === id) {
+        setSelectedEnquiry((current) =>
+          current ? { ...current, status: updated.status } : current
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      setEnquiries(previousEnquiries);
+      setSelectedEnquiry(previousSelected);
+    }
+  };
+
+  const deleteEnquiry = async () => {
+    if (!deleteTarget || !canDeleteEnquiry(deleteTarget.status)) {
+      return;
+    }
+
+    setIsDeleting(true);
+
+    try {
+      const res = await fetch(`/api/enquiries/${deleteTarget.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => null);
+        throw new Error(data?.error || 'Failed to delete enquiry');
+      }
+
+      setEnquiries((prev) => prev.filter((enquiry) => enquiry.id !== deleteTarget.id));
+
+      if (selectedEnquiry?.id === deleteTarget.id) {
+        setSelectedEnquiry(null);
+        setDetailOpen(false);
+      }
+
+      setDeleteTarget(null);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -289,6 +375,15 @@ export default function AdminEnquiriesPage() {
                                 Mark as {s}
                               </DropdownMenuItem>
                             ))}
+                            {canDeleteEnquiry(enquiry.status) && (
+                              <DropdownMenuItem
+                                onClick={() => setDeleteTarget(enquiry)}
+                                className="text-red-600 focus:text-red-600"
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete enquiry
+                              </DropdownMenuItem>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -344,10 +439,10 @@ export default function AdminEnquiriesPage() {
                   value={selectedEnquiry.status}
                   onValueChange={(val) => updateStatus(selectedEnquiry.id, val)}
                 >
-                  <SelectTrigger className="bg-brand-surface border-brand-border border-brand-border text-brand-dark mt-2">
+                  <SelectTrigger className="mt-2 bg-brand-surface border-brand-border text-brand-dark">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-brand-surface border-brand-border border-brand-border">
+                  <SelectContent className="bg-brand-surface border-brand-border">
                     {statuses.map((s) => (
                       <SelectItem key={s} value={s}>{s}</SelectItem>
                     ))}
@@ -357,7 +452,7 @@ export default function AdminEnquiriesPage() {
 
               <div>
                 <Label className="text-brand-dark">Message</Label>
-                <div className="mt-2 p-4 bg-brand-surface border-brand-border rounded-lg border border-brand-border">
+                <div className="mt-2 rounded-lg border border-brand-border bg-brand-surface p-4">
                   <p className="text-brand-grey whitespace-pre-wrap">
                     {selectedEnquiry.message}
                   </p>
@@ -371,32 +466,81 @@ export default function AdminEnquiriesPage() {
                 </div>
               )}
 
-              <div className="flex gap-3 pt-4 border-t border-brand-border">
-                <Button
-                  asChild
-                  className="flex-1 bg-brand-gold text-brand-bg"
-                >
-                  <a href={`mailto:${selectedEnquiry.email}`}>
-                    <Mail className="w-4 h-4 mr-2" />
-                    Reply via Email
-                  </a>
-                </Button>
-                {selectedEnquiry.phone && (
+              <div className="flex flex-col gap-3 border-t border-brand-border pt-4">
+                {canDeleteEnquiry(selectedEnquiry.status) && (
                   <Button
-                    asChild
+                    type="button"
                     variant="outline"
-                    className="flex-1 border-brand-border"
+                    className="border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+                    onClick={() => setDeleteTarget(selectedEnquiry)}
                   >
-                    <a href={`https://wa.me/${selectedEnquiry.phone.replace(/\D/g, '')}`}>
-                      WhatsApp
-                    </a>
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete enquiry
                   </Button>
                 )}
+
+                <div className="flex gap-3">
+                  <Button
+                    asChild
+                    className="flex-1 bg-brand-gold text-brand-bg"
+                  >
+                    <a href={`mailto:${selectedEnquiry.email}`}>
+                      <Mail className="mr-2 h-4 w-4" />
+                      Reply via Email
+                    </a>
+                  </Button>
+
+                  {selectedEnquiry.phone && (
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="flex-1 border-brand-border"
+                    >
+                      <a href={`https://wa.me/${selectedEnquiry.phone.replace(/\D/g, '')}`}>
+                        WhatsApp
+                      </a>
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           )}
         </SheetContent>
       </Sheet>
+
+      <AlertDialog
+        open={Boolean(deleteTarget)}
+        onOpenChange={(open) => {
+          if (!open && !isDeleting) {
+            setDeleteTarget(null);
+          }
+        }}
+      >
+        <AlertDialogContent className="bg-white border-brand-border">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-brand-dark">Delete enquiry?</AlertDialogTitle>
+            <AlertDialogDescription className="text-brand-mid-grey">
+              This will permanently remove the enquiry from the admin dashboard. Only enquiries
+              marked as Followed Up or Resolved can be deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              className="border-brand-border text-brand-dark"
+              disabled={isDeleting}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={deleteEnquiry}
+              className="bg-red-600 text-white hover:bg-red-700"
+              disabled={isDeleting}
+            >
+              {isDeleting ? 'Deleting...' : 'Delete enquiry'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
