@@ -3,7 +3,6 @@ import { getListings, getBusinessSettings } from '@/lib/queries';
 import { createPageMetadata } from '@/lib/seo';
 import InventoryPageClient from './InventoryPageClient';
 
-export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Inventory',

@@ -1,3 +1,4 @@
+import { unstable_cache } from 'next/cache';
 import { getPrisma } from './prisma';
 import { BusinessInfo, Stat, TeamMember } from '@/types';
 
@@ -37,7 +38,7 @@ function logPublicQueryError(queryName: string, error: unknown) {
   console.error(`[public-query:${queryName}]`, error);
 }
 
-export async function getBusinessSettings(): Promise<BusinessInfo> {
+async function _getBusinessSettings(): Promise<BusinessInfo> {
   try {
     const prisma = await getPrisma();
     const settings = await prisma.businessSettings.findFirst();
@@ -64,53 +65,78 @@ export async function getBusinessSettings(): Promise<BusinessInfo> {
   }
 }
 
-export async function getListings() {
+export const getBusinessSettings = unstable_cache(
+  _getBusinessSettings,
+  ['settings'],
+  { tags: ['settings'], revalidate: 3600 }
+);
+
+async function _getListings() {
   try {
     const prisma = await getPrisma();
-
-    return await prisma.listing.findMany({
+    const listings = await prisma.listing.findMany({
       where: { published: true },
       orderBy: { createdAt: 'desc' },
     });
+    return listings.map(l => ({ ...l, price: Number(l.price) }));
   } catch (error) {
     logPublicQueryError('getListings', error);
     return [];
   }
 }
 
-export async function getListingBySlug(slug: string) {
+export const getListings = unstable_cache(
+  _getListings,
+  ['listings'],
+  { tags: ['listings'], revalidate: 3600 }
+);
+
+async function _getListingBySlug(slug: string) {
   try {
     const prisma = await getPrisma();
-
-    return await prisma.listing.findFirst({
+    const listing = await prisma.listing.findFirst({
       where: { slug, published: true },
     });
+    return listing ? { ...listing, price: Number(listing.price) } : null;
   } catch (error) {
     logPublicQueryError('getListingBySlug', error);
     return null;
   }
 }
 
-export async function getFeaturedListings() {
+export function getListingBySlug(slug: string) {
+  return unstable_cache(
+    () => _getListingBySlug(slug),
+    [`listing-${slug}`],
+    { tags: ['listings', `listing-${slug}`], revalidate: 3600 }
+  )();
+}
+
+async function _getFeaturedListings() {
   try {
     const prisma = await getPrisma();
-
-    return await prisma.listing.findMany({
+    const listings = await prisma.listing.findMany({
       where: { featured: true, published: true },
       orderBy: { createdAt: 'desc' },
       take: 4,
     });
+    return listings.map(l => ({ ...l, price: Number(l.price) }));
   } catch (error) {
     logPublicQueryError('getFeaturedListings', error);
     return [];
   }
 }
 
-export async function getRelatedListings(currentId: string, category: string) {
+export const getFeaturedListings = unstable_cache(
+  _getFeaturedListings,
+  ['listings-featured'],
+  { tags: ['listings'], revalidate: 3600 }
+);
+
+async function _getRelatedListings(currentId: string, category: string) {
   try {
     const prisma = await getPrisma();
-
-    return await prisma.listing.findMany({
+    const listings = await prisma.listing.findMany({
       where: {
         id: { not: currentId },
         category,
@@ -119,8 +145,18 @@ export async function getRelatedListings(currentId: string, category: string) {
       take: 3,
       orderBy: { createdAt: 'desc' },
     });
+    return listings.map(l => ({ ...l, price: Number(l.price) }));
   } catch (error) {
     logPublicQueryError('getRelatedListings', error);
     return [];
   }
 }
+
+export function getRelatedListings(currentId: string, category: string) {
+  return unstable_cache(
+    () => _getRelatedListings(currentId, category),
+    [`related-${currentId}-${category}`],
+    { tags: ['listings'], revalidate: 3600 }
+  )();
+}
+

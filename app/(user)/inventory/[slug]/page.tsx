@@ -10,7 +10,6 @@ interface ListingPageProps {
   }>;
 }
 
-export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: ListingPageProps): Promise<Metadata> {
   const { slug } = await params;

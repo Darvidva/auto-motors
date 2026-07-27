@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 import { getPrisma } from '@/lib/prisma';
 import { requireAdminRequest } from '@/lib/auth';
 import { listingSchema } from '@/lib/validations';
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    revalidatePath('/', 'layout');
+    revalidateTag('listings', {});
     return NextResponse.json({ ...newListing, price: Number(newListing.price) }, { status: 201 });
   } catch (error: any) {
     console.error('Failed to create listing:', error);

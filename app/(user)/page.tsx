@@ -8,7 +8,6 @@ import CTABanner from '@/components/home/CTABanner';
 import { getFeaturedListings, getBusinessSettings } from '@/lib/queries';
 import { createPageMetadata } from '@/lib/seo';
 
-export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = createPageMetadata({
   title: 'Premium Vehicles & Machinery in Nigeria',

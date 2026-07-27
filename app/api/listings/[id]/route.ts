@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 import { getPrisma } from '@/lib/prisma';
 import { requireAdminRequest } from '@/lib/auth';
 import { listingSchema } from '@/lib/validations';
@@ -67,7 +67,8 @@ export async function PATCH(
       },
     });
 
-    revalidatePath('/', 'layout');
+    revalidateTag('listings', {});
+    if (updatedListing.slug) revalidateTag(`listing-${updatedListing.slug}`, {});
     return NextResponse.json({ ...updatedListing, price: Number(updatedListing.price) });
   } catch (error: any) {
     console.error('Failed to update listing:', error);
@@ -96,7 +97,7 @@ export async function DELETE(
       where: { id },
     });
 
-    revalidatePath('/', 'layout');
+    revalidateTag('listings', {});
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to delete listing:', error);

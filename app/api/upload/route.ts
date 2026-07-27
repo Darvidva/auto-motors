@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     const { data, error } = await supabase.storage
       .from('listing-images')
-      .upload(filepath, buffer, {
+      .upload(filepath, new Uint8Array(buffer), {
         contentType,
         upsert: false,
       });

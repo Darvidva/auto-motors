@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { revalidatePath } from 'next/cache';
+import { revalidateTag } from 'next/cache';
 import { getPrisma } from '@/lib/prisma';
 import { settingsSchema } from '@/lib/validations';
 
@@ -56,8 +56,8 @@ export async function PATCH(request: NextRequest) {
       });
     }
 
-    // Revalidate the entire site so hero images and settings update immediately
-    revalidatePath('/', 'layout');
+    // Bust the settings cache so hero images and contact info update immediately
+    revalidateTag('settings', {});
 
     return NextResponse.json(settings);
   } catch (error: any) {
