@@ -109,9 +109,6 @@ export default function AboutPageClient({ heroImage, teamMembers }: { heroImage?
               &ldquo;We don&apos;t just sell machines. We help Nigerians build their
               lives, their businesses, and their futures.&rdquo;
             </blockquote>
-            <p className="text-brand-gold mt-4 font-medium">
-              Adewale Okonkwo, Founder
-            </p>
           </div>
         </div>
 
