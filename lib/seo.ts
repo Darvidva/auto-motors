@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-const fallbackSiteUrl = 'https://dxstaremporium.com';
+const fallbackSiteUrl = 'https://dxstaremporiumltd.com';
 
 export const siteConfig = {
     name: 'DX STAR EMPORIUM',
