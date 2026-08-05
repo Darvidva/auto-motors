@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -51,11 +52,16 @@ export default function LoginPage() {
     <div className="min-h-screen bg-brand-surface flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-center gap-1">
-            <span className="font-display text-3xl font-bold text-brand-gold">DX</span>
-            <div className="w-1.5 h-8 bg-brand-gold/30" />
-            <span className="font-display text-3xl font-bold text-brand-off-white">STAR</span>
+        <div className="text-center mb-8 flex flex-col items-center">
+          <Link href="/" className="relative flex items-center justify-center h-24 w-72">
+            <Image
+              src="/logo.png"
+              alt="DX STAR EMPORIUM"
+              fill
+              sizes="288px"
+              className="object-contain"
+              priority
+            />
           </Link>
           <p className="text-brand-warm-grey text-sm mt-2">Admin Portal</p>
         </div>

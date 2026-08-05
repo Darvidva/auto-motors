@@ -20,6 +20,9 @@ export const metadata: Metadata = {
     'heavy machinery dealer',
     'industrial equipment Nigeria',
   ],
+  icons: {
+    icon: '/icon.svg',
+  },
   alternates: {
     canonical: '/',
   },

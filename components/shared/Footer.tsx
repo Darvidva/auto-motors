@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Phone, Mail, MapPin, Facebook, Instagram, Linkedin } from 'lucide-react';
 import { getBusinessSettings } from '@/lib/queries';
 
@@ -40,11 +41,14 @@ export default async function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Column */}
           <div className="space-y-4">
-            <div className="flex items-center gap-1">
-              <span className="font-display text-xl font-bold text-brand-gold">DX</span>
-              <div className="w-1 h-5 bg-brand-gold/30" />
-              <span className="font-display text-xl font-bold text-white">STAR</span>
-              <span className="font-display text-xl font-bold text-brand-light-grey ml-1">EMPORIUM</span>
+            <div className="relative flex items-center h-20 w-72">
+              <Image 
+                src="/logo.png" 
+                alt="DX STAR EMPORIUM" 
+                fill
+                sizes="256px"
+                className="object-contain object-left"
+              />
             </div>
             <p className="text-sm text-brand-light-grey leading-relaxed max-w-xs">
               Premium vehicles and heavy machinery. Cars, trucks, tractors,

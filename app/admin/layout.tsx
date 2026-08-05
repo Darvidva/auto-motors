@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -56,9 +57,15 @@ export default function AdminLayout({
         >
           <Menu className="w-6 h-6" />
         </button>
-        <div className="flex items-center gap-1">
-          <span className="font-display text-xl font-bold text-brand-gold">DX</span>
-          <span className="font-display text-xl font-bold text-brand-dark">STAR</span>
+        <div className="relative flex items-center justify-center h-14 w-48">
+          <Image 
+            src="/logo.png" 
+            alt="DX STAR EMPORIUM" 
+            fill
+            sizes="192px"
+            className="object-contain"
+            priority
+          />
         </div>
         <div className="w-10" />
       </header>
@@ -82,10 +89,15 @@ export default function AdminLayout({
           {/* Logo */}
           <div className="p-6 border-b border-brand-border">
             <div className="flex items-center justify-between">
-              <Link href="/admin" className="flex items-center gap-1">
-                <span className="font-display text-2xl font-bold text-brand-gold">DX</span>
-                <div className="w-1 h-6 bg-brand-gold/30" />
-                <span className="font-display text-2xl font-bold text-brand-dark">STAR</span>
+              <Link href="/admin" className="relative flex items-center justify-center h-16 w-full max-w-[200px]">
+                <Image 
+                  src="/logo.png" 
+                  alt="DX STAR EMPORIUM" 
+                  fill
+                  sizes="200px"
+                  className="object-contain"
+                  priority
+                />
               </Link>
               <button
                 onClick={() => setSidebarOpen(false)}

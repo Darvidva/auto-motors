@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { Menu, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -48,23 +49,15 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative flex items-center">
-              <div className="flex items-center gap-0.5">
-                <span className="font-display text-2xl font-bold text-brand-gold tracking-tight">
-                  DX
-                </span>
-                <div className="w-1.5 h-6 bg-brand-gold/30 mx-1" />
-                <span className="font-display text-2xl font-bold text-brand-dark tracking-tight">
-                  STAR
-                </span>
-              </div>
-              <svg
-                className="absolute -top-1 -right-3 w-3 h-3 text-brand-gold opacity-60"
-                viewBox="0 0 24 24"
-                fill="currentColor"
-              >
-                <path d="M23 13v-1.5a1 1 0 0 0-.7-.95L19 9.5l-2.5-4.5H7L4 9.5l-3.3 1.05A1 1 0 0 0 0 11.5V13h1a3 3 0 0 0 6 0h8a3 3 0 0 0 6 0h2zm-19 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0zm11.5 0a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0zM7.5 6.5h7.2l1.8 3H6.2l1.3-3z"/>
-              </svg>
+            <div className="relative flex items-center h-16 w-56">
+              <Image
+                src="/logo.png"
+                alt="DX STAR EMPORIUM"
+                fill
+                sizes="230px"
+                className="object-contain object-left"
+                priority
+              />
             </div>
           </Link>
 
@@ -120,10 +113,15 @@ export default function Navbar() {
               </SheetHeader>
               <div className="flex flex-col h-full pt-8">
                 {/* Mobile Logo */}
-                <div className="flex items-center gap-1 mb-8">
-                  <span className="font-display text-2xl font-bold text-brand-gold">DX</span>
-                  <div className="w-1 h-6 bg-brand-gold/30" />
-                  <span className="font-display text-2xl font-bold text-brand-dark">STAR</span>
+                <div className="relative flex items-center h-20 w-64 mb-8">
+                  <Image
+                    src="/logo.png"
+                    alt="DX STAR EMPORIUM"
+                    fill
+                    sizes="224px"
+                    className="object-contain object-left"
+                    priority
+                  />
                 </div>
                 <div className="flex flex-col gap-1">
                   {navLinks.map((link, index) => (
