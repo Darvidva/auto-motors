@@ -49,7 +49,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative flex items-center h-16 w-56">
+            <div className="relative flex items-center h-14 w-40 md:h-24 md:w-72">
               <Image
                 src="/logo.png"
                 alt="DX STAR EMPORIUM"
@@ -113,7 +113,7 @@ export default function Navbar() {
               </SheetHeader>
               <div className="flex flex-col h-full pt-8">
                 {/* Mobile Logo */}
-                <div className="relative flex items-center h-20 w-64 mb-8">
+                <div className="relative flex items-center h-16 w-48 mb-8">
                   <Image
                     src="/logo.png"
                     alt="DX STAR EMPORIUM"

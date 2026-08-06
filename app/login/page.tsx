@@ -53,7 +53,7 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8 flex flex-col items-center">
-          <Link href="/" className="relative flex items-center justify-center h-24 w-72">
+          <Link href="/" className="relative flex items-center justify-center h-20 w-56 sm:h-32 sm:w-80">
             <Image
               src="/logo.png"
               alt="DX STAR EMPORIUM"

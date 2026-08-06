@@ -41,7 +41,7 @@ export default async function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Column */}
           <div className="space-y-4">
-            <div className="relative flex items-center h-20 w-72">
+            <div className="relative flex items-center h-16 w-48 lg:h-28 lg:w-80">
               <Image 
                 src="/logo.png" 
                 alt="DX STAR EMPORIUM" 

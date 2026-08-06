@@ -57,7 +57,7 @@ export default function AdminLayout({
         >
           <Menu className="w-6 h-6" />
         </button>
-        <div className="relative flex items-center justify-center h-14 w-48">
+        <div className="relative flex items-center justify-center h-12 w-40">
           <Image 
             src="/logo.png" 
             alt="DX STAR EMPORIUM" 
@@ -89,7 +89,7 @@ export default function AdminLayout({
           {/* Logo */}
           <div className="p-6 border-b border-brand-border">
             <div className="flex items-center justify-between">
-              <Link href="/admin" className="relative flex items-center justify-center h-16 w-full max-w-[200px]">
+              <Link href="/admin" className="relative flex items-center justify-center h-24 w-full max-w-[240px]">
                 <Image 
                   src="/logo.png" 
                   alt="DX STAR EMPORIUM" 
