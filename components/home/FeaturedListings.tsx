@@ -20,7 +20,7 @@ export default function FeaturedListings({ featuredListings }: { featuredListing
   };
 
   return (
-    <section className="bg-brand-surface py-16 sm:py-24">
+    <section className="bg-white py-16 sm:py-24">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-10">
           <div>

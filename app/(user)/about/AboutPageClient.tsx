@@ -86,21 +86,15 @@ export default function AboutPageClient({ heroImage, teamMembers }: { heroImage?
         <div className="max-w-3xl mx-auto">
           <p className="text-brand-dark-grey text-lg leading-relaxed mb-6">
             DX STAR EMPORIUM started in Lagos with a clear focus: help customers find
-            dependable vehicles and machinery without the usual guesswork. From private
-            buyers to business owners, people come to us for stock they can inspect,
-            ask questions about and buy with confidence.
+            dependable vehicles, construction machinery, and industrial equipment without the usual guesswork.
+            From private buyers looking for passenger cars to business owners requiring heavy site equipment,
+            people come to us for stock they can inspect, ask questions about, and buy with confidence.
           </p>
           <p className="text-brand-dark-grey text-lg leading-relaxed mb-6">
-            We keep the process straightforward. Accurate listing details, honest
-            conversations and practical support matter more than sales talk. When a
-            customer is spending on a car, truck or machine, the information should be
-            clear from the start.
+            Our operations are centered around four core pillars: premium <strong className="font-semibold text-brand-dark">Car Sales</strong>, the <strong className="font-semibold text-brand-dark">Selling of Construction Machinery</strong> (including excavators, tractors, and loaders), safe and secure <strong className="font-semibold text-brand-dark">Shipping Services</strong> across Nigeria, and sourcing <strong className="font-semibold text-brand-dark">Other specialized Machines</strong> for industrial and agricultural projects.
           </p>
           <p className="text-brand-dark-grey text-lg leading-relaxed mb-12">
-            That approach still shapes how we work today. Whether someone needs a
-            family car, a work truck or equipment for a project site, we take time to
-            understand the need and point them to the right options. Our Surulere
-            showroom is where many of those conversations begin.
+            We keep the process straightforward. Accurate listing details, honest conversations, and practical shipping or clearing support matter more than sales talk. When a customer is investing in a car or specialized heavy machine, the information and logistics should be clear from the start. Our showroom in Surulere is where many of those successful partnerships begin.
           </p>
 
           {/* Mission Quote */}

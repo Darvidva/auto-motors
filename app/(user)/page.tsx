@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import HeroSection from '@/components/home/HeroSection';
 import CategoryBar from '@/components/home/CategoryBar';
+import ServicesSection from '@/components/home/ServicesSection';
 import TrustSection from '@/components/home/TrustSection';
 import FeaturedListings from '@/components/home/FeaturedListings';
 import HowItWorks from '@/components/home/HowItWorks';
@@ -10,15 +11,16 @@ import { createPageMetadata } from '@/lib/seo';
 
 
 export const metadata: Metadata = createPageMetadata({
-  title: 'Premium Vehicles & Machinery in Nigeria',
+  title: 'Car Sales, Construction Machinery & Shipping in Nigeria',
   description:
-    'Browse premium cars, trucks, tractors, excavators, heavy machinery, and equipment from DX STAR EMPORIUM in Nigeria.',
+    'Discover DX STAR EMPORIUM: your trusted source for premium car sales, selling of construction machinery, shipping, and other machines in Nigeria.',
   path: '/',
   keywords: [
-    'premium vehicles Nigeria',
-    'machinery dealer Lagos',
-    'cars trucks tractors Nigeria',
-    'heavy equipment for sale',
+    'car sales Nigeria',
+    'construction machinery Lagos',
+    'shipping services Nigeria',
+    'heavy machines Lagos',
+    'other machines for sale',
   ],
 });
 
@@ -32,8 +34,9 @@ export default async function HomePage() {
     <>
       <HeroSection heroImage={settings.heroImages?.home} />
       <CategoryBar />
-      <TrustSection />
+      <ServicesSection />
       <FeaturedListings featuredListings={featuredListings as any} />
+      <TrustSection />
       <HowItWorks />
       <CTABanner />
     </>

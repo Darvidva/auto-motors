@@ -6,7 +6,7 @@ export const siteConfig = {
     name: 'DX STAR EMPORIUM',
     shortName: 'DX STAR EMPORIUM',
     description:
-        'DX STAR EMPORIUM offers quality vehicles, trucks, tractors, excavators, heavy machinery, and equipment in Nigeria.',
+        'DX STAR EMPORIUM offers premium car sales, selling of construction machinery, shipping, and other machines in Nigeria.',
     siteUrl:
         process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/+$/, '') || fallbackSiteUrl,
     locale: 'en_NG',

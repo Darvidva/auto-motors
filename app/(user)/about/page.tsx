@@ -8,12 +8,13 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = createPageMetadata({
   title: 'About Us',
   description:
-    'Learn more about DX STAR EMPORIUM, our experience, and our commitment to quality vehicles and machinery in Nigeria.',
+    'Learn more about DX STAR EMPORIUM, our experience, and our commitment to car sales, construction machinery, shipping, and other machines in Nigeria.',
   path: '/about',
   keywords: [
     'about DX STAR EMPORIUM',
-    'vehicle dealer Nigeria',
-    'machinery company Lagos',
+    'car sales Nigeria',
+    'construction machinery Lagos',
+    'shipping services Nigeria',
   ],
 });
 

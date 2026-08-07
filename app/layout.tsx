@@ -5,20 +5,20 @@ import { absoluteUrl, siteConfig } from '@/lib/seo';
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.siteUrl),
   title: {
-    default: 'DX STAR EMPORIUM | Premium Vehicles & Machinery in Nigeria',
+    default: 'DX STAR EMPORIUM | Car Sales, Construction Machinery & Shipping in Nigeria',
     template: `%s | ${siteConfig.name}`,
   },
   description:
-    'DX STAR EMPORIUM - Quality vehicles and heavy machinery dealership in Nigeria. Cars, trucks, tractors, excavators, and industrial equipment. Best prices in Lagos.',
+    'DX STAR EMPORIUM - Premium car sales, selling of construction machinery, shipping, and other machines in Nigeria. Best prices in Lagos.',
   applicationName: siteConfig.name,
   keywords: [
-    'vehicles in Nigeria',
-    'cars for sale in Lagos',
-    'trucks for sale in Nigeria',
-    'tractors in Nigeria',
-    'excavators in Lagos',
-    'heavy machinery dealer',
-    'industrial equipment Nigeria',
+    'car sales Nigeria',
+    'construction machinery Lagos',
+    'shipping services Nigeria',
+    'heavy machines Lagos',
+    'other machines for sale',
+    'vehicle dealer Lagos',
+    'heavy equipment Nigeria',
   ],
   icons: {
     icon: '/icon.svg',
@@ -30,24 +30,24 @@ export const metadata: Metadata = {
     type: 'website',
     url: siteConfig.siteUrl,
     siteName: siteConfig.name,
-    title: 'DX STAR EMPORIUM | Premium Vehicles & Machinery in Nigeria',
+    title: 'DX STAR EMPORIUM | Car Sales, Construction Machinery & Shipping in Nigeria',
     description:
-      'DX STAR EMPORIUM - Quality vehicles and heavy machinery dealership in Nigeria. Cars, trucks, tractors, excavators, and industrial equipment. Best prices in Lagos.',
+      'DX STAR EMPORIUM - Premium car sales, selling of construction machinery, shipping, and other machines in Nigeria. Best prices in Lagos.',
     locale: siteConfig.locale,
     images: [
       {
         url: absoluteUrl('/images/og-image.jpg'),
         width: 1200,
         height: 630,
-        alt: 'DX STAR EMPORIUM vehicles and machinery',
+        alt: 'DX STAR EMPORIUM - Car Sales, Construction Machinery & Shipping',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'DX STAR EMPORIUM | Premium Vehicles & Machinery in Nigeria',
+    title: 'DX STAR EMPORIUM | Car Sales, Construction Machinery & Shipping in Nigeria',
     description:
-      'DX STAR EMPORIUM - Quality vehicles and heavy machinery dealership in Nigeria. Cars, trucks, tractors, excavators, and industrial equipment. Best prices in Lagos.',
+      'DX STAR EMPORIUM - Premium car sales, selling of construction machinery, shipping, and other machines in Nigeria. Best prices in Lagos.',
     images: [absoluteUrl('/images/og-image.jpg')],
   },
   robots: {

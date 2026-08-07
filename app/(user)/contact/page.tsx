@@ -8,12 +8,13 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = createPageMetadata({
   title: 'Contact Us',
   description:
-    'Contact DX STAR EMPORIUM for vehicle and machinery enquiries, pricing, availability, and inspections in Nigeria.',
+    'Contact DX STAR EMPORIUM for inquiries on car sales, selling of construction machinery, shipping, and other machines in Nigeria.',
   path: '/contact',
   keywords: [
-    'contact vehicle dealer Nigeria',
-    'DX STAR EMPORIUM contact',
-    'machinery enquiries Lagos',
+    'contact DX STAR EMPORIUM',
+    'car sales enquiries Nigeria',
+    'construction machinery inquiries Lagos',
+    'shipping services contact Nigeria',
   ],
 });
 
